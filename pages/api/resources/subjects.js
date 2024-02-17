@@ -7,6 +7,8 @@ connectDB();
 export default cors(async (req, res) => {
   if (req.method === "GET") {
     const subjects = await Subject.find();
+    // sort by code alphabetically
+    subjects.sort((a, b) => a.code.localeCompare(b.code));
     res.status(200).json(subjects);
   } else {
     verifyMember(req, res, async () => {

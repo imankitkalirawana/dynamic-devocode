@@ -16,6 +16,10 @@ const resourceSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now(),
+  },
   by: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",

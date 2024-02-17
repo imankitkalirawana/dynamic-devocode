@@ -107,7 +107,9 @@ const Navbar = () => {
   return (
     <>
       <div
-        className={`navbar bg-base-100/70 fixed z-30 text-content backdrop-blur-lg transition-all top-0`}
+        className={`navbar bg-base-100/70 fixed z-30 text-content backdrop-blur-lg transition-all top-0 ${
+          location?.startsWith("/auth") ? "hidden" : ""
+        }`}
       >
         <div className="navbar-start">
           <div className="dropdown">

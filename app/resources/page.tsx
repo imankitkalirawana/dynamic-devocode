@@ -1,7 +1,39 @@
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import subjectCount from "@/utils/count";
+
+type Subject = {
+  id: string;
+  title: string;
+  code: string;
+};
 
 const Page = () => {
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await axios.get("/api/resources/subjects");
+        setSubjects(response.data);
+        localStorage.setItem(
+          "subjectCount",
+          subjectCount(response.data.length)
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSubjects();
+  }, []);
+
   return (
     <div className="mt-24 max-w-7xl m-auto grid grid-cols-12 gap-4 gap-y-8 p-8">
       {/* subjects */}
@@ -31,18 +63,19 @@ const Page = () => {
             </Link>
           </div>
           <div className="card grid grid-cols-2 md:grid-cols-3 gap-4">
-            {/* {isLoading
+            {isLoading
               ? Array.from({ length: 3 }).map((_, index) => (
                   <div key={index} className="skeleton w-40 h-40"></div>
                 ))
-              : subjects.slice(0, 3).map((subject) => ( */}
-            <Link
-              href={`/resources/subjects/`}
-              className="stat bg-base-100 card aspect-square flex justify-center items-center hover:bg-base-300 transition-all"
-            >
-              <div className="stat-value text-2xl">CSE110</div>
-            </Link>
-            {/* ))} */}
+              : subjects.slice(0, 3).map((subject) => (
+                  <Link
+                    href={`/resources/subjects/`}
+                    key={subject.id}
+                    className="stat bg-base-100 card aspect-square flex justify-center items-center hover:bg-base-300 transition-all"
+                  >
+                    <div className="stat-value text-2xl">{subject.code}</div>
+                  </Link>
+                ))}
           </div>
         </div>
       </div>

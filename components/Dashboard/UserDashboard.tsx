@@ -1,6 +1,27 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Dashboard = () => {
+  const [subjectCount, setSubjectCount] = useState(0);
+  const [resourceCount, setResourceCount] = useState(0);
+  const [subject, setSubject] = useState([]);
+  const [resource, setResource] = useState([]);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const response = await axios.get("/api/resources/count");
+        setSubjectCount(response.data.subjectCount);
+        setResourceCount(response.data.resourceCount);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCount();
+  }, []);
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -28,7 +49,9 @@ const Dashboard = () => {
             </svg>
           </div>
           <div className="stat-title text-base">Subjects</div>
-          <div className="stat-value text-primary text-lg">20+</div>
+          <div className="stat-value text-primary text-lg">
+            {subjectCount || 0}+
+          </div>
         </div>
         <div className="stat bg-primary card col-span-6 md:col-span-3 row-span-1">
           <div className="stat-figure text-base-100">
@@ -47,8 +70,10 @@ const Dashboard = () => {
               />
             </svg>
           </div>
-          <div className="stat-title text-base-100">Views</div>
-          <div className="stat-value text-base-100 text-lg">2.6K</div>
+          <div className="stat-title text-base-100">Resources</div>
+          <div className="stat-value text-base-100 text-lg">
+            {resourceCount || 0}+
+          </div>
         </div>
 
         <div className="card col-span-12 sm:col-span-6 md:col-span-6 row-span-2 relative overflow-hidden stat aspect-[2/1] md:aspect-auto">
@@ -57,8 +82,8 @@ const Dashboard = () => {
             alt="dashboard-img"
             className="object-center object-cover w-full h-full brightness-50 absolute inset-0 -z-10"
           />
-          <div className="stat-title text-white">Total Revenue</div>
-          <div className="stat-value text-primary">2.6M</div>
+          <div className="stat-title text-white">Total Visiters</div>
+          <div className="stat-value text-primary">20.6K</div>
           <div className="flex gap-2">
             <Link href={""} className="badge badge-primary">
               Subjects
@@ -94,5 +119,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
