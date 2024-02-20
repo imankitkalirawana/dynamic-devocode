@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import Sad from "@/assets/Sad";
 import dynamic from "next/dynamic";
 import BottomBar from "./BottomBar";
+import AnimatedCursor from "react-animated-cursor";
 
 const themes = [
   "default",
@@ -45,6 +46,7 @@ const themes = [
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
+  const [isCustomCursor, setIsCustomCursor] = useState(false);
   const location = usePathname();
   const { loggedIn } = isLoggedIn();
 
@@ -86,6 +88,11 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    // get cursor from local storage
+    const cursor = localStorage.getItem("cursor");
+    if (cursor === "custom") {
+      setIsCustomCursor(true);
+    }
     dynamicTheme();
   }, [dynamicTheme]);
 
@@ -106,6 +113,17 @@ const Navbar = () => {
 
   return (
     <>
+      {isCustomCursor && (
+        <AnimatedCursor
+          innerStyle={{
+            backgroundColor: "var(--inner-color)",
+          }}
+          outerStyle={{
+            backgroundColor: "var(--outer-color)",
+            mixBlendMode: "difference",
+          }}
+        />
+      )}
       <div
         className={`navbar bg-base-100/70 fixed z-30 text-content backdrop-blur-lg transition-all top-0 ${
           location?.startsWith("/auth") ? "hidden" : ""
