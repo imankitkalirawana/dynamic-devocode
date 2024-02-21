@@ -4,7 +4,7 @@ import axios from "axios";
 
 async function getSubjects() {
   // const res = await fetch(`${API_BASE_URL}/resources/subjects`);
-  const res = await axios.get(`/api/resources/subjects`);
+  const res = await axios.get(`${API_BASE_URL}/resources/subjects`);
   return res.data;
 }
 
