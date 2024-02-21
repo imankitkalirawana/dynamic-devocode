@@ -41,7 +41,7 @@ export default cors(async (req, res) => {
       if (req.method === "POST") {
         try {
           const { subjectCode } = req.query;
-          let { type, title, link, description } = req.body;
+          let { type, title, link, description, file } = req.body;
           const subjectId = await getSubjectId(subjectCode);
           const userId = req.userId;
           if (!type || !title) {
@@ -55,7 +55,7 @@ export default cors(async (req, res) => {
             res.status(400).json({
               message: "Link is required for type link",
             });
-            return;
+          return;
           }
           const resource = new Resources({
             subject: subjectId,
@@ -63,6 +63,7 @@ export default cors(async (req, res) => {
             title,
             link,
             description,
+            file,
             by: userId,
           });
           await resource.save();
