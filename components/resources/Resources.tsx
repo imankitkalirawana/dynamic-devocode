@@ -10,7 +10,6 @@ type ResourceProps = {
 
 const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
   const { title, description, addedDate } = resourceData;
-  console.log(resourceData);
   return (
     <div
       //   onClick={(e) => handleCardClick(e, code)}
