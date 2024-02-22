@@ -1,5 +1,6 @@
 import ResourceType from "@/components/resources/ResourceType";
 import resourceTypes from "@/utils/resourceTypes";
+import Link from "next/link";
 
 interface Props {
   params: {
