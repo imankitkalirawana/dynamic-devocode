@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const ResourceType = ({
   ResourceType,
@@ -9,20 +9,21 @@ const ResourceType = ({
   ResourceType: string;
   code: string;
 }) => {
-  const router = useRouter();
-  const handleCardClick = (e: React.MouseEvent, code: string, type: string) => {
-    const dropdown = e.currentTarget.querySelector(".dropdown");
-    if (e.target === dropdown || dropdown?.contains(e.target as Node)) {
-      e.preventDefault();
-      return;
-    }
-    router.push(`/resources/subjects/${code}/${type}`);
-  };
+  const location = usePathname();
+
   return (
     <>
       <Link
         href={`/resources/subjects/${code}/${ResourceType}`}
-        className={`btn btn-sm`}
+        className={`btn btn-sm ${
+          location?.includes(ResourceType)
+            ? "btn-primary"
+            : "" ||
+              (location === `/resources/subjects/${code}` &&
+                ResourceType === "all")
+            ? "btn-primary"
+            : ""
+        }`}
       >
         {ResourceType.charAt(0).toUpperCase() + ResourceType.slice(1)}
       </Link>

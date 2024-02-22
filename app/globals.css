@@ -157,3 +157,7 @@
   --inner-color: #ff865b;
   --outer-color: #ffffff;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}

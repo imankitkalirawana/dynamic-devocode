@@ -16,7 +16,7 @@ export default function Layout({
 }) {
   return (
     <>
-      <div className="flex gap-4 mt-4">
+      <div className="flex gap-4 mt-4 overflow-x-scroll">
         {resourceTypes.map((resourceType: string, index: any) => (
           <ResourceType
             ResourceType={resourceType}

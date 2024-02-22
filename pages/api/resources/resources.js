@@ -20,6 +20,7 @@ export default cors(async (req, res) => {
         const subjectId = await getSubjectId(subjectCode);
         if (!type) {
           const resources = await Resources.find({ subject: subjectId });
+          resources.sort((a, b) => a.type.localeCompare(b.type));
           res.status(200).json(resources);
           return;
         }
@@ -55,7 +56,7 @@ export default cors(async (req, res) => {
             res.status(400).json({
               message: "Link is required for type link",
             });
-          return;
+            return;
           }
           const resource = new Resources({
             subject: subjectId,
