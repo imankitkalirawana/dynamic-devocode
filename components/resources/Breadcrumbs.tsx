@@ -13,7 +13,7 @@ const Breadcrumbs = () => {
   });
 
   return (
-    <div className="text-sm breadcrumbs ml-4 select-none cursor-default">
+    <div className="text-sm breadcrumbs select-none cursor-default">
       <ul>
         {breadcrumbItems?.map((item, index) => (
           <li key={index}>

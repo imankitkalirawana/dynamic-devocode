@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const ResourceType = ({
@@ -18,20 +19,14 @@ const ResourceType = ({
     router.push(`/resources/subjects/${code}/${type}`);
   };
   return (
-    <div
-      onClick={(e) => handleCardClick(e, code, ResourceType)}
-      className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 px-8 py-2 relative select-none cursor-pointer"
-    >
-      <div className="mt-2">
-        <h2 className="text-xl font-bold" tabIndex={0} role="link">
-          {/* capitalize resourceType */}
-          {ResourceType.charAt(0).toUpperCase() + ResourceType.slice(1)}
-        </h2>
-        <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
-          {/* {title} */}
-        </p>
-      </div>
-    </div>
+    <>
+      <Link
+        href={`/resources/subjects/${code}/${ResourceType}`}
+        className={`btn btn-sm`}
+      >
+        {ResourceType.charAt(0).toUpperCase() + ResourceType.slice(1)}
+      </Link>
+    </>
   );
 };
 

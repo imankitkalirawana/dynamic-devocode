@@ -1,4 +1,5 @@
 let resourceTypes = [
+    "all",
     "notes",
     "ca",
     "assignments",

@@ -12,13 +12,15 @@ export default async function Page() {
   const subjects = await getSubjects();
   return (
     <>
-      {subjects.length > 0 ? (
-        subjects.map((subject: any, index: any) => (
-          <Subjects key={index} subjectData={subject} />
-        ))
-      ) : (
-        <NotFound />
-      )}
+      <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">
+        {subjects.length > 0 ? (
+          subjects.map((subject: any, index: any) => (
+            <Subjects key={index} subjectData={subject} />
+          ))
+        ) : (
+          <NotFound />
+        )}
+      </div>
     </>
   );
 }
