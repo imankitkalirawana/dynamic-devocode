@@ -1,5 +1,6 @@
 "use client";
-import Sad from "@/assets/Sad";
+import Trash from "@/assets/Trash";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type SubjectProps = {
@@ -13,23 +14,13 @@ type SubjectProps = {
 };
 
 const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
-  const router = useRouter();
   const { code, title } = subjectData;
-
-  const handleCardClick = (e: React.MouseEvent, code: string) => {
-    const dropdown = e.currentTarget.querySelector(".dropdown");
-    if (e.target === dropdown || dropdown?.contains(e.target as Node)) {
-      e.preventDefault();
-      return;
-    }
-    router.push(`/resources/subjects/${code}`);
-  };
 
   return (
     <>
       <div
-        onClick={(e) => handleCardClick(e, code)}
-        className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 px-8 py-4 relative select-none cursor-pointer"
+        // onClick={(e) => handleCardClick(e, code)}
+        className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
         title={title}
       >
         <div className="flex items-center justify-between">
@@ -66,27 +57,27 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
                 <a>Archive</a>
               </li>
               <li>
-                <label htmlFor="delete_modal" className="text-error">
+                <label htmlFor={`delete_modal`} className="text-error">
                   Delete
                 </label>
               </li>
             </ul>
           </div>
         </div>
-        <div className="mt-2">
+        <Link href={`/resources/subjects/${code}`} className="px-8 py-4 ">
           <h2 className="text-xl font-bold" tabIndex={0} role="link">
             {code}
           </h2>
           <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
             {title}
           </p>
-        </div>
+        </Link>
       </div>
       <input type="checkbox" id="delete_modal" className="modal-toggle" />
       <div className="modal" role="dialog">
         <div className="modal-box max-w-96">
           <div className="max-w-40 mx-auto flex mb-8">
-            <Sad />
+            <Trash />
           </div>
           <div className="flex modal-action">
             <button
@@ -99,7 +90,7 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
               ) : (
                 "Logout"
               )} */}
-              "Delete"
+              Delete
             </button>
             <label className="btn flex-1" htmlFor="delete_modal">
               Cancel
