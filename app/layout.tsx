@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
 import Navbar from "@/components/common/Navbar";
-import ProgressBarI from "@/components/common/ProgressBar";
+// import ProgressBarI from "@/components/common/ProgressBar";
 
 export const metadata: Metadata = {
   title: "Devocode",
