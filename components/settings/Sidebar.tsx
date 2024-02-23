@@ -32,7 +32,7 @@ const Sidebar = () => {
               <a
                 href={item.href}
                 className={`btn w-full justify-start max-w-60 text-start transition-all ${
-                  pathname == item.href ? "btn-primary" : "btn-ghost"
+                  pathname == item.href ? "" : "btn-ghost"
                 }`}
               >
                 {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
