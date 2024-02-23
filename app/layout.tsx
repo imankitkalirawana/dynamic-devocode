@@ -20,7 +20,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <main>{children}</main>
-          <ProgressBarI />
+          {/* <ProgressBarI /> */}
         </Providers>
       </body>
     </html>
