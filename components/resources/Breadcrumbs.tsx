@@ -4,15 +4,12 @@ import resourceTypes from "@/utils/resourceTypes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import Subject from "./add/Subject";
+import Resource from "./add/Resource";
 
 const Breadcrumbs = () => {
   const location = usePathname();
   const pathSegments = location?.split("/").filter((segment) => segment !== "");
-  const [selectedType, setSelectedType] = useState("others");
-
-  const handleTypeChange = (e: any) => {
-    setSelectedType(e.target.value);
-  };
 
   const breadcrumbItems = pathSegments?.map((segment, index) => {
     const path = `/${pathSegments.slice(0, index + 1).join("/")}`;
@@ -27,7 +24,6 @@ const Breadcrumbs = () => {
   }
 
   // exclue "all" from resourceType
-  const resourceType = resourceTypes.filter((type) => type != "all");
 
   return (
     <>
@@ -72,127 +68,11 @@ const Breadcrumbs = () => {
       </div>
       <input type="checkbox" id="add_subject" className="modal-toggle" />
       <div className="modal" role="dialog">
-        <form className="modal-box max-w-96">
-          <h2 className="text-lg text-center font-semibold">
-            Add to {lastItem?.label}
-          </h2>
-          {lastItem?.label === "subjects" ? (
-            <div className="mx-auto flex flex-col mb-8 overflow-y-scroll px-4 py-2 gap-2">
-              <div className="flex flex-col w-full">
-                <label htmlFor="code" className="label">
-                  <span className="label-text">Code</span>
-                </label>
-                <input
-                  type="text"
-                  id="code"
-                  name="code"
-                  className="input input-bordered w-full"
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <label htmlFor="title" className="label">
-                  <span className="label-text">Title</span>
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  className="input input-bordered w-full"
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <label htmlFor="description" className="label">
-                  <span className="label-text">Description</span>
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  className="textarea textarea-bordered w-full"
-                ></textarea>
-              </div>
-            </div>
-          ) : (
-            <div className="mx-auto flex flex-col mb-8 overflow-y-scroll px-4 py-2 gap-2">
-              <div className="flex flex-col w-full">
-                <label htmlFor="title" className="label">
-                  <span className="label-text">Title</span>
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  className="input input-bordered w-full"
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <label htmlFor="description" className="label">
-                  <span className="label-text">Description</span>
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  className="textarea textarea-bordered w-full"
-                ></textarea>
-              </div>
-              <div className="flex flex-col w-full">
-                <label htmlFor="resource_type" className="label">
-                  <span className="label-text">Resource Type</span>
-                </label>
-                <select
-                  className="select select-bordered w-full max-w-xs"
-                  onChange={handleTypeChange}
-                >
-                  {resourceType.map((type, index) =>
-                    type == "others" ? (
-                      <option key={index} selected value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </option>
-                    ) : (
-                      <option key={index} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
-              {/* elements added based on user selection */}
-              {selectedType === "link" || selectedType === "moocs" ? (
-                <div className="flex flex-col w-full">
-                  <label htmlFor="url" className="label">
-                    <span className="label-text">URL</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="url"
-                    name="url"
-                    className="input input-bordered w-full"
-                  />
-                </div>
-              ) : (
-                <div className="flex flex-col w-full">
-                  <label htmlFor="file" className="label">
-                    <span className="label-text">File</span>
-                  </label>
-                  <input
-                    type="file"
-                    id="file"
-                    name="file"
-                    className="file-input file-input-bordered w-full"
-                  />
-                </div>
-              )}
-            </div>
-          )}
-          <div className="flex modal-action">
-            <button className="btn btn-primary flex-1" type="submit">
-              Add
-            </button>
-            <label className="btn flex-1" htmlFor="add_subject">
-              Cancel
-            </label>
-          </div>
-        </form>
-
+        {lastItem?.label === "subjects" ? (
+          <Subject lastItem={lastItem} />
+        ) : (
+          <Resource lastItem={lastItem} />
+        )}
         <label className="modal-backdrop" htmlFor="add_subject">
           Close
         </label>

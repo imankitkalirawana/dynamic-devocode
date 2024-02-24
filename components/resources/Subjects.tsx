@@ -1,6 +1,7 @@
 "use client";
 import Trash from "@/assets/Trash";
 import Link from "next/link";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 
 type SubjectProps = {
@@ -14,6 +15,7 @@ type SubjectProps = {
 };
 
 const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
+  const router = useRouter();
   const { code, title, description, addedDate } = subjectData;
 
   const humanReadableDate = new Date(addedDate).toLocaleDateString("en-US", {
@@ -22,10 +24,30 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
     year: "numeric",
   });
 
+  const handleDelete = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    code: string
+  ) => {
+    e.preventDefault();
+    try {
+      const res = await axios.delete(`/api/resources/subjects/${code}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log(res);
+      router.refresh();
+      // close the modal
+      const modal = document.getElementById("delete_modal");
+      modal?.click();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <div
-        // onClick={(e) => handleCardClick(e, code)}
         className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
         title={title}
       >
@@ -90,14 +112,8 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
           <div className="flex modal-action">
             <button
               className="btn btn-primary flex-1"
-              // onClick={handleLogout}
-              // disabled={isloggingOut}
+              onClick={(e) => handleDelete(e, code)}
             >
-              {/* {isloggingOut ? (
-                <span className="loading loading-dots loading-sm"></span>
-              ) : (
-                "Logout"
-              )} */}
               Delete
             </button>
             <label className="btn flex-1" htmlFor="delete_modal">

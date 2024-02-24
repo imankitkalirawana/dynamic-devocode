@@ -16,9 +16,19 @@ export default cors(async (req, res) => {
         try {
           let { code, title, description } = req.body;
           const userId = req.userId;
-          if (!code || !title || !description) {
-            res.status(400).json({
-              message: "Code, title, and description are required",
+          if (!code || !title) {
+            res.status(401).json({
+              message: "Code and title are required",
+            });
+            return;
+          }
+          // check if the code already exists
+          const existingSubject = await Subject.findOne({
+            code: code.toUpperCase(),
+          });
+          if (existingSubject) {
+            res.status(402).json({
+              message: "Subject with the same code already exists",
             });
             return;
           }
