@@ -19,7 +19,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Navbar />
-          <main>{children}</main>
+          <main className="mb-24">{children}</main>
           {/* <ProgressBarI /> */}
         </Providers>
       </body>

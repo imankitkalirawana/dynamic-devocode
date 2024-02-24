@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const Items = [
   {
@@ -25,18 +26,18 @@ const Sidebar = () => {
   const pathname = usePathname();
   return (
     <>
-      <div className="flex flex-col col-span-full lg:col-span-3">
-        <ul>
+      <div className="flex col-span-full lg:col-span-3 justify-center lg:justify-start mb-8 lg:mb-0">
+        <ul className="flex lg:flex-col">
           {Items.map((item, index) => (
             <li key={index}>
-              <a
+              <Link
                 href={item.href}
-                className={`btn w-full justify-start max-w-60 text-start transition-all ${
-                  pathname == item.href ? "" : "btn-ghost"
+                className={`btn btn-sm sm:btn-md w-full justify-start max-w-60 text-start transition-all ${
+                  pathname == item.href ? "btn-primary" : "btn-ghost"
                 }`}
               >
                 {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

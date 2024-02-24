@@ -8,6 +8,7 @@ export default function Layout({
   return (
     <div className="mt-24 max-w-7xl m-auto p-8">
       <Breadcrumbs />
+
       {children}
     </div>
   );

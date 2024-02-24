@@ -14,7 +14,13 @@ type SubjectProps = {
 };
 
 const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
-  const { code, title } = subjectData;
+  const { code, title, description, addedDate } = subjectData;
+
+  const humanReadableDate = new Date(addedDate).toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <>
@@ -24,7 +30,6 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
         title={title}
       >
         <div className="flex items-center justify-between">
-          {/* <span className="text-sm">{subject.addedDate}</span> */}
           <div className="dropdown dropdown-end absolute right-3 top-3">
             <div
               tabIndex={0}
@@ -64,13 +69,16 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
             </ul>
           </div>
         </div>
-        <Link href={`/resources/subjects/${code}`} className="px-8 py-4 ">
+        <Link href={`/resources/subjects/${code}/all`} className="px-8 py-4 ">
           <h2 className="text-xl font-bold" tabIndex={0} role="link">
             {code}
           </h2>
           <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
             {title}
           </p>
+          <div className="flex justify-end items-center mt-2">
+            <span className="text-xs">{humanReadableDate}</span>
+          </div>
         </Link>
       </div>
       <input type="checkbox" id="delete_modal" className="modal-toggle" />

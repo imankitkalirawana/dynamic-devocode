@@ -1,7 +1,11 @@
-import React from "react";
+import Profile from "@/components/settings/Profile";
 
 const Page = () => {
-  return <>Profile</>;
+  return (
+    <>
+      <Profile />
+    </>
+  );
 };
 
 export default Page;

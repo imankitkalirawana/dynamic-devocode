@@ -1,7 +1,12 @@
+import Security from "@/components/settings/Security";
 import React from "react";
 
 const Page = () => {
-  return <div>Security</div>;
+  return (
+    <>
+      <Security />
+    </>
+  );
 };
 
 export default Page;

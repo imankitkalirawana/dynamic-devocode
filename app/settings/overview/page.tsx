@@ -1,7 +1,9 @@
-import React from "react";
+import Overview from "@/components/settings/Overview";
 
-const Page = () => {
-  return <div>Overview</div>;
-};
-
-export default Page;
+export default async function Page() {
+  return (
+    <>
+      <Overview />
+    </>
+  );
+}
