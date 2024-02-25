@@ -10,10 +10,16 @@ async function getSubjects() {
 
 export default async function Page() {
   const subjects = await getSubjects();
+  // filter subjects with isArchived = false
+  const filteredSubjects = subjects.filter(
+    (subject: any) => subject.isArchived === false
+  );
+
   return (
     <>
       <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">
-        {subjects.length > 0 ? (
+        {filteredSubjects.length > 0 ? (
+          // filteredSubjects.map((subject: any, index: any) => (
           subjects.map((subject: any, index: any) => (
             <Subjects key={index} subjectData={subject} />
           ))

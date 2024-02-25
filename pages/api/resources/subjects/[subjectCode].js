@@ -38,24 +38,28 @@ export default cors(async (req, res) => {
             by: userId,
           });
           if (!subject) {
+            console.log("subject not found...");
             res.status(404).json({ message: "Subject not found" });
             return;
           }
-          let { code, title, description } = req.body;
-          if (!code || !title || !description) {
+          let { code, title, description, isArchived } = req.body;
+          console.log("archived: ", isArchived);
+          if (!code || !title) {
             res.status(400).json({
-              message: "Code, title, and description are required",
+              message: "Code, title are required",
             });
             return;
           }
           code = code.toUpperCase();
           const updatedSubject = await Subject.findOneAndUpdate(
             { code: subjectCode, by: userId },
-            { code, title, description },
+            { code, title, description, isArchived },
             { new: true }
           );
+          console.log("subject updated...");
           res.status(200).json(updatedSubject);
         } catch (e) {
+          console.log(e.message);
           res.status(400).json({ message: e.message });
         }
       } else if (req.method === "DELETE") {

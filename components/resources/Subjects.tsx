@@ -2,7 +2,6 @@
 import Trash from "@/assets/Trash";
 import Link from "next/link";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 type SubjectProps = {
   subjectData: {
@@ -15,7 +14,6 @@ type SubjectProps = {
 };
 
 const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
-  const router = useRouter();
   const { code, title, description, addedDate } = subjectData;
 
   const humanReadableDate = new Date(addedDate).toLocaleDateString("en-US", {
@@ -30,16 +28,16 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
   ) => {
     e.preventDefault();
     try {
+      const modal = document.getElementById(`delete_modal_${code}`);
       const res = await axios.delete(`/api/resources/subjects/${code}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       console.log(res);
-      router.refresh();
-      // close the modal
-      const modal = document.getElementById("delete_modal");
       modal?.click();
+      window.location.reload();
+      // close the modal
     } catch (error) {
       console.error(error);
     }
@@ -78,13 +76,13 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
               className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
             >
               <li>
-                <a>Edit</a>
+                <Link href={`/resources/subjects/update/${code}`}>Edit</Link>
               </li>
               <li>
                 <a>Archive</a>
               </li>
               <li>
-                <label htmlFor={`delete_modal`} className="text-error">
+                <label htmlFor={`delete_modal_${code}`} className="text-error">
                   Delete
                 </label>
               </li>
@@ -103,7 +101,11 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
           </div>
         </Link>
       </div>
-      <input type="checkbox" id="delete_modal" className="modal-toggle" />
+      <input
+        type="checkbox"
+        id={`delete_modal_${code}`}
+        className="modal-toggle"
+      />
       <div className="modal" role="dialog">
         <div className="modal-box max-w-96">
           <div className="max-w-40 mx-auto flex mb-8">
@@ -116,13 +118,13 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
             >
               Delete
             </button>
-            <label className="btn flex-1" htmlFor="delete_modal">
+            <label className="btn flex-1" htmlFor={`delete_modal_${code}`}>
               Cancel
             </label>
           </div>
         </div>
 
-        <label className="modal-backdrop" htmlFor="delete_modal">
+        <label className="modal-backdrop" htmlFor={`delete_modal_$_{code}`}>
           Close
         </label>
       </div>

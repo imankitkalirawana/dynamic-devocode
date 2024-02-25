@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,6 @@ interface Subject {
 }
 
 const Subject: React.FC<SubjectProps> = ({ lastItem }) => {
-  const router = useRouter();
   const [subject, setSubject] = useState<Subject>({
     code: "",
     title: "",
@@ -46,7 +45,7 @@ const Subject: React.FC<SubjectProps> = ({ lastItem }) => {
       //   close the popup
       const modal = document.getElementById("add_subject");
       modal?.click();
-      router.refresh();
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }

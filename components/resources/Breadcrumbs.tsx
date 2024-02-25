@@ -16,6 +16,9 @@ const Breadcrumbs = () => {
     return { label: segment, link: path };
   });
 
+  // check if breadcrumbitem contains "update"
+  const update = breadcrumbItems?.find((item) => item.label === "update");
+
   // get the last item in the array
   let lastItem = breadcrumbItems?.slice(-1)[0];
   // if there are 2 items after subjects then get the last second item
@@ -43,7 +46,7 @@ const Breadcrumbs = () => {
             </li>
           ))}
         </ul>
-        {lastItem?.label != "resources" ? (
+        {lastItem?.label != "resources" && !update ? (
           <label
             htmlFor="add_subject"
             className="btn btn-sm btn-circle ml-4 active:ring-4 focus:ring-4 ring-primary/50 hover:btn-primary"

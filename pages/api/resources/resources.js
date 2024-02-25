@@ -15,7 +15,16 @@ const getSubjectId = async (subjectCode) => {
 export default cors(async (req, res) => {
   if (req.method === "GET") {
     try {
-      const { subjectCode, type } = req.query;
+      const { subjectCode, type, resourceId } = req.query;
+      if (resourceId) {
+        const resource = await Resources.findById(resourceId);
+        if (!resource) {
+          res.status(404).json({ message: "Resource not found" });
+          return;
+        }
+        res.status(200).json(resource);
+        return;
+      }
       if (subjectCode) {
         const subjectId = await getSubjectId(subjectCode);
         if (!type) {
@@ -42,50 +51,58 @@ export default cors(async (req, res) => {
       if (req.method === "POST") {
         try {
           const { subjectCode } = req.query;
-          let { type, title, link, description, file } = req.body;
+          if (!subjectCode) {
+            res.status(400).json({ message: "Subject code is required" });
+            return;
+          }
+          let { resourceType, title, link, description, file } = req.body;
           const subjectId = await getSubjectId(subjectCode);
           const userId = req.userId;
-          if (!type || !title) {
-            res.status(400).json({
+          if (!resourceType || !title) {
+            res.status(401).json({
               message: "Type and Title are required",
             });
             return;
           }
-          type = type.toLowerCase();
-          if (type === "link" && !link) {
-            res.status(400).json({
+          resourceType = resourceType.toLowerCase();
+          if (resourceType === "link" && !link) {
+            res.status(402).json({
               message: "Link is required for type link",
             });
             return;
           }
-          const resource = new Resources({
+
+          const resource = await Resources.create({
             subject: subjectId,
-            type,
+            type: resourceType,
             title,
             link,
             description,
             file,
+            isArchived: false,
             by: userId,
           });
-          await resource.save();
-          res.status(201).json({ message: "Resource added successfully" });
+          console.log(resource);
+
+          res.status(201).json(resource);
         } catch (e) {
           res.status(400).json({ message: e.message });
         }
       } else if (req.method === "PUT") {
         try {
           // only update what user created
-          const userId = req.userId;
+          // const userId = req.userId;
           const { resourceId } = req.query;
           const resource = await Resources.findOne({
             _id: resourceId,
-            by: userId,
+            // by: userId,
           });
           if (!resource) {
             res.status(404).json({ message: "Resource not found" });
             return;
           }
-          let { type, title, link, description } = req.body;
+
+          let { type, title, link, description, isArchived, file } = req.body;
           if (!type || !title) {
             res.status(400).json({
               message: "Type and Title are required",
@@ -93,17 +110,21 @@ export default cors(async (req, res) => {
             return;
           }
           type = type.toLowerCase();
-          if (type === "link" && !link) {
-            res.status(400).json({
-              message: "Link is required for type link",
-            });
-            return;
-          }
+          console.log(isArchived); // it is returning true
           const updatedResource = await Resources.findByIdAndUpdate(
             resourceId,
-            { type, title, link, description, updatedAt: Date.now() },
+            {
+              type,
+              title,
+              link,
+              description,
+              isArchived,
+              updatedAt: Date.now(),
+              file,
+            },
             { new: true }
           );
+          console.log(updatedResource);
           res.status(200).json(updatedResource);
         } catch (e) {
           res.status(400).json({ message: e.message });

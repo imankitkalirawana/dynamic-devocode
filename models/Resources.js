@@ -12,10 +12,15 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isArchived: {
+    type: Boolean,
+    default: false,
+  },
   addedDate: {
     type: Date,
     default: Date.now(),
   },
+
   updatedAt: {
     type: Date,
     default: Date.now(),

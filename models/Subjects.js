@@ -13,6 +13,10 @@ const subjectSchema = new mongoose.Schema({
   },
   url: String,
   description: String,
+  isArchived: {
+    type: Boolean,
+    default: false,
+  },
   file: String,
   addedDate: {
     type: Date,
@@ -22,13 +26,10 @@ const subjectSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
   },
-  ca: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ca" }],
-  endterm: [{ type: mongoose.Schema.Types.ObjectId, ref: "Endterm" }],
-  midterm: [{ type: mongoose.Schema.Types.ObjectId, ref: "Midterm" }],
-  moocs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Moocs" }],
-  notes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Notes" }],
-  reference: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reference" }],
-  syllabus: [{ type: mongoose.Schema.Types.ObjectId, ref: "Syllabus" }],
+  updatedDate: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const Subject =

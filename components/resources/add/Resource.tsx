@@ -1,20 +1,81 @@
 import React, { useState } from "react";
 import resourceTypes from "@/utils/resourceTypes";
+import { useFormik } from "formik";
+import axios from "axios";
+import S3 from "aws-sdk/clients/s3";
+
+const s3 = new S3({
+  accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
+  region: process.env.NEXT_PUBLIC_REGION,
+});
 
 type ResourceProps = {
   lastItem: any;
 };
 
-const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
-  const [selectedType, setSelectedType] = useState("others");
+interface Resource {
+  title: string;
+  description: string;
+  resourceType: string;
+  url: string;
+  file: File | null;
+}
 
-  const handleTypeChange = (e: any) => {
-    setSelectedType(e.target.value);
+const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
+  const [upload, setUpload] = useState<S3.ManagedUpload | null>(null);
+  
+
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      description: "",
+      resourceType: "others",
+      link: "",
+      file: null,
+    },
+    onSubmit: async (values) => {
+      try {
+        const res = await axios.post(
+          `/api/resources/resources/?subjectCode=${lastItem.label}`,
+          values,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        console.log(res.data);
+        formik.resetForm();
+        //   close the popup
+        const modal = document.getElementById("add_resource");
+        modal?.click();
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    let file = e.target.files[0];
+    const filename = file.name;
+    // get the filename
+    formik.setFieldValue("file", filename);
   };
+
+  const handleResourceType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    formik.setFieldValue("resourceType", e.target.value);
+    // reset the file value and url value
+    formik.setFieldValue("file", null);
+    formik.setFieldValue("link", "");
+  };
+
   const resourceType = resourceTypes.filter((type) => type != "all");
   return (
     <>
-      <form className="modal-box max-w-96">
+      <form className="modal-box max-w-96" onSubmit={formik.handleSubmit}>
         <h2 className="text-lg text-center font-semibold">
           Add to {lastItem.label}
         </h2>
@@ -28,6 +89,9 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
               id="title"
               name="title"
               className="input input-bordered w-full"
+              value={formik.values.title}
+              onChange={formik.handleChange}
+              required
             />
           </div>
           <div className="flex flex-col w-full">
@@ -38,6 +102,8 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
               id="description"
               name="description"
               className="textarea textarea-bordered w-full"
+              value={formik.values.description}
+              onChange={formik.handleChange}
             ></textarea>
           </div>
           <div className="flex flex-col w-full">
@@ -46,8 +112,10 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
             </label>
             <select
               className="select select-bordered w-full max-w-xs"
-              onChange={handleTypeChange}
-              defaultValue={selectedType}
+              id="resourceType"
+              name="resourceType"
+              onChange={handleResourceType}
+              value={formik.values.resourceType}
             >
               {resourceType.map((type, index) => (
                 <option key={index} value={type}>
@@ -57,16 +125,20 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
             </select>
           </div>
           {/* elements added based on user selection */}
-          {selectedType === "link" || selectedType === "moocs" ? (
+          {formik.values.resourceType === "link" ||
+          formik.values.resourceType === "moocs" ? (
             <div className="flex flex-col w-full">
-              <label htmlFor="url" className="label">
-                <span className="label-text">URL</span>
+              <label htmlFor="link" className="label">
+                <span className="label-text">Link</span>
               </label>
               <input
                 type="text"
-                id="url"
-                name="url"
+                id="link"
+                name="link"
                 className="input input-bordered w-full"
+                value={formik.values.link}
+                onChange={formik.handleChange}
+                required
               />
             </div>
           ) : (
@@ -79,6 +151,8 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
                 id="file"
                 name="file"
                 className="file-input file-input-bordered w-full"
+                onChange={handleFile}
+                required
               />
             </div>
           )}
