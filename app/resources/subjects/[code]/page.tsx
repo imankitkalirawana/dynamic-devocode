@@ -1,44 +1,18 @@
-import React from "react";
-import Resources from "@/components/resources/Resources";
-import API_BASE_URL from "@/utils/config";
-import axios from "axios";
-import NotFound from "@/components/assets/NotFound";
+"use client";
+import { useRouter } from "next/navigation";
 
-interface Resource {
-  _id: string;
-  title: string;
-  description: string;
-  link: string;
-  file: string;
-  addedDate: string;
-}
-
-interface Props {
+interface PageProps {
   params: {
     code: string;
   };
 }
 
-async function getResources(code: string): Promise<Resource[]> {
-  const res = await axios.get(
-    `${API_BASE_URL}/resources/resources/?subjectCode=${code}`
-  );
-  return res.data;
-}
+const Page = ({ params }: PageProps) => {
+  const router = useRouter();
+  const { code } = params;
+  router.push(`/resources/subjects/${code}/all`);
 
-export default async function Page({ params }: Props) {
-  const resources = await getResources(params.code);
-  return (
-    <>
-      <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">
-        {resources.length > 0 ? (
-          resources.map((resource: any, index: any) => (
-            <Resources resourceData={resource} key={index} />
-          ))
-        ) : (
-          <NotFound />
-        )}
-      </div>
-    </>
-  );
-}
+  return null;
+};
+
+export default Page;
