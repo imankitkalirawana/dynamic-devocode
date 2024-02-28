@@ -1,13 +1,13 @@
 "use client";
-import resourceTypes from "@/utils/resourceTypes";
-
+import { isLoggedIn } from "@/utils/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import Subject from "./add/Subject";
 import Resource from "./add/Resource";
+import dynamic from "next/dynamic";
 
 const Breadcrumbs = () => {
+  const { loggedIn } = isLoggedIn();
   const location = usePathname();
   const pathSegments = location?.split("/").filter((segment) => segment !== "");
 
@@ -46,42 +46,47 @@ const Breadcrumbs = () => {
             </li>
           ))}
         </ul>
-        {lastItem?.label != "resources" && !update ? (
-          <label
-            htmlFor="add_subject"
-            className="btn btn-sm btn-circle ml-4 active:ring-4 focus:ring-4 ring-primary/50 hover:btn-primary"
-          >
-            <svg
-              className="w-4 h-4"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 18 18"
+        {loggedIn &&
+          (lastItem?.label != "resources" && !update ? (
+            <label
+              htmlFor="add_subject"
+              className="btn btn-sm btn-circle ml-4 active:ring-4 focus:ring-4 ring-primary/50 hover:btn-primary"
             >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 1v16M1 9h16"
-              />
-            </svg>
-          </label>
-        ) : null}
+              <svg
+                className="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 18 18"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 1v16M1 9h16"
+                />
+              </svg>
+            </label>
+          ) : null)}
       </div>
-      <input type="checkbox" id="add_subject" className="modal-toggle" />
-      <div className="modal" role="dialog">
-        {lastItem?.label === "subjects" ? (
-          <Subject lastItem={lastItem} />
-        ) : (
-          <Resource lastItem={lastItem} />
-        )}
-        <label className="modal-backdrop" htmlFor="add_subject">
-          Close
-        </label>
-      </div>
+      {loggedIn && (
+        <>
+          <input type="checkbox" id="add_subject" className="modal-toggle" />
+          <div className="modal" role="dialog">
+            {lastItem?.label === "subjects" ? (
+              <Subject lastItem={lastItem} />
+            ) : (
+              <Resource lastItem={lastItem} />
+            )}
+            <label className="modal-backdrop" htmlFor="add_subject">
+              Close
+            </label>
+          </div>
+        </>
+      )}
     </>
   );
 };
 
-export default Breadcrumbs;
+export default dynamic(() => Promise.resolve(Breadcrumbs), { ssr: false });

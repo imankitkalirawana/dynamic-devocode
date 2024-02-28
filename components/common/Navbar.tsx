@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { isLoggedIn } from "@/utils/auth";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Sad from "@/assets/Sad";
 import dynamic from "next/dynamic";
 import BottomBar from "./BottomBar";
@@ -48,20 +48,8 @@ const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
   const [isCustomCursor, setIsCustomCursor] = useState(false);
   const location = usePathname();
+  const router = useRouter();
   const { loggedIn } = isLoggedIn();
-
-  const handleThemeChange = (theme: string) => {
-    const root = window.document.documentElement;
-    const isDark = theme !== "light";
-    root.classList.remove(isDark ? "light" : "dark");
-    if (theme === "default") {
-      localStorage.removeItem("theme");
-      dynamicTheme();
-    } else {
-      localStorage.setItem("theme", theme);
-      document.documentElement.setAttribute("data-theme", theme);
-    }
-  };
 
   const dynamicTheme = () => {
     const date = new Date();
@@ -102,13 +90,18 @@ const Navbar = () => {
       const theme = localStorage.getItem("theme");
       localStorage.clear();
       localStorage.setItem("theme", theme as string);
-      window.location.href = "/";
+      window.location.href = "/resources";
       const modal = document.getElementById("logout_modal") as HTMLInputElement;
       if (modal) {
         modal.checked = false;
       }
       setIsLoggingOut(false);
     }, 1000);
+  };
+
+  const loginRedirect = () => {
+    localStorage.setItem("redirectPath", location || "/");
+    router.push("/auth/login");
   };
 
   return (
@@ -177,33 +170,13 @@ const Navbar = () => {
                   <Link href={"/resources/dl"}>DL's</Link>
                 </li>
                 <li>
+                  <Link href={"/settings"}>Settings</Link>
+                </li>
+                <li>
                   <a href="https://divinelydeveloper.me">About</a>
                 </li>
                 <li>
                   <a href="https://divinelydeveloper.me">Contact</a>
-                </li>
-                <li>
-                  <details>
-                    <summary>Theme</summary>
-                    <ul className="h-80 overflow-y-scroll">
-                      {themes.map((theme) => (
-                        <li key={theme}>
-                          <input
-                            type="radio"
-                            name="theme-dropdown"
-                            className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-                            value={theme}
-                            aria-label={
-                              theme != "default"
-                                ? theme.charAt(0).toUpperCase() + theme.slice(1)
-                                : "Dynamic"
-                            }
-                            onChange={() => handleThemeChange(theme)}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
                 </li>
               </ul>
             </div>
@@ -253,46 +226,27 @@ const Navbar = () => {
           </div>
         </div>
         <div className="navbar-end">
-          <div className="hidden lg:block dropdown mr-4">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost m-1 flex flex-nowrap"
+          <Link
+            href={"/settings/preference"}
+            className="btn btn-ghost btn-sm btn-square mr-4"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
             >
-              Theme
-              <svg
-                width="12px"
-                height="12px"
-                className="h-2 w-2 fill-current opacity-60 inline-block"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 2048 2048"
-              >
-                <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
-              </svg>
-            </div>
-            <ul
-              tabIndex={0}
-              className="dropdown-content z-[1] p-2 shadow-2xl bg-base-300 rounded-box w-52 h-80 overflow-y-scroll"
-            >
-              {themes.map((theme) => (
-                <li key={theme}>
-                  <input
-                    type="radio"
-                    name="theme-dropdown"
-                    className={`theme-controller btn btn-sm btn-block justify-start btn-ghost`}
-                    value={theme}
-                    aria-label={
-                      theme != "default"
-                        ? theme.charAt(0).toUpperCase() + theme.slice(1)
-                        : "Dynamic"
-                    }
-                    onChange={() => handleThemeChange(theme)}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="hidden md:block form-control mr-4">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495"
+              />
+            </svg>
+          </Link>
+
+          <div className="hidden md:block form-control mr-4 ">
             <input
               type="text"
               placeholder="Search"
@@ -332,12 +286,12 @@ const Navbar = () => {
             </div>
           ) : (
             <>
-              <Link
-                href={"/auth/login"}
+              <button
                 className="btn btn-primary btn-sm rounded-btn mr-4"
+                onClick={loginRedirect}
               >
                 Sign In
-              </Link>
+              </button>
             </>
           )}
         </div>

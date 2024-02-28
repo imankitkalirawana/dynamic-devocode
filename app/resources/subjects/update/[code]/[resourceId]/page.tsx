@@ -4,6 +4,13 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import resourceTypes from "@/utils/resourceTypes";
+import S3 from "aws-sdk/clients/s3";
+
+const s3 = new S3({
+  accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
+  secretAccessKey: process.env.NEXT_PUBLIC_SECRET_ACCESS_KEY,
+  region: process.env.NEXT_PUBLIC_REGION,
+});
 
 interface Props {
   params: {
@@ -56,19 +63,15 @@ const Page = ({ params }: Props) => {
     },
     onSubmit: async (values) => {
       try {
-        await axios
-          .put(
-            `/api/resources/resources/?resourceId=${params.resourceId}`,
-            values,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          )
-          .then(() => {
-            router.push(`/resources/subjects/${params.code}/all`);
-          });
+        await axios.put(
+          `/api/resources/resources/?resourceId=${params.resourceId}`,
+          values,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
       } catch (error) {
         console.error(error);
       }
@@ -77,17 +80,33 @@ const Page = ({ params }: Props) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(
-        `/api/resources/resources/?resourceId=${params.resourceId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      router.push(`/resources/subjects/${params.code}/all`);
+      // await axios.delete(
+      //   `/api/resources/resources/?resourceId=${params.resourceId}`,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //     },
+      //   }
+      // );
+      handleDeleteFile(resource.file);
+      // router.push(`/resources/subjects/${params.code}/all`);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleDeleteFile = async (filename: string) => {
+    try {
+      console.log("Deleting file:", filename);
+      const deleteParams = {
+        Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME!,
+        Key: filename,
+      };
+      const deleteOperation = s3.deleteObject(deleteParams);
+      const res = await deleteOperation.promise();
+      console.log(res);
+    } catch (error) {
+      console.error("Error deleting file:", error);
     }
   };
 

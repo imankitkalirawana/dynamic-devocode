@@ -20,12 +20,15 @@ interface Resource {
   resourceType: string;
   url: string;
   file: File | null;
+  size: string;
 }
 
 const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
+  const [file, setFile] = useState<File | null>(null);
   const [upload, setUpload] = useState<S3.ManagedUpload | null>(null);
-  
+  const [progress, setProgress] = useState<number>(0);
 
+  // get subject code from the url
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -33,6 +36,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       resourceType: "others",
       link: "",
       file: null,
+      size: "",
     },
     onSubmit: async (values) => {
       try {
@@ -46,11 +50,12 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
           }
         );
         console.log(res.data);
+        handleUpload();
         formik.resetForm();
         //   close the popup
         const modal = document.getElementById("add_resource");
         modal?.click();
-        window.location.reload();
+        // window.location.reload();
       } catch (error) {
         console.error(error);
       }
@@ -58,11 +63,35 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
   });
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    let file = e.target.files[0];
-    const filename = file.name;
-    // get the filename
-    formik.setFieldValue("file", filename);
+    const selectedFile = e.target.files![0];
+    // if (!e.target.files) return;
+    // let file = e.target.files[0];
+    // const filename = file.name;
+    // // get the filename
+    // formik.setFieldValue("file", filename);
+    if (selectedFile) {
+      const fileSize = selectedFile.size / 1024 / 1024;
+      var file = e.target.files![0];
+      var extension = file.name.split(".").pop();
+      var resourceTitle = formik.values.title;
+      var resourceType = formik.values.resourceType;
+      if (resourceTitle === "") resourceTitle = "untitled";
+      if (resourceType === "") resourceType = "others";
+      var key = `${resourceType}/${resourceTitle}.${extension}`;
+      resourceTitle = resourceTitle.replace(/\s/g, "_");
+      file = new File(
+        [file],
+        `${
+          lastItem.label
+        }_${resourceType}_${resourceTitle}_${Date.now()}.${extension}`,
+        {
+          type: file.type,
+        }
+      );
+      setFile(file);
+      formik.setFieldValue("file", file.name);
+      formik.setFieldValue("size", fileSize.toFixed(2) + "MB");
+    }
   };
 
   const handleResourceType = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -70,6 +99,27 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
     // reset the file value and url value
     formik.setFieldValue("file", null);
     formik.setFieldValue("link", "");
+  };
+
+  const handleUpload = async () => {
+    if (file) {
+      const params = {
+        Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME!,
+        Key: file.name,
+        Body: file,
+      };
+      try {
+        const upload = s3.upload(params);
+        setUpload(upload);
+        upload.on("httpUploadProgress", (p: any) => {
+          setProgress((p.loaded / p.total) * 100);
+        });
+        const res = await upload.promise();
+        console.log(res);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   const resourceType = resourceTypes.filter((type) => type != "all");

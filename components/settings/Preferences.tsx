@@ -81,6 +81,34 @@ const Preference = () => {
     <>
       <div className="col-span-full lg:col-span-9">
         <div className="flex flex-col">
+          <h3 className="text-base font-semibold leading-7 ">Settings</h3>
+          <p className="mt-1 max-w-2xl text-sm leading-6 ">
+            Change your preferences.
+          </p>
+        </div>
+        <div className="divider"></div>
+
+        <div className="mt-8 flex justify-between items-center">
+          <div className="flex flex-col">
+            <p className="text-sm font-semibold leading-5 ">Animated Cursor</p>
+            <p className="text-sm leading-5 ">
+              Enable the customised animated cursor.
+            </p>
+          </div>
+          <input type="checkbox" className="toggle" defaultChecked={false} />
+        </div>
+        <div className="mt-8 flex justify-between items-center">
+          <div className="flex flex-col">
+            <p className="text-sm font-semibold leading-5 ">Dynamic Themes</p>
+            <p className="text-sm leading-5 ">
+              Change the theme based on time and day.
+            </p>
+          </div>
+          <input type="checkbox" className="toggle" defaultChecked={false} />
+        </div>
+        <div className="divider"></div>
+        {/* Themes */}
+        <div className="flex flex-col">
           <h3 className="text-base font-semibold leading-7 ">Appearance</h3>
           <p className="mt-1 max-w-2xl text-sm leading-6 ">
             Choose a theme that matches your taste.

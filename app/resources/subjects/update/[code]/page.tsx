@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
+import { isLoggedIn } from "@/utils/auth";
+import { usePathname } from "next/navigation";
 
 interface Props {
   params: {
@@ -19,8 +21,10 @@ interface Subject {
 }
 
 const Page = ({ params }: Props) => {
+  const { loggedIn } = isLoggedIn();
   const [subject, setSubject] = useState<Subject>({} as Subject);
   const router = useRouter();
+  const location = usePathname();
 
   useEffect(() => {
     const getSubject = async () => {
@@ -34,6 +38,11 @@ const Page = ({ params }: Props) => {
         isArchived: res.data.isArchived,
       });
     };
+    if (!loggedIn) {
+      router.push("/auth/login");
+      // set route to localStorage
+      localStorage.setItem("redirectPath", location || "");
+    }
     getSubject();
   }, []);
 

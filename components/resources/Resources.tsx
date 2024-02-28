@@ -4,6 +4,7 @@ import S3 from "aws-sdk/clients/s3";
 import axios from "axios";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { isLoggedIn } from "@/utils/auth";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -24,6 +25,7 @@ type ResourceProps = {
 };
 
 const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
+  const { loggedIn } = isLoggedIn();
   const handleDownload = async (filename: string) => {
     const params = {
       Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME,
@@ -87,48 +89,50 @@ const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
         className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
         title={`Title: ${title}\nDescription: ${description}`}
       >
-        <div className="flex items-center justify-between">
-          <div className="dropdown dropdown-end absolute right-3 top-3">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-sm btn-ghost m-1"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
+        {loggedIn && (
+          <div className="flex items-center justify-between">
+            <div className="dropdown dropdown-end absolute right-3 top-3">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-sm btn-ghost m-1"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                />
-              </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                  />
+                </svg>
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
+              >
+                <li>
+                  <Link href={`/resources/subjects/update/${code}/${_id}`}>
+                    Edit
+                  </Link>
+                </li>
+                <li>
+                  <a>Archive</a>
+                </li>
+                <li>
+                  <label htmlFor={`delete_modal_${_id}`} className="text-error">
+                    Delete
+                  </label>
+                </li>
+              </ul>
             </div>
-            <ul
-              tabIndex={0}
-              className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
-            >
-              <li>
-                <Link href={`/resources/subjects/update/${code}/${_id}`}>
-                  Edit
-                </Link>
-              </li>
-              <li>
-                <a>Archive</a>
-              </li>
-              <li>
-                <label htmlFor={`delete_modal_${_id}`} className="text-error">
-                  Delete
-                </label>
-              </li>
-            </ul>
           </div>
-        </div>
+        )}
         <div
           className="px-8 py-4"
           onClick={(e) => handleCardClick(e, file, link)}

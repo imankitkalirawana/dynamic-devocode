@@ -2,6 +2,7 @@
 import Trash from "@/assets/Trash";
 import Link from "next/link";
 import axios from "axios";
+import { isLoggedIn } from "@/utils/auth";
 
 type SubjectProps = {
   subjectData: {
@@ -15,6 +16,7 @@ type SubjectProps = {
 
 const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
   const { code, title, description, addedDate } = subjectData;
+  const { loggedIn } = isLoggedIn();
 
   const humanReadableDate = new Date(addedDate).toLocaleDateString("en-US", {
     day: "numeric",
@@ -49,46 +51,51 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
         className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
         title={title}
       >
-        <div className="flex items-center justify-between">
-          <div className="dropdown dropdown-end absolute right-3 top-3">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-sm btn-ghost m-1"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
+        {loggedIn && (
+          <div className="flex items-center justify-between">
+            <div className="dropdown dropdown-end absolute right-3 top-3">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-sm btn-ghost m-1"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                />
-              </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                  />
+                </svg>
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
+              >
+                <li>
+                  <Link href={`/resources/subjects/update/${code}`}>Edit</Link>
+                </li>
+                <li>
+                  <a>Archive</a>
+                </li>
+                <li>
+                  <label
+                    htmlFor={`delete_modal_${code}`}
+                    className="text-error"
+                  >
+                    Delete
+                  </label>
+                </li>
+              </ul>
             </div>
-            <ul
-              tabIndex={0}
-              className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
-            >
-              <li>
-                <Link href={`/resources/subjects/update/${code}`}>Edit</Link>
-              </li>
-              <li>
-                <a>Archive</a>
-              </li>
-              <li>
-                <label htmlFor={`delete_modal_${code}`} className="text-error">
-                  Delete
-                </label>
-              </li>
-            </ul>
           </div>
-        </div>
+        )}
         <Link href={`/resources/subjects/${code}/all`} className="px-8 py-4 ">
           <h2 className="text-xl font-bold" tabIndex={0} role="link">
             {code}

@@ -16,6 +16,10 @@ const resourceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  size: {
+    type: String,
+    default: "0",
+  },
   addedDate: {
     type: Date,
     default: Date.now(),

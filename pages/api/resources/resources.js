@@ -55,7 +55,7 @@ export default cors(async (req, res) => {
             res.status(400).json({ message: "Subject code is required" });
             return;
           }
-          let { resourceType, title, link, description, file } = req.body;
+          let { resourceType, title, link, description, file, size } = req.body;
           const subjectId = await getSubjectId(subjectCode);
           const userId = req.userId;
           if (!resourceType || !title) {
@@ -79,10 +79,10 @@ export default cors(async (req, res) => {
             link,
             description,
             file,
+            size,
             isArchived: false,
             by: userId,
           });
-          console.log(resource);
 
           res.status(201).json(resource);
         } catch (e) {
