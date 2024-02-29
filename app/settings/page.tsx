@@ -1,10 +1,12 @@
 "use client";
-import React from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
   const router = useRouter();
-  router.push("/settings/preference");
+  useEffect(() => {
+    router.push("/settings/preference");
+  }, []);
   return null;
 };
 
