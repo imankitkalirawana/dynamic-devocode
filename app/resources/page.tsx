@@ -1,12 +1,10 @@
 import API_BASE_URL from "@/utils/config";
 import Homepage from "@/components/resources/Homepage";
+import axios from "axios";
 
 async function getSubjects() {
-  // const res = await axios.get(`${API_BASE_URL}/resources/subjects`);
-  const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
-    cache: "no-cache",
-  });
-  return await res.json();
+  const res = await axios.get(`${API_BASE_URL}/resources/subjects`);
+  return res.data;
 }
 
 export default async function Page() {
