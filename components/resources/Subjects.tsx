@@ -48,8 +48,8 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
         }
       );
       modal?.click();
-      router.refresh();
-      // window.location.reload();
+      // router.refresh();
+      window.location.reload();
       // close the modal
     } catch (error) {
       console.error(error);
