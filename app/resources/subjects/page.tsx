@@ -4,12 +4,12 @@ import axios from "axios";
 import NotFound from "@/components/assets/NotFound";
 
 async function getSubjects() {
-  try {
-    const res = await axios.get(`${API_BASE_URL}/resources/subjects`);
-    return res.data;
-  } catch (e) {
-    console.error(e);
-  }
+  // const res = await axios.get(`${API_BASE_URL}/resources/subjects`);
+  const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
+    cache: "no-cache",
+    method: "GET",
+  });
+  return res.json();
 }
 
 export default async function Page() {
