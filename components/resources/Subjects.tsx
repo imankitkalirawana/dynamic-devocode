@@ -4,6 +4,8 @@ import Link from "next/link";
 import axios from "axios";
 import { isLoggedIn } from "@/utils/auth";
 import dynamic from "next/dynamic";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type SubjectProps = {
   subjectData: {
@@ -16,6 +18,7 @@ type SubjectProps = {
 };
 
 const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
+  const router = useRouter();
   const { code, title, description, addedDate } = subjectData;
   const { loggedIn } = isLoggedIn();
 
@@ -32,14 +35,21 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
     e.preventDefault();
     try {
       const modal = document.getElementById(`delete_modal_${code}`);
-      const res = await axios.delete(`/api/resources/subjects/${code}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      console.log(res);
+      await toast.promise(
+        axios.delete(`/api/resources/subjects/${code}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }),
+        {
+          loading: "Deleting...",
+          success: "Deleted",
+          error: "Error",
+        }
+      );
       modal?.click();
-      window.location.reload();
+      router.refresh();
+      // window.location.reload();
       // close the modal
     } catch (error) {
       console.error(error);
@@ -140,4 +150,5 @@ const Subjects: React.FC<SubjectProps> = ({ subjectData }) => {
   );
 };
 
-export default Subjects;
+// export default Subjects;
+export default dynamic(() => Promise.resolve(Subjects), { ssr: false });
