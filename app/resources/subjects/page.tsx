@@ -28,7 +28,7 @@ export default async function Page() {
             <Subjects key={index} subjectData={subject} />
           ))
         ) : (
-          <NotFound />
+          <NotFound message="Nothing uploaded there! Maybe you can try later." />
         )}
       </div>
     </>

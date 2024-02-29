@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "./providers";
 import Navbar from "@/components/common/Navbar";
 // import ProgressBarI from "@/components/common/ProgressBar";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Devocode",
@@ -15,10 +16,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" data-theme={"default"}>
       <body>
         <Providers>
           <Navbar />
+          <Toaster position="bottom-center" />
+
           <main className="mb-24">{children}</main>
           {/* <ProgressBarI /> */}
         </Providers>

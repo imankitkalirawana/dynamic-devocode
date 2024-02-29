@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const themes = [
   "default",
@@ -39,43 +40,31 @@ const themes = [
 
 const Preference = () => {
   const [currentTheme, setCurrentTheme] = useState("default");
-
-  const handleThemeChange = (theme: any) => {
-    setCurrentTheme(theme);
-    if (theme === "default") {
-      localStorage.removeItem("theme");
-      dynamicTheme();
-      return;
-    }
-    localStorage.setItem("theme", theme);
-    document.documentElement.dataset.theme = theme;
-  };
-
-  const dynamicTheme = () => {
-    const date = new Date();
-    const hours = date.getHours();
-    const month = date.getMonth();
-
-    const sunset = hours >= 17 && hours <= 20;
-    const dim = (hours >= 20 && hours <= 23) || (hours >= 0 && hours < 6);
-    const theme = localStorage.getItem("theme");
-
-    if (sunset) {
-      document.documentElement.setAttribute("data-theme", theme || "sunset");
-    } else if (dim) {
-      document.documentElement.setAttribute("data-theme", theme || "dim");
-    } else if (month === 1) {
-      document.documentElement.setAttribute("data-theme", theme || "valentine");
-    } else if (month === 10) {
-      document.documentElement.setAttribute("data-theme", theme || "halloween");
-    } else if (month >= 11 || month < 1) {
-      document.documentElement.setAttribute("data-theme", theme || "winter");
-    }
-  };
+  const [isCustomCursor, setIsCustomCursor] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    dynamicTheme();
-  }, [dynamicTheme]);
+    const cursor = localStorage.getItem("isCustomCursor");
+    setIsCustomCursor(cursor ? JSON.parse(cursor) : false);
+  });
+
+  const handleCustomCursor = () => {
+    setIsCustomCursor(!isCustomCursor);
+    localStorage.setItem("isCustomCursor", JSON.stringify(!isCustomCursor));
+    router.refresh();
+  };
+
+  const handleThemeChange = (theme: any) => {
+    if (theme === "default") {
+      setCurrentTheme("");
+      localStorage.removeItem("theme");
+      document.documentElement.removeAttribute("data-theme");
+    } else {
+      setCurrentTheme(theme);
+      localStorage.setItem("theme", theme);
+      document.documentElement.dataset.theme = theme;
+    }
+  };
 
   return (
     <>
@@ -88,24 +77,25 @@ const Preference = () => {
         </div>
         <div className="divider"></div>
 
-        <div className="mt-8 flex justify-between items-center">
+        <label
+          htmlFor="custom-cursor"
+          className="mt-8 flex justify-between items-center"
+        >
           <div className="flex flex-col">
             <p className="text-sm font-semibold leading-5 ">Animated Cursor</p>
             <p className="text-sm leading-5 ">
               Enable the customised animated cursor.
             </p>
           </div>
-          <input type="checkbox" className="toggle" defaultChecked={false} />
-        </div>
-        <div className="mt-8 flex justify-between items-center">
-          <div className="flex flex-col">
-            <p className="text-sm font-semibold leading-5 ">Dynamic Themes</p>
-            <p className="text-sm leading-5 ">
-              Change the theme based on time and day.
-            </p>
-          </div>
-          <input type="checkbox" className="toggle" defaultChecked={false} />
-        </div>
+          <input
+            id="custom-cursor"
+            type="checkbox"
+            className="toggle toggle-primary"
+            onChange={handleCustomCursor}
+            checked={isCustomCursor}
+          />
+        </label>
+
         <div className="divider"></div>
         {/* Themes */}
         <div className="flex flex-col">

@@ -33,7 +33,7 @@ export default async function Page({ params }: Props) {
             <Resources resourceData={resource} key={index} />
           ))
         ) : (
-          <NotFound />
+          <NotFound message="Nothing uploaded there! Maybe you can try later." />
         )}
       </div>
     </>

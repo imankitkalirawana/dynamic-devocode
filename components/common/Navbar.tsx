@@ -7,82 +7,19 @@ import Sad from "@/assets/Sad";
 import dynamic from "next/dynamic";
 import BottomBar from "./BottomBar";
 import AnimatedCursor from "react-animated-cursor";
-
-const themes = [
-  "default",
-  "light",
-  "dark",
-  "cupcake",
-  "bumblebee",
-  "emerald",
-  "corporate",
-  "synthwave",
-  "retro",
-  "cyberpunk",
-  "valentine",
-  "halloween",
-  "garden",
-  "forest",
-  "aqua",
-  "lofi",
-  "pastel",
-  "fantasy",
-  "wireframe",
-  "black",
-  "luxury",
-  "dracula",
-  "cmyk",
-  "autumn",
-  "business",
-  "acid",
-  "lemonade",
-  "night",
-  "coffee",
-  "winter",
-  "dim",
-  "nord",
-  "sunset",
-];
+import dynamicTheme from "@/utils/theme";
+import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
-  const [isCustomCursor, setIsCustomCursor] = useState(false);
+
   const location = usePathname();
   const router = useRouter();
   const { loggedIn } = isLoggedIn();
 
-  const dynamicTheme = () => {
-    const date = new Date();
-    const hours = date.getHours();
-    const month = date.getMonth();
-    // const hours = 14;
-    // const month = 0;
+  const isCustomCursor = localStorage.getItem("isCustomCursor") === "true";
 
-    const sunset = hours >= 17 && hours <= 20;
-    const dim = (hours >= 20 && hours <= 23) || (hours >= 0 && hours < 6);
-    const theme = localStorage.getItem("theme");
-
-    if (sunset) {
-      document.documentElement.setAttribute("data-theme", theme || "sunset");
-    } else if (dim) {
-      document.documentElement.setAttribute("data-theme", theme || "dim");
-    } else if (month === 1) {
-      document.documentElement.setAttribute("data-theme", theme || "valentine");
-    } else if (month === 10) {
-      document.documentElement.setAttribute("data-theme", theme || "halloween");
-    } else if (month >= 11 || month < 1) {
-      document.documentElement.setAttribute("data-theme", theme || "winter");
-    }
-  };
-
-  useEffect(() => {
-    // get cursor from local storage
-    const cursor = localStorage.getItem("cursor");
-    if (cursor === "custom") {
-      setIsCustomCursor(true);
-    }
-    dynamicTheme();
-  }, [dynamicTheme]);
+  dynamicTheme();
 
   const handleLogout = () => {
     setIsLoggingOut(true);
@@ -228,7 +165,7 @@ const Navbar = () => {
         <div className="navbar-end">
           <Link
             href={"/settings/preference"}
-            className="btn btn-ghost btn-sm btn-square mr-4"
+            className="btn btn-ghost btn-sm btn-square mr-4 hidden md:flex"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

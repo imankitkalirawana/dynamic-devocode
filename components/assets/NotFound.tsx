@@ -1,6 +1,10 @@
 import React from "react";
 
-const NotFound = () => {
+interface NotFoundProps {
+  message: string;
+}
+
+const NotFound: React.FC<NotFoundProps> = ({ message }) => {
   return (
     <div className="col-span-12 md:col-span-8 lg:col-span-4 col-start-1 md:col-start-3 lg:col-start-5">
       <svg
@@ -88,7 +92,7 @@ const NotFound = () => {
         </defs>
       </svg>
       <div className="text-lg text-center">
-        Nothing uploaded there! Maybe you can try later.
+        {message ? message : "Page not found"}
       </div>
     </div>
   );
