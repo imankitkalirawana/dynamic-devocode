@@ -3,6 +3,8 @@ import resourceTypes from "@/utils/resourceTypes";
 import { useFormik } from "formik";
 import axios from "axios";
 import S3 from "aws-sdk/clients/s3";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -24,6 +26,7 @@ interface Resource {
 }
 
 const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [upload, setUpload] = useState<S3.ManagedUpload | null>(null);
   const [progress, setProgress] = useState<number>(0);
@@ -49,13 +52,10 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
             },
           }
         );
-        console.log(res.data);
+        if (res.status != 201) {
+          return;
+        }
         handleUpload();
-        formik.resetForm();
-        //   close the popup
-        const modal = document.getElementById("add_resource");
-        modal?.click();
-        // window.location.reload();
       } catch (error) {
         console.error(error);
       }
@@ -64,11 +64,6 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files![0];
-    // if (!e.target.files) return;
-    // let file = e.target.files[0];
-    // const filename = file.name;
-    // // get the filename
-    // formik.setFieldValue("file", filename);
     if (selectedFile) {
       const fileSize = selectedFile.size / 1024 / 1024;
       var file = e.target.files![0];
@@ -77,7 +72,6 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       var resourceType = formik.values.resourceType;
       if (resourceTitle === "") resourceTitle = "untitled";
       if (resourceType === "") resourceType = "others";
-      var key = `${resourceType}/${resourceTitle}.${extension}`;
       resourceTitle = resourceTitle.replace(/\s/g, "_");
       file = new File(
         [file],
@@ -114,8 +108,16 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
         upload.on("httpUploadProgress", (p: any) => {
           setProgress((p.loaded / p.total) * 100);
         });
-        const res = await upload.promise();
-        console.log(res);
+        const res = await toast.promise(upload.promise(), {
+          loading: "Uploading...",
+          success: "Uploaded",
+          error: "Error",
+        });
+        formik.resetForm();
+        //   close the popup
+        const modal = document.getElementById("add_subject");
+        modal?.click();
+        router.refresh();
       } catch (error) {
         console.error(error);
       }
@@ -192,26 +194,35 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
               />
             </div>
           ) : (
-            <div className="flex flex-col w-full">
-              <label htmlFor="file" className="label">
-                <span className="label-text">File</span>
-              </label>
-              <input
-                type="file"
-                id="file"
-                name="file"
-                className="file-input file-input-bordered w-full"
-                onChange={handleFile}
-                required
-              />
-            </div>
+            <>
+              <div className="flex flex-col w-full">
+                <label htmlFor="file" className="label">
+                  <span className="label-text">File</span>
+                </label>
+                <input
+                  type="file"
+                  id="file"
+                  name="file"
+                  className="file-input file-input-bordered w-full"
+                  onChange={handleFile}
+                  required
+                />
+              </div>
+              {progress > 0 && (
+                <progress
+                  className="progress w-full animate-enter"
+                  value={progress}
+                  max="100"
+                ></progress>
+              )}
+            </>
           )}
         </div>
         <div className="flex modal-action">
           <button className="btn btn-primary flex-1" type="submit">
             Add
           </button>
-          <label className="btn flex-1" htmlFor="add_subject">
+          <label className="btn flex-1" htmlFor="add_subjects">
             Cancel
           </label>
         </div>

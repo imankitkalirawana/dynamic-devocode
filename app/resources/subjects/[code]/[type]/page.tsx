@@ -12,15 +12,23 @@ interface Props {
 
 async function getResources(code: string, type: string) {
   if (type === "all") {
-    const res = await axios.get(
-      `${API_BASE_URL}/resources/resources/?subjectCode=${code}`
+    const res = await fetch(
+      `${API_BASE_URL}/resources/resources/?subjectCode=${code}`,
+      {
+        cache: "no-cache",
+        method: "GET",
+      }
     );
-    return res.data;
+    return res.json();
   }
-  const res = await axios.get(
-    `${API_BASE_URL}/resources/resources/?subjectCode=${code}&type=${type}`
+  const res = await fetch(
+    `${API_BASE_URL}/resources/resources/?subjectCode=${code}&type=${type}`,
+    {
+      cache: "no-cache",
+      method: "GET",
+    }
   );
-  return res.data;
+  return res.json();
 }
 
 export default async function Page({ params }: Props) {

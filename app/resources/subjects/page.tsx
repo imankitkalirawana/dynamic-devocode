@@ -1,10 +1,8 @@
 import API_BASE_URL from "@/utils/config";
 import Subjects from "@/components/resources/Subjects";
-import axios from "axios";
 import NotFound from "@/components/assets/NotFound";
 
 async function getSubjects() {
-  // const res = await axios.get(`${API_BASE_URL}/resources/subjects`);
   const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
     cache: "no-cache",
     method: "GET",

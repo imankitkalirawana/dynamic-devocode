@@ -5,6 +5,9 @@ import axios from "axios";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isLoggedIn } from "@/utils/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+import dynamic from "next/dynamic";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -25,6 +28,7 @@ type ResourceProps = {
 };
 
 const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
+  const router = useRouter();
   const { loggedIn } = isLoggedIn();
   const handleDownload = async (filename: string) => {
     const params = {
@@ -69,14 +73,21 @@ const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
 
   const handleDelete = async (e: any, resourceId: string) => {
     try {
-      await axios
-        .delete(`/api/resources/resources/?resourceId=${resourceId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
+      await toast
+        .promise(
+          axios.delete(`/api/resources/resources/?resourceId=${resourceId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }),
+          {
+            loading: "Deleting...",
+            success: "Deleted",
+            error: "Error",
+          }
+        )
         .then(() => {
-          window.location.reload();
+          router.refresh();
         });
     } catch (error) {
       console.error(error);
@@ -213,4 +224,4 @@ const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
   );
 };
 
-export default Resources;
+export default dynamic(() => Promise.resolve(Resources), { ssr: false });
