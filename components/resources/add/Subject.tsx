@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 type SubjectProps = {
   lastItem: any;
@@ -16,6 +17,7 @@ interface Subject {
 }
 
 const Subject: React.FC<SubjectProps> = ({ lastItem }) => {
+  const router = useRouter();
   const [subject, setSubject] = useState<Subject>({
     code: "",
     title: "",
@@ -35,17 +37,23 @@ const Subject: React.FC<SubjectProps> = ({ lastItem }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/resources/subjects", subject, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      console.log(res);
+      const res = await toast.promise(
+        axios.post("/api/resources/subjects", subject, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }),
+        {
+          loading: "Adding...",
+          success: "Added",
+          error: "Error",
+        }
+      );
       setSubject({} as Subject);
       //   close the popup
       const modal = document.getElementById("add_subject");
       modal?.click();
-      window.location.reload();
+      router.refresh();
     } catch (error) {
       console.error(error);
     }

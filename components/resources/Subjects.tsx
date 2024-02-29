@@ -3,6 +3,7 @@ import Trash from "@/assets/Trash";
 import Link from "next/link";
 import axios from "axios";
 import { isLoggedIn } from "@/utils/auth";
+import dynamic from "next/dynamic";
 
 type SubjectProps = {
   subjectData: {

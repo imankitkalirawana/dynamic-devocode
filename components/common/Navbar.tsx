@@ -8,7 +8,6 @@ import dynamic from "next/dynamic";
 import BottomBar from "./BottomBar";
 import AnimatedCursor from "react-animated-cursor";
 import dynamicTheme from "@/utils/theme";
-import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
@@ -39,6 +38,10 @@ const Navbar = () => {
   const loginRedirect = () => {
     localStorage.setItem("redirectPath", location || "/");
     router.push("/auth/login");
+    // toast.error("This feature is not available yet", {
+    //   className:
+    //     "!bg-base-200/50 backdrop-blur-lg !text-base-content shadow-lg",
+    // });
   };
 
   return (

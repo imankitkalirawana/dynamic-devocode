@@ -20,7 +20,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Navbar />
-          <Toaster position="bottom-center" />
+          <Toaster position="top-right" containerClassName="mt-16" />
 
           <main className="mb-24">{children}</main>
           {/* <ProgressBarI /> */}
