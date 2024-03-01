@@ -4,6 +4,8 @@ import Providers from "./providers";
 import Navbar from "@/components/common/Navbar";
 // import ProgressBarI from "@/components/common/ProgressBar";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "Devocode",
@@ -22,7 +24,11 @@ export default function RootLayout({
           <Navbar />
           <Toaster position="bottom-center" containerClassName="mt-16" />
 
-          <main className="mb-24">{children}</main>
+          <main className="mb-24">
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </main>
           {/* <ProgressBarI /> */}
         </Providers>
       </body>
