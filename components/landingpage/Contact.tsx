@@ -1,7 +1,6 @@
 // import { Switch } from "@headlessui/react";
 "use client";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import dynamic from "next/dynamic";
 
 const Contact = () => {
   return (
@@ -20,10 +19,11 @@ const Contact = () => {
       </div>
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Contact sales
+          Contact Us
         </h2>
         <p className="mt-2 text-lg leading-8">
-          Aute magna irure deserunt veniam aliqua magna enim voluptate.
+          We are here to help you. Please feel free to contact us. We will get
+          back to you as soon as possible.
         </p>
       </div>
       <form
@@ -91,6 +91,7 @@ const Contact = () => {
           <div className="sm:col-span-2">
             <label htmlFor="phone-number" className="label">
               <span className="label-text">Phone Number</span>
+              <span className="label-text text-sm">(Optional)</span>
             </label>
             <div className="relative mt-2.5">
               <div className="absolute inset-y-0 left-0 flex items-center">
@@ -145,5 +146,4 @@ const Contact = () => {
   );
 };
 
-// export default dynamic(() => Promise.resolve(Contact), { ssr: false });
 export default Contact;

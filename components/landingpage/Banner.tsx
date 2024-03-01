@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 const Banner = () => {
   return (
@@ -18,28 +19,34 @@ const Banner = () => {
       <div className="mx-auto max-w-2xl py-20">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-content ring-1 ring-base-300/70">
-            Announcing our next round of funding.{" "}
-            <a href="#" className="font-semibold text-primary">
+            Contribute to devocode and help others to grow.{"  "}
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdFBSjoY5HW4QeUwOPn2gBruzUwW4utGR1TAGIXa4UoQwmKgg/viewform?usp=send_form"
+              target="_blank"
+              className="font-semibold text-primary"
+            >
               <span className="absolute inset-0" aria-hidden="true" />
-              Read more <span aria-hidden="true">&rarr;</span>
+              Contribute <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            Data to enrich your online business
+            Welcome to devocode
           </h1>
           <p className="mt-6 text-lg leading-8 text-content">
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-            lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
-            fugiat aliqua.
+            A platform for developers to share and grow their knowledge.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <a href="#" className="btn btn-primary">
+            <Link href="/resources" className="btn btn-primary">
               Get started
-            </a>
-            <a href="#" className="btn btn-ghost">
-              Learn more <span aria-hidden="true">→</span>
+            </Link>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdFBSjoY5HW4QeUwOPn2gBruzUwW4utGR1TAGIXa4UoQwmKgg/viewform?usp=send_form"
+              className="btn btn-ghost"
+              target="_blank"
+            >
+              Contribute <span aria-hidden="true">→</span>
             </a>
           </div>
         </div>

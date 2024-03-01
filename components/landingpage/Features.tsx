@@ -1,35 +1,34 @@
 import {
   ArrowPathIcon,
   CloudArrowUpIcon,
-  FingerPrintIcon,
+  SwatchIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
-import dynamic from "next/dynamic";
 
 const features = [
   {
-    name: "Push to deploy",
+    name: "S3 deployed Resources",
     description:
-      "Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.",
+      "We provide you the high speed S3 deployed resources to access the content.",
     icon: CloudArrowUpIcon,
   },
   {
-    name: "SSL certificates",
+    name: "Secure data access",
     description:
-      "Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.",
+      "We don't share your data with anyone. Your data is secure with us.",
     icon: LockClosedIcon,
   },
   {
-    name: "Simple queues",
+    name: "Organized content",
     description:
-      "Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.",
+      "We provide you the organized content to access your study resources easily.",
     icon: ArrowPathIcon,
   },
   {
-    name: "Advanced security",
+    name: "Customizable platform",
     description:
-      "Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.",
-    icon: FingerPrintIcon,
+      "You can customize the platform according to your needs with 30+ handpicked themes.",
+    icon: SwatchIcon,
   },
 ];
 const Features = () => {
@@ -38,15 +37,15 @@ const Features = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-primary">
-            Deploy faster
+            Access to all features
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tightsm:text-4xl">
-            Everything you need to deploy your app
+            Everything you need to get started
           </p>
           <p className="mt-6 text-lg leading-8">
-            Quis tellus eget adipiscing convallis sit sit eget aliquet quis.
-            Suspendisse eget egestas a elementum pulvinar et feugiat blandit at.
-            In mi viverra elit nunc.
+            You can use our open source platform to bluid your knowledge and
+            access to all the features you need to prepare for your next LPU
+            examination.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -71,5 +70,4 @@ const Features = () => {
   );
 };
 
-// export default dynamic(() => Promise.resolve(Features), { ssr: false });
 export default Features;

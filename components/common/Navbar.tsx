@@ -12,20 +12,38 @@ import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
+  const [isNew, setIsNew] = useState(true);
+  const [isCustomCursor, setIsCustomCursor] = useState(false);
+
+  useEffect(() => {
+    const cursor = localStorage.getItem("isCustomCursor");
+    setIsCustomCursor(cursor ? JSON.parse(cursor) : false);
+    // check if the user is new from localstorage isNew key
+    const isNewUser = localStorage.getItem("isNew");
+    if (isNewUser) {
+      setIsNew(false);
+    }
+  }, []);
 
   const location = usePathname();
   const router = useRouter();
   const { loggedIn } = isLoggedIn();
 
-  const isCustomCursor = localStorage.getItem("isCustomCursor") === "true";
-
   dynamicTheme();
+
+  const handleIsNew = () => {
+    setIsNew(false);
+    localStorage.setItem("isNew", "false");
+  };
 
   const handleLogout = () => {
     setIsLoggingOut(true);
     setTimeout(() => {
       const theme = localStorage.getItem("theme");
-      localStorage.clear();
+      // remove token and user from localstorage
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userData");
       localStorage.setItem("theme", theme as string);
       window.location.href = "/resources";
       const modal = document.getElementById("logout_modal") as HTMLInputElement;
@@ -122,7 +140,10 @@ const Navbar = () => {
               </ul>
             </div>
           </div>
-          <Link href={"/"} className="btn btn-ghost text-xl">
+          <Link
+            href={"/"}
+            className="btn btn-ghost text-xl after:content-['LPU'] after:text-xs after:mb-2"
+          >
             DevoCode
           </Link>
         </div>
@@ -278,6 +299,32 @@ const Navbar = () => {
           Close
         </label>
       </div>
+      {isNew && (
+        <div
+          className="card max-w-96 w-full bg-base-100 shadow-xl fixed bottom-[50%] translate-y-[50%] z-10 left-[50%] translate-x-[-50%] px-8 py-4 md:left-1 md:bottom-1 md:translate-x-0 md:translate-y-0"
+          id="updated-popup"
+        >
+          <form method="dialog">
+            <button
+              className="btn btn-sm btn-circle absolute right-2 top-2"
+              onClick={handleIsNew}
+            >
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">New Look and Feel!</h3>
+          <p className="py-4 text-sm">
+            Devocode just got updated.{" "}
+            <a
+              className="link"
+              href="https://github.com/imankitkalirawana/dynamic-devocode"
+              target="_blank"
+            >
+              Know more!
+            </a>
+          </p>
+        </div>
+      )}
     </>
   );
 };

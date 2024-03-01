@@ -25,7 +25,7 @@ const Newsletter = () => {
         An API for your design&nbsp;system.
       </p>
       <p className="mt-4 max-w-3xl space-y-6 ">
-        Utility classNamees help you work within the constraints of a system
+        Utility classNames help you work within the constraints of a system
         instead of littering your stylesheets with arbitrary values. They make
         it easy to be consistent with color choices, spacing, typography,
         shadows, and everything else that makes up a well-engineered design
