@@ -12,6 +12,7 @@ const NotFound: React.FC<NotFoundProps> = ({ message }) => {
         viewBox="-80 0 369 271"
         // width="360"
         xmlns="http://www.w3.org/2000/svg"
+        className="max-w-xs mx-auto"
       >
         <path
           clipRule="evenodd"
