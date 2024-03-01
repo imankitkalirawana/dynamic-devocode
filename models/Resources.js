@@ -5,7 +5,7 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  url: String,
+  link: String,
   description: String,
   file: String,
   type: {
