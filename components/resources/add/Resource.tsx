@@ -39,7 +39,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       resourceType: "others",
       link: "",
       file: null,
-      size: "",
+      filesize: "",
     },
     onSubmit: async (values) => {
       addData(values);
@@ -103,7 +103,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       );
       setFile(file);
       formik.setFieldValue("file", file.name);
-      formik.setFieldValue("size", fileSize.toFixed(2) + "MB");
+      formik.setFieldValue("filesize", fileSize.toFixed(2));
     }
   };
 
@@ -113,6 +113,8 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
     formik.setFieldValue("file", null);
     formik.setFieldValue("link", "");
   };
+
+  console.log(formik.values);
 
   const handleUpload = async () => {
     if (file) {

@@ -198,12 +198,14 @@ const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
           <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
             {description}
           </p>
-          <div className="flex justify-between items-center">
-            <span className="text-xs">{humanReadableDate}</span>
-            <span className="text-xs">
-              {filesize}mb ({getFileExtension(file)})
-            </span>
-          </div>
+          {file && (
+            <div className="flex justify-between items-center">
+              <span className="text-xs">{humanReadableDate}</span>
+              <span className="text-xs">
+                {parseInt(filesize)}mb ({getFileExtension(file)})
+              </span>
+            </div>
+          )}
         </div>
       </div>
       <input

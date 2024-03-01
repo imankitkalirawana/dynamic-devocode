@@ -55,7 +55,8 @@ export default cors(async (req, res) => {
             res.status(400).json({ message: "Subject code is required" });
             return;
           }
-          let { resourceType, title, link, description, file, size } = req.body;
+          let { resourceType, title, link, description, file, filesize } =
+            req.body;
           const subjectId = await getSubjectId(subjectCode);
           const userId = req.userId;
           if (!resourceType || !title) {
@@ -71,6 +72,7 @@ export default cors(async (req, res) => {
             });
             return;
           }
+          console.log("adding resource");
 
           const resource = await Resources.create({
             subject: subjectId,
@@ -79,13 +81,14 @@ export default cors(async (req, res) => {
             link,
             description,
             file,
-            size,
+            filesize,
             isArchived: false,
             by: userId,
           });
 
           res.status(201).json(resource);
         } catch (e) {
+          console.log(e);
           res.status(400).json({ message: e.message });
         }
       } else if (req.method === "PUT") {
