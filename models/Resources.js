@@ -16,7 +16,7 @@ const resourceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  size: {
+  filesize: {
     type: String,
     default: "0",
   },

@@ -3,13 +3,15 @@ let resourceTypes = [
     "notes",
     "ca",
     "assignments",
+    "mcq",
     "midterm",
     "endterm",
     "moocs",
     "link",
     "books",
     "references",
-    "others"
+    "others",
+    "syllabus"
 ]
 
 resourceTypes = resourceTypes.sort()

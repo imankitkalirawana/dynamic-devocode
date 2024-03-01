@@ -24,6 +24,7 @@ type ResourceProps = {
     file: string;
     addedDate: string;
     resourceType: string;
+    filesize: string;
   };
 };
 
@@ -52,8 +53,16 @@ const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
       window.open(link, "_blank");
     }
   };
-  const { _id, title, description, addedDate, file, link, resourceType } =
-    resourceData;
+  const {
+    _id,
+    title,
+    description,
+    addedDate,
+    file,
+    link,
+    resourceType,
+    filesize,
+  } = resourceData;
   // function to convert date to human readable format
   const date = new Date(addedDate);
   const humanReadableDate = date.toLocaleDateString("en-US", {
@@ -87,6 +96,8 @@ const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
           }
         )
         .then(() => {
+          const modal = document.getElementById(`delete_modal_${resourceId}`);
+          modal?.click();
           router.refresh();
         });
     } catch (error) {
@@ -189,7 +200,9 @@ const Resources: React.FC<ResourceProps> = ({ resourceData }) => {
           </p>
           <div className="flex justify-between items-center">
             <span className="text-xs">{humanReadableDate}</span>
-            <span className="text-xs">{getFileExtension(file)}</span>
+            <span className="text-xs">
+              {filesize}mb ({getFileExtension(file)})
+            </span>
           </div>
         </div>
       </div>

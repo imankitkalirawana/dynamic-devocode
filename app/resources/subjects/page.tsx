@@ -17,6 +17,20 @@ export default async function Page() {
     (subject: any) => subject.isArchived === false
   );
 
+  // sort with code
+  filteredSubjects?.sort((a: any, b: any) => {
+    const codeA = a.code.toLowerCase();
+    const codeB = b.code.toLowerCase();
+
+    if (codeA < codeB) {
+      return -1;
+    }
+    if (codeA > codeB) {
+      return 1;
+    }
+    return 0;
+  });
+
   return (
     <>
       <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">

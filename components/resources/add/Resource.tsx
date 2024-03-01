@@ -22,7 +22,7 @@ interface Resource {
   resourceType: string;
   url: string;
   file: File | null;
-  size: string;
+  filesize: string;
 }
 
 const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
@@ -42,8 +42,21 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       size: "",
     },
     onSubmit: async (values) => {
-      try {
-        const res = await axios.post(
+      addData(values);
+      if (file) {
+        handleUpload();
+      } else {
+        const modal = document.getElementById("add_subject");
+        modal?.click();
+        router.refresh();
+      }
+    },
+  });
+
+  const addData = async (values: any) => {
+    try {
+      const res = await toast.promise(
+        axios.post(
           `/api/resources/resources/?subjectCode=${lastItem.label}`,
           values,
           {
@@ -51,16 +64,22 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
-        );
-        if (res.status != 201) {
-          return;
+        ),
+        {
+          loading: "Adding...",
+          success: "Added",
+          error: "Error",
         }
-        handleUpload();
-      } catch (error) {
-        console.error(error);
+      );
+      if (res.status != 201) {
+        console.log("error occured");
+        return;
       }
-    },
-  });
+      // handleUpload();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files![0];
@@ -222,7 +241,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
           <button className="btn btn-primary flex-1" type="submit">
             Add
           </button>
-          <label className="btn flex-1" htmlFor="add_subjects">
+          <label className="btn flex-1" htmlFor="add_subject">
             Cancel
           </label>
         </div>

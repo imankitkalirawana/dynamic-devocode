@@ -1,6 +1,5 @@
 import API_BASE_URL from "@/utils/config";
 import Resources from "@/components/resources/Resources";
-import axios from "axios";
 import NotFound from "@/components/assets/NotFound";
 
 interface Props {
@@ -33,6 +32,20 @@ async function getResources(code: string, type: string) {
 
 export default async function Page({ params }: Props) {
   const resources = await getResources(params.code, params.type);
+  // sort by title
+  resources.sort((a: any, b: any) => {
+    const titleA = a.title.toLowerCase();
+    const titleB = b.title.toLowerCase();
+
+    if (titleA < titleB) {
+      return -1;
+    }
+    if (titleA > titleB) {
+      return 1;
+    }
+    return 0;
+  });
+
   return (
     <>
       <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">

@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import resourceTypes from "@/utils/resourceTypes";
 import S3 from "aws-sdk/clients/s3";
+import { toast } from "react-hot-toast";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -63,15 +64,26 @@ const Page = ({ params }: Props) => {
     },
     onSubmit: async (values) => {
       try {
-        await axios.put(
-          `/api/resources/resources/?resourceId=${params.resourceId}`,
-          values,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        await toast
+          .promise(
+            axios.put(
+              `/api/resources/resources/?resourceId=${params.resourceId}`,
+              values,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              }
+            ),
+            {
+              loading: "Updating...",
+              success: "Updated",
+              error: "Error",
+            }
+          )
+          .then(() => {
+            router.push(`/resources/subjects/${params.code}/all`);
+          });
       } catch (error) {
         console.error(error);
       }
@@ -80,15 +92,24 @@ const Page = ({ params }: Props) => {
 
   const handleDelete = async () => {
     try {
-      // await axios.delete(
-      //   `/api/resources/resources/?resourceId=${params.resourceId}`,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //     },
-      //   }
-      // );
-      handleDeleteFile(resource.file);
+      await toast.promise(
+        axios.delete(
+          `/api/resources/resources/?resourceId=${params.resourceId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        ),
+        {
+          loading: "Deleting...",
+          success: "Deleted",
+          error: "Error",
+        }
+      );
+      handleDeleteFile(resource.file).then(() => {
+        router.push(`/resources/subjects/${params.code}/all`);
+      });
       // router.push(`/resources/subjects/${params.code}/all`);
     } catch (error) {
       console.error(error);
@@ -182,21 +203,7 @@ const Page = ({ params }: Props) => {
                   required
                 />
               </div>
-            ) : (
-              <div className="flex flex-col w-full">
-                <label htmlFor="file" className="label">
-                  <span className="label-text">File</span>
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  name="file"
-                  className="file-input file-input-bordered w-full"
-                  // onChange={handleFile}
-                  required
-                />
-              </div>
-            )}
+            ) : null}
 
             <div className="form-control">
               <label className="label">

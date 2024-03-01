@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import BottomBar from "./BottomBar";
 import AnimatedCursor from "react-animated-cursor";
 import dynamicTheme from "@/utils/theme";
+import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
@@ -191,6 +192,15 @@ const Navbar = () => {
               type="text"
               placeholder="Search"
               className="input input-bordered w-30 md:w-auto h-10"
+              onFocus={(e) => {
+                toast.error("Coming soon!", {
+                  icon: "🚧",
+                  id: "search-coming-soon",
+                  position: "bottom-center",
+                });
+                // disable input for now
+                e.target.blur();
+              }}
             />
           </div>
           {loggedIn ? (
