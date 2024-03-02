@@ -1,11 +1,36 @@
 import API_BASE_URL from "@/utils/config";
 import Resources from "@/components/resources/Resources";
 import NotFound from "@/components/assets/NotFound";
+import { Metadata, ResolvingMetadata } from "next";
 
 interface Props {
   params: {
     code: string;
     type: string;
+  };
+}
+
+async function fetchResources(id: string) {
+  return {
+    title: `${id} - Devocode By Divinely Developer`,
+    description: `Resources for ${id} - Devocode By Divinely Developer`,
+  };
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const id = params.code;
+  const resource = await fetchResources(id);
+
+  const previousImages = (await parent).openGraph?.images || [];
+
+  return {
+    title: resource.title,
+    openGraph: {
+      images: ["/some-specific-page-image.jpg", ...previousImages],
+    },
   };
 }
 
