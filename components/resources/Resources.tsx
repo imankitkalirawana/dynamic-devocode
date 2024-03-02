@@ -8,7 +8,7 @@ import { isLoggedIn } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -35,6 +35,19 @@ const Resources: React.FC<ResourcesProps> = ({ resources }) => {
   const router = useRouter();
   const { loggedIn } = isLoggedIn();
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterCriteria, setFilterCriteria] = useState("");
+
+  useEffect(() => {
+    const savedFilterCriteria = localStorage.getItem("resourceFilterCriteria");
+    if (savedFilterCriteria) {
+      setFilterCriteria(savedFilterCriteria);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("resourceFilterCriteria", filterCriteria);
+  }, [filterCriteria]);
+
   const handleDownload = async (filename: string) => {
     const params = {
       Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME,
@@ -100,33 +113,218 @@ const Resources: React.FC<ResourcesProps> = ({ resources }) => {
     }
   };
 
+  const filterResources = () => {
+    switch (filterCriteria) {
+      case "ascending":
+        return resources.sort((a: any, b: any) => {
+          const titleA = a.title.toLowerCase();
+          const titleB = b.title.toLowerCase();
+
+          if (titleA < titleB) {
+            return -1;
+          }
+          if (titleA > titleB) {
+            return 1;
+          }
+          return 0;
+        });
+      case "descending":
+        return resources.sort((a: any, b: any) => {
+          const titleA = a.title.toLowerCase();
+          const titleB = b.title.toLowerCase();
+
+          if (titleA > titleB) {
+            return -1;
+          }
+          if (titleA < titleB) {
+            return 1;
+          }
+          return 0;
+        });
+      case "newest":
+        return resources.sort((a: any, b: any) => {
+          const dateA = new Date(a.addedDate);
+          const dateB = new Date(b.addedDate);
+          return dateB.getTime() - dateA.getTime();
+        });
+      case "oldest":
+        return resources.sort((a: any, b: any) => {
+          const dateA = new Date(a.addedDate);
+          const dateB = new Date(b.addedDate);
+          return dateA.getTime() - dateB.getTime();
+        });
+      case "type":
+        return resources.sort((a: any, b: any) => {
+          const typeA = a.type.toLowerCase();
+          const typeB = b.type.toLowerCase();
+
+          if (typeA < typeB) {
+            return -1;
+          }
+          if (typeA > typeB) {
+            return 1;
+          }
+          return 0;
+        });
+      default:
+        return resources;
+    }
+  };
+
+  const filteredResources = filterResources();
+
   return (
     <>
-      <div className="col-span-12 relative">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-5 h-5 absolute left-0 top-[50%] translate-y-[-50%] ml-4"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-          />
-        </svg>
+      <div className="col-span-12 flex items-center gap-4">
+        <div className="col-span-12 relative">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5 absolute left-0 top-[50%] translate-y-[-50%] ml-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            />
+          </svg>
 
-        <input
-          type="text"
-          placeholder={`Search in ${code}`}
-          className="input input-bordered w-full sm:w-fit pl-12"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+          <input
+            type="text"
+            placeholder={`Search in ${code}`}
+            className="input input-bordered w-full sm:w-fit pl-12"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className="dropdown dropdown-end">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-circle m-1 tooltip flex justify-center items-center"
+            data-tip="Filter Subjects"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+              />
+            </svg>
+          </div>
+          <ul
+            tabIndex={0}
+            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li onClick={() => setFilterCriteria("ascending")}>
+              <a>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
+                  />
+                </svg>
+                Ascending
+              </a>
+            </li>
+            <li onClick={() => setFilterCriteria("descending")}>
+              <a>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
+                  />
+                </svg>
+                Descending
+              </a>
+            </li>
+            <li onClick={() => setFilterCriteria("newest")}>
+              <a>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                Newest First
+              </a>
+            </li>
+            <li onClick={() => setFilterCriteria("oldest")}>
+              <a>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                Oldest First
+              </a>
+            </li>
+            <li onClick={() => setFilterCriteria("type")}>
+              <a>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                  />
+                </svg>
+                By Type
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      {resources.map((resource) => (
+      {filteredResources.map((resource) => (
         <div
           className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
           title={`Title: ${resource.title}\nDescription: ${resource.description}`}
