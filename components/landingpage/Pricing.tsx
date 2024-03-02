@@ -67,6 +67,7 @@ const Pricing = () => {
                 <a
                   href="https://github.com/imankitkalirawana/dynamic-devocode"
                   className="btn btn-primary mt-4"
+                  target="_blank"
                 >
                   Let's make it
                 </a>

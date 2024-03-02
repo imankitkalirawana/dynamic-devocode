@@ -9,7 +9,7 @@ export default function NotFound() {
         <Link href="/" className="btn btn-primary">
           Return Home
         </Link>
-        <Link href="/" className="btn btn-ghost">
+        <Link href="/resources" className="btn btn-ghost">
           Explore Resources
           <svg
             xmlns="http://www.w3.org/2000/svg"
