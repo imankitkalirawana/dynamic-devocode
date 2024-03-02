@@ -127,14 +127,14 @@ const Navbar = () => {
                 <li>
                   <Link href={"/resources/subjects"}>Subjects</Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href={"/resources/announcements"}>Announcements</Link>
                 </li>
                 <li>
                   <Link href={"/resources/dl"}>DL's</Link>
-                </li>
+                </li> */}
                 <li>
-                  <Link href={"/settings"}>Settings</Link>
+                  <Link href={"/settings/preference"}>Settings</Link>
                 </li>
                 <li>
                   <a href="https://divinelydeveloper.me">About</a>
