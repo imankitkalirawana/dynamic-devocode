@@ -85,7 +85,6 @@ export default cors(async (req, res) => {
             isArchived: false,
             by: userId,
           });
-          console.log("resource", resource);
 
           res.status(201).json(resource);
         } catch (e) {

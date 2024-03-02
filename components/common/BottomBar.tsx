@@ -1,7 +1,10 @@
+"use client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const BottomBar = () => {
+  const pathname = usePathname();
   return (
     <div className="fixed z-50 w-full h-16 max-w-lg -translate-x-1/2 bg-base-100/70 border border-base-200 rounded-full bottom-4 left-1/2 backdrop-blur-lg">
       <div className="grid h-full max-w-lg grid-cols-5 mx-auto">
@@ -18,7 +21,9 @@ const BottomBar = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 mb-1 text-base-content group-hover:text-primary transition-all"
+            className={`w-6 h-6 mb-1 text-${
+              pathname === "/" ? "primary" : "base-content"
+            } transition-all`}
           >
             <path
               strokeLinecap="round"
@@ -41,7 +46,9 @@ const BottomBar = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 mb-1 text-base-content group-hover:text-primary transition-all"
+            className={`w-6 h-6 mb-1 text-${
+              pathname?.includes("resources") ? "primary" : "base-content"
+            } transition-all`}
           >
             <path
               strokeLinecap="round"
@@ -90,7 +97,9 @@ const BottomBar = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 mb-1 text-base-content group-hover:text-primary transition-all"
+            className={`w-6 h-6 mb-1 text-${
+              pathname?.includes("preference") ? "primary" : "base-content"
+            } transition-all`}
           >
             <path
               strokeLinecap="round"
@@ -115,7 +124,11 @@ const BottomBar = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 mb-1 text-base-content group-hover:text-primary transition-all"
+            className={`w-6 h-6 mb-1 text-${
+              pathname?.includes("profile") || pathname?.includes("overview")
+                ? "primary"
+                : "base-content"
+            } transition-all`}
           >
             <path
               strokeLinecap="round"
