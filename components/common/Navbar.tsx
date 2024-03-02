@@ -116,6 +116,11 @@ const Navbar = () => {
                 <li>
                   <Link href={"/"}>Home</Link>
                 </li>
+                {loggedIn && (
+                  <li>
+                    <Link href={"/dashboard"}>Dashboard</Link>
+                  </li>
+                )}
                 <li>
                   <Link href={"/resources"}>Resources</Link>
                 </li>

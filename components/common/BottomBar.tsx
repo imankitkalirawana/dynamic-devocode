@@ -60,11 +60,12 @@ const BottomBar = () => {
           <span className="sr-only">Resources</span>
         </Link>
         <div className="flex items-center justify-center">
-          <Link
-            href={""}
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdFBSjoY5HW4QeUwOPn2gBruzUwW4utGR1TAGIXa4UoQwmKgg/viewform?usp=send_form"
             type="button"
+            target="_blank"
             className="inline-flex items-center justify-center w-10 h-10 font-medium bg-primary rounded-full group focus:ring-4 focus:ring-primary/50 focus:outline-none transition-all tooltip"
-            data-tip="Create"
+            data-tip="Contribute"
           >
             <svg
               className="w-4 h-4 text-white"
@@ -81,7 +82,7 @@ const BottomBar = () => {
                 d="M9 1v16M1 9h16"
               />
             </svg>
-          </Link>
+          </a>
           <span className="sr-only">Create</span>
         </div>
         <Link
