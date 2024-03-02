@@ -77,7 +77,7 @@ const Navbar = () => {
         />
       )}
       <div
-        className={`navbar bg-base-100/70 fixed z-30 text-content backdrop-blur-lg transition-all top-0 ${
+        className={`navbar bg-base-100/70 fixed z-30 text-content backdrop-blur-lg transition-all duration-1000 top-0 ${
           location?.startsWith("/auth") ? "hidden" : ""
         }`}
       >
@@ -217,7 +217,7 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="Search"
-              className="input input-bordered w-30 md:w-auto h-10"
+              className="input input-bordered w-30 md:w-auto h-10 transition-all duration-1000"
               onFocus={(e) => {
                 toast.error("Coming soon!", {
                   icon: "🚧",

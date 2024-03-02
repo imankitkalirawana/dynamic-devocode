@@ -39,7 +39,7 @@ const themes = [
 ];
 
 const Preference = () => {
-  const [currentTheme, setCurrentTheme] = useState("default");
+  const [currentTheme, setCurrentTheme] = useState("");
   const [isCustomCursor, setIsCustomCursor] = useState(false);
   const router = useRouter();
 

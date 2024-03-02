@@ -18,7 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme={"default"}>
+    <html
+      lang="en"
+      data-theme={"default"}
+      className="transition-all duration-1000"
+    >
       <body>
         <Providers>
           <Navbar />
