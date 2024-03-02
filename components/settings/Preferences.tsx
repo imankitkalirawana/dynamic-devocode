@@ -107,10 +107,10 @@ const Preference = () => {
         <div className="rounded-box grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 max-w-4xl mt-8">
           {themes.map((theme) => (
             <div
-              className={`border-base-content/20 overflow-hidden rounded-lg border outline outline-2 outline-offset-2 outline-transparent ${
+              className={`border-base-content/20 overflow-hidden rounded-lg border outline outline-2 outline-offset-2 ${
                 currentTheme == theme
-                  ? "outline-offset-2 outline-primary"
-                  : "hover:outline-offset-2 hover:outline-primary"
+                  ? "outline-primary"
+                  : "hover:outline-offset-2 hover:outline-primary outline-transparent"
               }`}
               data-set-theme={theme}
               key={theme}
