@@ -20,5 +20,7 @@ export default function dynamicTheme() {
     document.documentElement.setAttribute("data-theme", theme || "halloween");
   } else if (month >= 11 || month < 1) {
     document.documentElement.setAttribute("data-theme", theme || "winter");
+  } else {
+    document.documentElement.setAttribute("data-theme", theme || "cupcake");
   }
 };
