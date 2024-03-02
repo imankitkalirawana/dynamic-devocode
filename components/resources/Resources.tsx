@@ -8,7 +8,7 @@ import { isLoggedIn } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { useState } from "react";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -34,6 +34,7 @@ type ResourcesProps = {
 const Resources: React.FC<ResourcesProps> = ({ resources }) => {
   const router = useRouter();
   const { loggedIn } = isLoggedIn();
+  const [searchQuery, setSearchQuery] = useState("");
   const handleDownload = async (filename: string) => {
     const params = {
       Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME,
@@ -101,6 +102,30 @@ const Resources: React.FC<ResourcesProps> = ({ resources }) => {
 
   return (
     <>
+      <div className="col-span-12 relative">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-5 h-5 absolute left-0 top-[50%] translate-y-[-50%] ml-4"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+          />
+        </svg>
+
+        <input
+          type="text"
+          placeholder={`Search in ${code}`}
+          className="input input-bordered w-full sm:w-fit pl-12"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       {resources.map((resource) => (
         <div
           className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
