@@ -10,29 +10,29 @@ interface Props {
   };
 }
 
-async function fetchResources(id: string) {
-  return {
-    title: `${id} - Devocode By Divinely Developer`,
-    description: `Resources for ${id} - Devocode By Divinely Developer`,
-  };
-}
+// async function fetchResources(id: string) {
+//   return {
+//     title: `${id} - Devocode By Divinely Developer`,
+//     description: `Resources for ${id} - Devocode By Divinely Developer`,
+//   };
+// }
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const id = params.code;
-  const resource = await fetchResources(id);
+// export async function generateMetadata(
+//   { params }: Props,
+//   parent: ResolvingMetadata
+// ): Promise<Metadata> {
+//   const id = params.code;
+//   const resource = await fetchResources(id);
 
-  const previousImages = (await parent).openGraph?.images || [];
+//   const previousImages = (await parent).openGraph?.images || [];
 
-  return {
-    title: resource.title,
-    openGraph: {
-      images: ["/some-specific-page-image.jpg", ...previousImages],
-    },
-  };
-}
+//   return {
+//     title: resource.title,
+//     openGraph: {
+//       images: ["/some-specific-page-image.jpg", ...previousImages],
+//     },
+//   };
+// }
 
 async function getResources(code: string, type: string) {
   if (type === "all") {
@@ -75,9 +75,7 @@ export default async function Page({ params }: Props) {
     <>
       <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">
         {resources.length > 0 ? (
-          resources.map((resource: any, index: any) => (
-            <Resources resourceData={resource} key={index} />
-          ))
+          <Resources resources={resources} />
         ) : (
           <NotFound message="Nothing uploaded there! Maybe you can try later." />
         )}

@@ -14,6 +14,9 @@ let resourceTypes = [
     "syllabus"
 ]
 
+
+
+
 resourceTypes = resourceTypes.sort()
 
 

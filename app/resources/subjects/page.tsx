@@ -35,10 +35,7 @@ export default async function Page() {
     <>
       <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">
         {filteredSubjects?.length > 0 ? (
-          // filteredSubjects.map((subject: any, index: any) => (
-          filteredSubjects?.map((subject: any, index: any) => (
-            <Subjects key={index} subjectData={subject} />
-          ))
+          <Subjects subjects={filteredSubjects} />
         ) : (
           <NotFound message="Nothing uploaded there! Maybe you can try later." />
         )}
