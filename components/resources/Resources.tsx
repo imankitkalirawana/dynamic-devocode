@@ -324,129 +324,144 @@ const Resources: React.FC<ResourcesProps> = ({ resources }) => {
           </ul>
         </div>
       </div>
-      {filteredResources.map((resource) => (
-        <div
-          className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
-          title={`Title: ${resource.title}\nDescription: ${resource.description}`}
-        >
-          {path?.includes("all") && (
-            <span className="indicator-item badge badge-primary -top-2 -right-4 absolute">
-              {resource.type}
-            </span>
-          )}
+      {filteredResources
+        .filter((resource) => {
+          if (searchQuery === "") {
+            return resource;
+          } else if (
+            resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (resource.description &&
+              resource.description
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())) ||
+            resource.type.toLowerCase().includes(searchQuery.toLowerCase())
+          ) {
+            return resource;
+          }
+        })
+        .map((resource) => (
+          <div
+            className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
+            title={`Title: ${resource.title}\nDescription: ${resource.description}`}
+          >
+            {path?.includes("all") && (
+              <span className="indicator-item badge badge-primary -top-2 -right-4 absolute">
+                {resource.type}
+              </span>
+            )}
 
-          {loggedIn && (
-            <div className="flex items-center justify-between">
-              <div className="dropdown dropdown-end absolute right-3 top-3">
-                <div
+            {loggedIn && (
+              <div className="flex items-center justify-between">
+                <div className="dropdown dropdown-end absolute right-3 top-3">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn btn-sm btn-ghost m-1"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                      />
+                    </svg>
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
+                  >
+                    <li>
+                      <Link
+                        href={`/resources/subjects/update/${code}/${resource._id}`}
+                      >
+                        Edit
+                      </Link>
+                    </li>
+                    <li>
+                      <a>Archive</a>
+                    </li>
+                    <li>
+                      <label
+                        htmlFor={`delete_modal_${resource._id}`}
+                        className="text-error"
+                      >
+                        Delete
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+            <div
+              className="px-8 py-4"
+              onClick={(e) => handleCardClick(e, resource.file, resource.link)}
+            >
+              <div className="flex items-center">
+                <h2
+                  className="text-lg font-bold max-w-[80%] overflow-hidden text-ellipsis whitespace-nowrap"
                   tabIndex={0}
-                  role="button"
-                  className="btn btn-sm btn-ghost m-1"
+                  role="link"
                 >
+                  {resource.title}
+                </h2>
+                {resource.file ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="w-5 h-5"
+                    className="w-5 h-5 ml-2"
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                      d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13"
                     />
                   </svg>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
-                >
-                  <li>
-                    <Link
-                      href={`/resources/subjects/update/${code}/${resource._id}`}
-                    >
-                      Edit
-                    </Link>
-                  </li>
-                  <li>
-                    <a>Archive</a>
-                  </li>
-                  <li>
-                    <label
-                      htmlFor={`delete_modal_${resource._id}`}
-                      className="text-error"
-                    >
-                      Delete
-                    </label>
-                  </li>
-                </ul>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5 ml-2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                    />
+                  </svg>
+                )}
+              </div>
+              <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
+                {resource.description}
+              </p>
+
+              <div className="flex justify-between items-center">
+                <span className="text-xs">
+                  {humanReadableDate(resource.addedDate)}
+                </span>
+                <span className="text-xs"></span>
+                {resource.file && (
+                  <span className="text-xs">
+                    {parseInt(resource.filesize)}mb (
+                    {getFileExtension(resource.file)})
+                  </span>
+                )}
               </div>
             </div>
-          )}
-          <div
-            className="px-8 py-4"
-            onClick={(e) => handleCardClick(e, resource.file, resource.link)}
-          >
-            <div className="flex items-center">
-              <h2
-                className="text-lg font-bold max-w-[80%] overflow-hidden text-ellipsis whitespace-nowrap"
-                tabIndex={0}
-                role="link"
-              >
-                {resource.title}
-              </h2>
-              {resource.file ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5 ml-2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5 ml-2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                  />
-                </svg>
-              )}
-            </div>
-            <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
-              {resource.description}
-            </p>
-
-            <div className="flex justify-between items-center">
-              <span className="text-xs">
-                {humanReadableDate(resource.addedDate)}
-              </span>
-              <span className="text-xs"></span>
-              {resource.file && (
-                <span className="text-xs">
-                  {parseInt(resource.filesize)}mb (
-                  {getFileExtension(resource.file)})
-                </span>
-              )}
-            </div>
           </div>
-        </div>
-      ))}
+        ))}
       {resources.map((resource) => (
         <React.Fragment key={resource._id}>
           <input
