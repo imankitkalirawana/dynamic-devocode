@@ -10,29 +10,29 @@ interface Props {
   };
 }
 
-// async function fetchResources(id: string) {
-//   return {
-//     title: `${id} - Devocode By Divinely Developer`,
-//     description: `Resources for ${id} - Devocode By Divinely Developer`,
-//   };
-// }
+async function fetchResources(id: string) {
+  return {
+    title: `${id} - Devocode By Divinely Developer`,
+    description: `Resources for ${id} - Devocode By Divinely Developer`,
+  };
+}
 
-// export async function generateMetadata(
-//   { params }: Props,
-//   parent: ResolvingMetadata
-// ): Promise<Metadata> {
-//   const id = params.code;
-//   const resource = await fetchResources(id);
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const id = params.code;
+  const resource = await fetchResources(id);
 
-//   const previousImages = (await parent).openGraph?.images || [];
+  const previousImages = (await parent).openGraph?.images || [];
 
-//   return {
-//     title: resource.title,
-//     openGraph: {
-//       images: ["/some-specific-page-image.jpg", ...previousImages],
-//     },
-//   };
-// }
+  return {
+    title: resource.title,
+    openGraph: {
+      images: ["/some-specific-page-image.jpg", ...previousImages],
+    },
+  };
+}
 
 async function getResources(code: string, type: string) {
   if (type === "all") {
