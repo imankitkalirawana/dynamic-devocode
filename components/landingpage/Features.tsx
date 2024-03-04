@@ -43,7 +43,7 @@ const Features = () => {
             Everything you need to get started
           </p>
           <p className="mt-6 text-lg leading-8">
-            You can use our open source platform to bluid your knowledge and
+            You can use our open source platform to build your knowledge and
             access to all the features you need to prepare for your next LPU
             examination.
           </p>
