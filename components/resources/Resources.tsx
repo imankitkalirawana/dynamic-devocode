@@ -381,7 +381,7 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
                   </div>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
+                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100/30 backdrop-blur-lg rounded-box w-52"
                   >
                     <li>
                       <Link
