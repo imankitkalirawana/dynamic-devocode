@@ -36,14 +36,14 @@ const Features = () => {
     <div className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-primary">
+          <h2 className="text-base font-semibold leading-7 text-primary text-center">
             Access to all features
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tightsm:text-4xl flex items-center gap-2 justify-center">
             <img src="/devocode.png" className="w-12" alt="" />
             <span>Everything you need to get started</span>
           </p>
-          <p className="mt-6 text-lg leading-8">
+          <p className="mt-6 text-lg leading-8 text-center">
             You can use our open source platform to build your knowledge and
             access to all the features you need to prepare for your next LPU
             examination.
