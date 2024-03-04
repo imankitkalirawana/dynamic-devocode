@@ -39,8 +39,9 @@ const Features = () => {
           <h2 className="text-base font-semibold leading-7 text-primary">
             Access to all features
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tightsm:text-4xl">
-            Everything you need to get started
+          <p className="mt-2 text-3xl font-bold tracking-tightsm:text-4xl flex items-center gap-2 justify-center">
+            <img src="/devocode.png" className="w-12" alt="" />
+            <span>Everything you need to get started</span>
           </p>
           <p className="mt-6 text-lg leading-8">
             You can use our open source platform to build your knowledge and
