@@ -32,7 +32,7 @@ const config: Config = {
       // "luxury",
       "dracula",
       // "cmyk",
-      "autumn",
+      // "autumn",
       // "business",
       // "acid",
       "lemonade",
