@@ -175,7 +175,7 @@ const Navbar = () => {
             </svg>
           </Link>
 
-          <div className="hidden md:block form-control mr-4 ">
+          <div className="hidden form-control mr-4 ">
             <input
               type="text"
               placeholder="Search"
