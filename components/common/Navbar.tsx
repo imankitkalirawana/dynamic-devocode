@@ -9,6 +9,7 @@ import BottomBar from "./BottomBar";
 import AnimatedCursor from "react-animated-cursor";
 import dynamicTheme from "@/utils/theme";
 import { toast } from "react-hot-toast";
+import Logo from "../assets/Logo";
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
@@ -106,7 +107,7 @@ const Navbar = () => {
             </label>
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
 
-            <div className="drawer-side" tabIndex={0}>
+            <div className="drawer-side z-40" tabIndex={0}>
               <label
                 htmlFor="my-drawer"
                 aria-label="close sidebar"
@@ -147,8 +148,9 @@ const Navbar = () => {
           </div>
           <Link
             href={"/"}
-            className="btn btn-ghost text-xl after:content-['LPU'] after:text-xs after:mb-2"
+            className="btn btn-ghost text-xl after:content-[''] after:text-xs after:mb-2"
           >
+            <Logo />
             DevoCode
           </Link>
         </div>
