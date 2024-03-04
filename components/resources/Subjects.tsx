@@ -140,7 +140,7 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
           <input
             type="text"
             placeholder="Search by code or title..."
-            className="input input-bordered w-full sm:w-fit pl-12"
+            className="input input-bordered w-full sm:w-72 pl-12"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

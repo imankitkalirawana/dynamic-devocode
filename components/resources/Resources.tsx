@@ -29,9 +29,10 @@ type Resource = {
 
 type ResourcesProps = {
   resources: Resource[];
+  type: string;
 };
 
-const Resources: React.FC<ResourcesProps> = ({ resources }) => {
+const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
   const router = useRouter();
   const { loggedIn } = isLoggedIn();
   const [searchQuery, setSearchQuery] = useState("");
@@ -194,8 +195,10 @@ const Resources: React.FC<ResourcesProps> = ({ resources }) => {
 
           <input
             type="text"
-            placeholder={`Search in ${code}`}
-            className="input input-bordered w-full sm:w-fit pl-12"
+            placeholder={`Search ${
+              type == "all" ? "anything" : type
+            } in ${code}`}
+            className="input input-bordered w-full sm:w-72 pl-12"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

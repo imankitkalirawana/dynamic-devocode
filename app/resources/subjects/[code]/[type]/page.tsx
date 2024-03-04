@@ -75,7 +75,7 @@ export default async function Page({ params }: Props) {
     <>
       <div className="grid grid-cols-12 gap-4 gap-y-8 mt-8">
         {resources.length > 0 ? (
-          <Resources resources={resources} />
+          <Resources resources={resources} type={params.type} />
         ) : (
           <NotFound message="Nothing uploaded there! Maybe you can try later." />
         )}
