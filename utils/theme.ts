@@ -21,6 +21,6 @@ export default function dynamicTheme() {
   } else if (month >= 11 || month < 1) {
     document.documentElement.setAttribute("data-theme", theme || "winter");
   } else {
-    document.documentElement.setAttribute("data-theme", theme || "lemonade");
+    document.documentElement.setAttribute("data-theme", theme || "forest");
   }
 };
