@@ -5,7 +5,7 @@ import Navbar from "@/components/common/Navbar";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import ProgressBarI from "@/components/common/ProgressBar";
+// import ProgressBarI from "@/components/common/ProgressBar";
 
 export const metadata: Metadata = {
   title: "Devocode By Divinely Developer",
@@ -34,7 +34,7 @@ export default function RootLayout({
             <Analytics />
             <SpeedInsights />
           </main>
-          <ProgressBarI />
+          {/* <ProgressBarI /> */}
         </Providers>
       </body>
     </html>
