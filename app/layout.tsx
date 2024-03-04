@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme={"default"}
+      data-theme={"lemonade"}
       className="transition-all duration-1000"
     >
       <body>
