@@ -224,7 +224,7 @@ const Resources: React.FC<ResourcesProps> = ({ resources }) => {
           </div>
           <ul
             tabIndex={0}
-            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+            className="dropdown-content z-[1] menu p-2 shadow bg-base-100/20 backdrop-blur-lg rounded-box w-52"
           >
             <li onClick={() => setFilterCriteria("ascending")}>
               <a>
@@ -345,7 +345,10 @@ const Resources: React.FC<ResourcesProps> = ({ resources }) => {
             title={`Title: ${resource.title}\nDescription: ${resource.description}`}
           >
             {path?.includes("all") && (
-              <span className="indicator-item badge badge-primary -top-2 -right-4 absolute">
+              // <span className="indicator-item badge badge-primary -top-2 -right-4 absolute">
+              //   {resource.type}
+              // </span>
+              <span className="indicator-item absolute -top-2 -right-4 inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/70 backdrop-blur-lg">
                 {resource.type}
               </span>
             )}

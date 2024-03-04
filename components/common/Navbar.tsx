@@ -78,7 +78,7 @@ const Navbar = () => {
         />
       )}
       <div
-        className={`navbar bg-base-100/70 fixed z-30 text-content backdrop-blur-lg transition-all duration-1000 top-0 ${
+        className={`navbar bg-base-100/50 fixed z-30 text-content backdrop-blur-lg transition-all duration-1000 top-0 ${
           location?.startsWith("/auth") ? "hidden" : ""
         }`}
       >
@@ -105,46 +105,6 @@ const Navbar = () => {
                 />
               </svg>
             </label>
-            <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-
-            <div className="drawer-side z-40" tabIndex={0}>
-              <label
-                htmlFor="my-drawer"
-                aria-label="close sidebar"
-                className="drawer-overlay"
-              ></label>
-              <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-                <li>
-                  <Link href={"/"}>Home</Link>
-                </li>
-                {loggedIn && (
-                  <li>
-                    <Link href={"/dashboard"}>Dashboard</Link>
-                  </li>
-                )}
-                <li>
-                  <Link href={"/resources"}>Resources</Link>
-                </li>
-                <li>
-                  <Link href={"/resources/subjects"}>Subjects</Link>
-                </li>
-                {/* <li>
-                  <Link href={"/resources/announcements"}>Announcements</Link>
-                </li>
-                <li>
-                  <Link href={"/resources/dl"}>DL's</Link>
-                </li> */}
-                <li>
-                  <Link href={"/settings/preference"}>Settings</Link>
-                </li>
-                <li>
-                  <a href="https://divinelydeveloper.me">About</a>
-                </li>
-                <li>
-                  <a href="https://divinelydeveloper.me">Contact</a>
-                </li>
-              </ul>
-            </div>
           </div>
           <Link
             href={"/"}
@@ -308,7 +268,7 @@ const Navbar = () => {
       </div>
       {isNew && (
         <div
-          className="card max-w-96 w-full bg-base-100 shadow-xl fixed bottom-[50%] translate-y-[50%] z-10 left-[50%] translate-x-[-50%] px-8 py-4 md:left-1 md:bottom-1 md:translate-x-0 md:translate-y-0"
+          className="card max-w-96 w-full bg-base-100/50 backdrop-blur-lg shadow-xl fixed bottom-[50%] translate-y-[50%] z-10 left-[50%] translate-x-[-50%] px-8 py-4 md:left-1 md:bottom-1 md:translate-x-0 md:translate-y-0"
           id="updated-popup"
         >
           <form method="dialog">
@@ -332,6 +292,45 @@ const Navbar = () => {
           </p>
         </div>
       )}
+      <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-side z-50" tabIndex={0}>
+        <label
+          htmlFor="my-drawer"
+          aria-label="close sidebar"
+          className="drawer-overlay"
+        ></label>
+        <ul className="menu p-4 w-80 min-h-full bg-base-100/50 backdrop-blur-lg text-base-content">
+          <li>
+            <Link href={"/"}>Home</Link>
+          </li>
+          {loggedIn && (
+            <li>
+              <Link href={"/dashboard"}>Dashboard</Link>
+            </li>
+          )}
+          <li>
+            <Link href={"/resources"}>Resources</Link>
+          </li>
+          <li>
+            <Link href={"/resources/subjects"}>Subjects</Link>
+          </li>
+          {/* <li>
+                  <Link href={"/resources/announcements"}>Announcements</Link>
+                </li>
+                <li>
+                  <Link href={"/resources/dl"}>DL's</Link>
+                </li> */}
+          <li>
+            <Link href={"/settings/preference"}>Settings</Link>
+          </li>
+          <li>
+            <a href="https://divinelydeveloper.me">About</a>
+          </li>
+          <li>
+            <a href="https://divinelydeveloper.me">Contact</a>
+          </li>
+        </ul>
+      </div>
     </>
   );
 };

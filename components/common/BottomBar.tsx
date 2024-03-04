@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const BottomBar = () => {
   const pathname = usePathname();
   return (
-    <div className="fixed z-50 w-full h-16 max-w-lg -translate-x-1/2 bg-base-100/70 border border-base-200 rounded-full bottom-4 left-1/2 backdrop-blur-lg">
+    <div className="fixed z-50 w-full h-16 max-w-lg -translate-x-1/2 bg-base-100/50 border border-base-200 rounded-full bottom-4 left-1/2 backdrop-blur-lg">
       <div className="grid h-full max-w-lg grid-cols-5 mx-auto">
         <Link
           href={"/"}
