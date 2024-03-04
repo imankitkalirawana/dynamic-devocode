@@ -39,7 +39,7 @@ const Banner = () => {
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link href="/resources" className="btn btn-primary">
-              Get started
+              Explore Resources
             </Link>
             <a
               href="https://docs.google.com/forms/d/e/1FAIpQLSdFBSjoY5HW4QeUwOPn2gBruzUwW4utGR1TAGIXa4UoQwmKgg/viewform?usp=send_form"
