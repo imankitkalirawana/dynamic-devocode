@@ -27,7 +27,7 @@ const features = [
   {
     name: "Customizable platform",
     description:
-      "You can customize the platform according to your needs with 30+ handpicked themes.",
+      "You can customize the platform according to your needs with 18+ handpicked themes.",
     icon: SwatchIcon,
   },
 ];
