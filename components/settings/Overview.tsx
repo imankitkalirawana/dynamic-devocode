@@ -100,7 +100,8 @@ const Overview = () => {
               {user.address ? user.address : "-"}
             </dd>
           </div>
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <div className="hidden">
+            {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"> */}
             <dt className="text-sm font-medium leading-6 ">Attachments</dt>
             <dd className="mt-2 text-sm  sm:col-span-2 sm:mt-0">
               <ul role="list" className="rounded-md">
@@ -122,12 +123,12 @@ const Overview = () => {
                     </svg>
 
                     <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">pan_card.pdf</span>
-                      <span className="flex-shrink-0 ">2.4mb</span>
+                      <span className="truncate font-medium">-</span>
+                      <span className="flex-shrink-0 "></span>
                     </div>
                   </div>
                   <div className="ml-4 flex-shrink-0">
-                    <a href="#" className="btn btn-sm btn-ghost">
+                    <a href="#" className="btn btn-sm btn-ghost hidden">
                       Download
                     </a>
                   </div>

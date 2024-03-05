@@ -41,16 +41,17 @@ export default async function handler(req, res) {
     } else if (req.method === "PUT") {
       try {
         const userId = req.userId;
-        const { firstname, lastname, username, email, phone } = req.body;
+        const { name, username, about, email, phone, address } = req.body;
         const user = await User.findById(userId);
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
-        user.firstname = firstname;
-        user.lastname = lastname;
+        user.name = name;
         user.username = username;
         user.email = email;
+        user.about = about;
         user.phone = phone;
+        user.address = address;
 
         await user.save();
         res.json({ message: "Profile updated successfully" });

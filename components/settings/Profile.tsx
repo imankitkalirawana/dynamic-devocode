@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import PSkeleton from "./PSkeleton";
+import { toast } from "react-hot-toast";
+import { useFormik } from "formik";
 
-type User = {
+interface User {
   _id: string;
   name: string;
   profile: string;
@@ -17,12 +19,38 @@ type User = {
   createdat: string;
   updatedat: string;
   theme: string;
-};
+}
 
 const Profile = () => {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>({} as User);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      phone: user.phone,
+      about: user.about,
+      address: user.address,
+      confirmusername: "",
+    },
+    onSubmit: async (values) => {
+      try {
+        const res = await axios.put("/api/user", values, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        toast.success(res.data.message);
+        router.refresh();
+      } catch (error: any) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    },
+  });
 
   useEffect(() => {
     // fetch user data
@@ -34,6 +62,15 @@ const Profile = () => {
           },
         });
         setUser(res.data);
+        formik.setValues({
+          ...formik.values,
+          name: res.data.name,
+          username: res.data.username,
+          email: res.data.email,
+          phone: res.data.phone,
+          about: res.data.about,
+          address: res.data.address,
+        });
       } catch (error) {
         console.log(error);
       }
@@ -44,6 +81,25 @@ const Profile = () => {
     }
   }, []);
 
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await axios.delete("/api/user", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast.success("Account deleted successfully");
+      localStorage.removeItem("token");
+      router.push("/auth/login");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (!user)
     return (
       <>
@@ -53,7 +109,7 @@ const Profile = () => {
 
   return (
     <div className="col-span-full lg:col-span-9">
-      <form className="px-4 sm:px-0">
+      <form className="px-4 sm:px-0" onSubmit={formik.handleSubmit}>
         <div className="pb-12">
           <h2 className="text-base font-semibold leading-7 text-base-content">
             Profile
@@ -79,11 +135,8 @@ const Profile = () => {
                     id="username"
                     autoComplete="username"
                     className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-base-content placeholder:text-base-neutral focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder={user.username}
-                    value={user.username}
-                    onChange={(e) =>
-                      setUser({ ...user, username: e.target.value })
-                    }
+                    onChange={formik.handleChange}
+                    value={formik.values.username}
                   />
                 </div>
               </div>
@@ -98,9 +151,9 @@ const Profile = () => {
                   id="about"
                   name="about"
                   rows={3}
-                  className="input input-bordered block w-full h-28 bg-base-100 py-1.5 text-base-content shadow-sm placeholder:text-neutral focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                  value={user.about}
-                  onChange={(e) => setUser({ ...user, about: e.target.value })}
+                  className="textarea textarea-bordered block w-full h-28 bg-base-100 py-1.5 text-base-content shadow-sm placeholder:text-neutral focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                  onChange={formik.handleChange}
+                  value={formik.values.about}
                 />
               </div>
               <div className="label">
@@ -110,7 +163,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="col-span-full">
+            <div className="col-span-full hidden">
               <label htmlFor="photo" className="label">
                 <span className="label-text">Photo</span>
               </label>
@@ -129,7 +182,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="col-span-full">
+            <div className="col-span-full hidden">
               <label htmlFor="cover-photo" className="label">
                 <span className="label-text">Cover Photo</span>
               </label>
@@ -170,18 +223,18 @@ const Profile = () => {
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="col-span-6 sm:col-span-3">
-                <label htmlFor="first-name" className="label">
-                  <span className="label-text">First Name</span>
+                <label htmlFor="name" className="label">
+                  <span className="label-text">Full Name</span>
                 </label>
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="first-name"
-                    id="first-name"
+                    name="name"
+                    id="name"
                     autoComplete="given-name"
                     className="input input-bordered w-full"
-                    value={user.name}
-                    onChange={(e) => setUser({ ...user, name: e.target.value })}
+                    onChange={formik.handleChange}
+                    value={formik.values.name}
                   />
                 </div>
               </div>
@@ -197,10 +250,9 @@ const Profile = () => {
                     type="email"
                     autoComplete="email"
                     className="input input-bordered w-full"
-                    value={user.email}
-                    onChange={(e) =>
-                      setUser({ ...user, email: e.target.value })
-                    }
+                    onChange={formik.handleChange}
+                    value={formik.values.email}
+                    disabled
                   />
                 </div>
               </div>
@@ -209,23 +261,16 @@ const Profile = () => {
                   <span className="label-text">Phone</span>
                 </label>
                 <div className="mt-2">
-                  <div className="flex input input-bordered shadow-sm">
-                    <span className="hidden sm:flex select-none items-center pl-1 text-base-content sm:text-sm">
-                      +91
-                    </span>
-                    <input
-                      type="text"
-                      name="phone"
-                      id="phone"
-                      autoComplete="phone"
-                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-base-content placeholder:text-base-neutral focus:ring-0 sm:text-sm sm:leading-6"
-                      placeholder={user.phone}
-                      value={user.phone}
-                      onChange={(e) =>
-                        setUser({ ...user, phone: e.target.value })
-                      }
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    autoComplete="phone"
+                    className="input input-bordered w-full"
+                    onChange={formik.handleChange}
+                    value={formik.values.phone}
+                    disabled
+                  />
                 </div>
               </div>
 
@@ -240,17 +285,15 @@ const Profile = () => {
                     type="address"
                     autoComplete="address"
                     className="input input-bordered w-full"
-                    value={user.address}
-                    onChange={(e) =>
-                      setUser({ ...user, address: e.target.value })
-                    }
+                    onChange={formik.handleChange}
+                    value={formik.values.address}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pb-12">
+          <div className="pb-12 hidden">
             <h2 className="text-base font-semibold leading-7 text-base-content">
               Notifications
             </h2>
@@ -408,18 +451,28 @@ const Profile = () => {
           <div className="modal-box max-w-96">
             <label htmlFor="city" className="label">
               <span className="label-text">
-                Enter <b>{user.username}</b> to delete
+                Enter <b>{formik.values.username}</b> to delete
               </span>
             </label>
             <input
               type="text"
               id="delete_confirmation"
+              name="confirmusername"
               className="input input-bordered w-full placeholder:text-base-content/40"
-              placeholder={user.username}
+              placeholder={formik.values.username}
               disabled={isDeleting}
+              onChange={formik.handleChange}
+              value={formik.values.confirmusername}
             />
             <div className="flex modal-action">
-              <button className="btn btn-primary flex-1" disabled={isDeleting}>
+              <button
+                className="btn btn-primary flex-1"
+                disabled={
+                  formik.values.confirmusername !== formik.values.username ||
+                  isDeleting
+                }
+                onClick={handleDelete}
+              >
                 {isDeleting ? (
                   <span className="loading loading-dots loading-sm"></span>
                 ) : (

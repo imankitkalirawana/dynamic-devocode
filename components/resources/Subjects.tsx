@@ -1,7 +1,7 @@
 "use client";
 import Trash from "@/assets/Trash";
 import Link from "next/link";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { isLoggedIn } from "@/utils/auth";
 import dynamic from "next/dynamic";
 import { toast } from "react-hot-toast";
@@ -62,15 +62,16 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
         {
           loading: "Deleting...",
           success: "Deleted",
-          error: "Error",
+          error: "Error deleting",
         }
       );
       modal?.click();
       router.refresh();
       // window.location.reload();
       // close the modal
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error(error.message);
+      toast.error(error.message);
     }
   };
 

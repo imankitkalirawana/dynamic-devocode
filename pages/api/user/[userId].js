@@ -27,16 +27,8 @@ export default async function handler(req, res) {
       try {
         const userId = req.query.userId;
         if (userId === "register") {
-          const { firstname, lastname, username, email, phone, password } =
-            req.body;
-          if (
-            !firstname ||
-            !lastname ||
-            !username ||
-            !email ||
-            !phone ||
-            !password
-          ) {
+          const { name, username, email, phone, password } = req.body;
+          if (!name || !username || !email || !phone || !password) {
             return res.status(400).json({ error: "All fields are required" });
           }
           const userExists = await User.findOne({ username });
@@ -49,8 +41,7 @@ export default async function handler(req, res) {
           }
           const hashedPassword = await bcrypt.hash(password, 10);
           const user = await User.create({
-            firstname,
-            lastname,
+            name,
             username,
             email,
             phone,
@@ -75,13 +66,12 @@ export default async function handler(req, res) {
     } else if (req.method === "PUT") {
       try {
         const userId = req.query.userId;
-        const { firstname, lastname, username, email, phone } = req.body;
+        const { name, username, email, phone } = req.body;
         const user = await User.findById(userId);
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
-        user.firstname = firstname;
-        user.lastname = lastname;
+        user.name = name;
         user.username = username;
         user.email = email;
         user.phone = phone;

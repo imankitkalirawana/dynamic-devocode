@@ -94,11 +94,11 @@ export default cors(async (req, res) => {
       } else if (req.method === "PUT") {
         try {
           // only update what user created
-          // const userId = req.userId;
+          const userId = req.userId;
           const { resourceId } = req.query;
           const resource = await Resources.findOne({
             _id: resourceId,
-            // by: userId,
+            by: userId,
           });
           if (!resource) {
             res.status(404).json({ message: "Resource not found" });

@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { isLoggedIn } from "@/utils/auth";
 import { usePathname } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 interface Props {
   params: {
@@ -55,15 +56,22 @@ const Page = ({ params }: Props) => {
     },
     onSubmit: async (values) => {
       try {
-        await axios
-          .put(`/api/resources/subjects/${params.code}`, values, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          })
-          .then(() => {
-            router.push("/resources/subjects");
-          });
+        await toast.promise(
+          axios
+            .put(`/api/resources/subjects/${params.code}`, values, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            })
+            .then(() => {
+              router.push("/resources/subjects");
+            }),
+          {
+            loading: "Updating...",
+            success: "Subject updated",
+            error: AxiosError.ERR_BAD_REQUEST as string,
+          }
+        );
       } catch (error) {
         console.error(error);
       }
@@ -72,14 +80,16 @@ const Page = ({ params }: Props) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/resources/subjects/${params.code}`, {
+      const res = await axios.delete(`/api/resources/subjects/${params.code}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      toast.success(res.data.message);
       router.push("/resources/subjects");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      toast.error(error.message);
     }
   };
 
