@@ -5,6 +5,8 @@ import axios from "axios";
 import S3 from "aws-sdk/clients/s3";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import Jimp from "jimp";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -40,6 +42,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       link: "",
       file: null,
       filesize: "",
+      watermark: false,
     },
     onSubmit: async (values) => {
       addData(values);
@@ -104,6 +107,10 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       setFile(file);
       formik.setFieldValue("file", file.name);
       formik.setFieldValue("filesize", fileSize.toFixed(2));
+    } else {
+      // If no file is selected, reset the file state and formik field
+      setFile(null);
+      formik.setFieldValue("file", null);
     }
   };
 
@@ -123,7 +130,53 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
         Key: file.name,
         Body: file,
       };
+
       try {
+        if (formik.values.watermark === true) {
+          if (file.type === "application/pdf") {
+            // Watermark for PDF files
+            const watermarkText = "www.devocode.in";
+            const existingPdfBytes = await file.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            const pages = pdfDoc.getPages();
+
+            for (let i = 0; i < pages.length; i++) {
+              const page = pages[i];
+              const { width, height } = page.getSize();
+              const fontSize = 16;
+
+              const x = width - 150;
+              const y = height - 30;
+
+              page.drawText(watermarkText, {
+                x: x,
+                y: y,
+                size: fontSize,
+                color: rgb(0, 0, 0),
+                opacity: 0.7,
+              });
+            }
+
+            const modifiedPdfBytes = await pdfDoc.save();
+            const modifiedPdfFile = new File([modifiedPdfBytes], file.name);
+            params.Body = modifiedPdfFile;
+          } else if (file.type === "image/jpeg" || file.type === "image/jpg") {
+            const watermarkText = "devocode.in";
+            const image = await Jimp.read(file);
+            const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
+            image.print(font, 10, 10, watermarkText);
+
+            const modifiedImageBuffer = await image.getBufferAsync(
+              Jimp.MIME_JPEG
+            );
+            const modifiedImageFile = new File(
+              [modifiedImageBuffer],
+              file.name
+            );
+            params.Body = modifiedImageFile;
+          }
+        }
+
         const upload = s3.upload(params);
         setUpload(upload);
         upload.on("httpUploadProgress", (p: any) => {
@@ -135,7 +188,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
           error: "Error",
         });
         formik.resetForm();
-        //   close the popup
+        // close the popup
         const modal = document.getElementById("add_subject");
         modal?.click();
         router.refresh();
@@ -216,6 +269,19 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
             </div>
           ) : (
             <>
+              <div className="flex flex-col w-full">
+                <label htmlFor="filesize" className="label">
+                  <span className="label-text">Add watermark</span>
+                </label>
+                <input
+                  type="checkbox"
+                  id="watermark"
+                  name="watermark"
+                  className="toggle"
+                  onChange={formik.handleChange}
+                  checked={formik.values.watermark}
+                />
+              </div>
               <div className="flex flex-col w-full">
                 <label htmlFor="file" className="label">
                   <span className="label-text">File</span>
