@@ -162,7 +162,14 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
             params.Body = modifiedPdfFile;
           } else if (file.type === "image/jpeg" || file.type === "image/jpg") {
             const watermarkText = "devocode.in";
-            const image = await Jimp.read(file);
+
+            // Read file content as buffer
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            // Read buffer using Jimp
+            const image = await Jimp.read(buffer);
+
             const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
             image.print(font, 10, 10, watermarkText);
 
