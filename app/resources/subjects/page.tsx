@@ -3,11 +3,41 @@ import Subjects from "@/components/resources/Subjects";
 import NotFound from "@/components/assets/NotFound";
 
 async function getSubjects() {
-  const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
-    cache: "no-cache",
-    method: "GET",
-  });
-  return res.json();
+  // const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
+  //   cache: "no-cache",
+  //   method: "GET",
+  // });
+  // return res.json();
+  return [
+    {
+      _id: "1",
+      code: "CS 101",
+      title: "Introduction to Computer Science",
+      description: "This is the description of CS 101",
+      isArchived: false,
+    },
+    {
+      _id: "2",
+      code: "CS 102",
+      title: "Data Structures and Algorithms",
+      description: "This is the description of CS 102",
+      isArchived: false,
+    },
+    {
+      _id: "3",
+      code: "CS 103",
+      title: "Operating Systems",
+      description: "This is the description of CS 103",
+      isArchived: true,
+    },
+    {
+      _id: "4",
+      code: "CS 104",
+      title: "Database Management Systems",
+      description: "This is the description of CS 104",
+      isArchived: false,
+    },
+  ];
 }
 
 export default async function Page() {
