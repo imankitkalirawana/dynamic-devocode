@@ -1,51 +1,36 @@
+"use client";
 import API_BASE_URL from "@/utils/config";
 import Subjects from "@/components/resources/Subjects";
 import NotFound from "@/components/assets/NotFound";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-async function getSubjects() {
-  // const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
-  //   cache: "no-cache",
-  //   method: "GET",
-  // });
-  // return res.json();
-  return [
-    {
-      _id: "1",
-      code: "CS 101",
-      title: "Introduction to Computer Science",
-      description: "This is the description of CS 101",
-      isArchived: false,
-      addedDate: "2021-10-01",
-    },
-    {
-      _id: "2",
-      code: "CS 102",
-      title: "Data Structures and Algorithms",
-      description: "This is the description of CS 102",
-      isArchived: false,
-      addedDate: "2021-10-02",
-    },
-    {
-      _id: "3",
-      code: "CS 103",
-      title: "Operating Systems",
-      description: "This is the description of CS 103",
-      isArchived: true,
-      addedDate: "2021-10-03",
-    },
-    {
-      _id: "4",
-      code: "CS 104",
-      title: "Database Management Systems",
-      description: "This is the description of CS 104",
-      isArchived: false,
-      addedDate: "2021-10-04",
-    },
-  ];
-}
+// async function getSubjects() {
+//   const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
+//     cache: "no-cache",
+//     method: "GET",
+//   });
+//   return res.json();
+// }
 
 export default async function Page() {
-  const subjects = await getSubjects();
+  // const subjects = await getSubjects();
+  const [subjects, setSubjects] = useState([]);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/resources/subjects`);
+        setSubjects(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchSubjects();
+  }, []);
+
+  console.log(subjects);
+
   // filter subjects with isArchived = false
   const filteredSubjects = subjects?.filter(
     (subject: any) => subject.isArchived === false
