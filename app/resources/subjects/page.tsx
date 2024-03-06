@@ -15,6 +15,7 @@ async function getSubjects() {
       title: "Introduction to Computer Science",
       description: "This is the description of CS 101",
       isArchived: false,
+      addedDate: "2021-10-01",
     },
     {
       _id: "2",
@@ -22,6 +23,7 @@ async function getSubjects() {
       title: "Data Structures and Algorithms",
       description: "This is the description of CS 102",
       isArchived: false,
+      addedDate: "2021-10-02",
     },
     {
       _id: "3",
@@ -29,6 +31,7 @@ async function getSubjects() {
       title: "Operating Systems",
       description: "This is the description of CS 103",
       isArchived: true,
+      addedDate: "2021-10-03",
     },
     {
       _id: "4",
@@ -36,6 +39,7 @@ async function getSubjects() {
       title: "Database Management Systems",
       description: "This is the description of CS 104",
       isArchived: false,
+      addedDate: "2021-10-04",
     },
   ];
 }
