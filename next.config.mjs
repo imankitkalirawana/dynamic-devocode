@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+import { withAxiom } from "next-axiom";
+
+const nextConfig = withAxiom({
   async headers() {
     return [
       {
@@ -21,6 +23,6 @@ const nextConfig = {
       },
     ];
   },
-};
+});
 
 export default nextConfig;

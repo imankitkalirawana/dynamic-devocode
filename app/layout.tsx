@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 // import ProgressBarI from "@/components/common/ProgressBar";
+import { AxiomWebVitals } from "next-axiom";
 
 export const metadata: Metadata = {
   title: "Devocode By Divinely Developer",
@@ -33,6 +34,7 @@ export default function RootLayout({
             {children}
             <Analytics />
             <SpeedInsights />
+            <AxiomWebVitals />
           </main>
           {/* <ProgressBarI /> */}
         </Providers>
