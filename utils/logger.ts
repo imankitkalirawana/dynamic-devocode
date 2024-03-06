@@ -16,6 +16,7 @@ const logger = createLogger({
         format.splat(),
         format.json(),
     ),
+    defaultMeta: { service: "user-service" },
     transports: [
         new transports.File({ filename: "error.log", level: "error" }),
         new transports.File({ filename: "combined.log" }),
@@ -42,6 +43,7 @@ if (process.env.NEXT_PUBLIC_NODE_ENV === "production") {
         format: format.combine(
             format.timestamp(),
             format.json(),
+            format.metadata(),
         )
     }),);
 }
