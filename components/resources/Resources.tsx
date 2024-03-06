@@ -87,7 +87,7 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
       extension === "jpg" ||
       extension === "jpeg"
     ) {
-      window.open(`/api/file/view?filename=${file}`, "_blank");
+      window.open(`/api/file/${file}`, "_blank");
     } else {
       toast.promise(
         handleDownload(file),
