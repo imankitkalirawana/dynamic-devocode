@@ -56,17 +56,58 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
     };
 
     try {
-      const url = await s3.getSignedUrlPromise("getObject", params);
-      window.open(url, "_blank");
+      const url = await toast.promise(
+        s3.getSignedUrlPromise("getObject", params),
+        {
+          loading: "Loading...",
+          success: "Download Started",
+          error: "Error Downloading File",
+        },
+        {
+          id: "download",
+          duration: 5000,
+        }
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const openFile = (file: string) => {
+    const extension = file.split(".").pop();
+    if (
+      extension === "pdf" ||
+      extension === "png" ||
+      extension === "jpg" ||
+      extension === "jpeg"
+    ) {
+      window.open(`/api/file/view?filename=${file}`, "_blank");
+    } else {
+      toast.promise(
+        handleDownload(file),
+        {
+          loading: "Loading...",
+          success: "Cannot open file! Downloading...",
+          error: "Error Downloading File",
+        },
+        {
+          id: "download",
+        }
+      );
+      // handleDownload(file);
     }
   };
 
   const handleCardClick = (e: any, file: string, link: string) => {
     e.preventDefault();
     if (file) {
-      handleDownload(file);
+      openFile(file);
     } else if (link) {
       window.open(link, "_blank");
     }
@@ -356,55 +397,64 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
               </span>
             )}
 
-            {loggedIn && (
-              <div className="flex items-center justify-between">
-                <div className="dropdown dropdown-end absolute right-3 top-3">
-                  <div
-                    tabIndex={0}
-                    role="button"
-                    className="btn btn-sm btn-ghost m-1"
+            <div className="flex items-center justify-between">
+              <div className="dropdown dropdown-end absolute right-3 top-3">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-sm btn-ghost m-1"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                      />
-                    </svg>
-                  </div>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100/30 backdrop-blur-lg rounded-box w-52"
-                  >
-                    <li>
-                      <Link
-                        href={`/resources/subjects/update/${code}/${resource._id}`}
-                      >
-                        Edit
-                      </Link>
-                    </li>
-                    <li>
-                      <a>Archive</a>
-                    </li>
-                    <li>
-                      <label
-                        htmlFor={`delete_modal_${resource._id}`}
-                        className="text-error"
-                      >
-                        Delete
-                      </label>
-                    </li>
-                  </ul>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                    />
+                  </svg>
                 </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100/30 backdrop-blur-lg rounded-box w-52"
+                >
+                  <li onClick={() => openFile(resource.file)}>
+                    <a>Open file</a>
+                  </li>
+                  <li onClick={() => handleDownload(resource.file)}>
+                    <a>Download</a>
+                  </li>
+                  {loggedIn && (
+                    <>
+                      <li>
+                        <Link
+                          href={`/resources/subjects/update/${code}/${resource._id}`}
+                        >
+                          Edit
+                        </Link>
+                      </li>
+
+                      <li>
+                        <a>Archive</a>
+                      </li>
+                      <li>
+                        <label
+                          htmlFor={`delete_modal_${resource._id}`}
+                          className="text-error"
+                        >
+                          Delete
+                        </label>
+                      </li>
+                    </>
+                  )}
+                </ul>
               </div>
-            )}
+            </div>
             <div
               className="px-8 py-4"
               onClick={(e) => handleCardClick(e, resource.file, resource.link)}
