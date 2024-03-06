@@ -2,9 +2,13 @@ import Subject from "@/models/Subjects";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 import cors from "@/cors";
+import logger from "@/utils/logger";
 connectDB();
 
 export default cors(async (req, res) => {
+  // get device details and ip address
+  const device = req.headers["user-agent"];
+  const ip = req.headers["x-real-ip"];
   if (req.method === "GET") {
     // get subject by code
     try {
@@ -38,8 +42,12 @@ export default cors(async (req, res) => {
             by: userId,
           });
           if (!subject) {
-            console.log("subject not found...");
-            res.status(404).json({ message: "Subject not found" });
+            logger.error(
+              `User: ${userId} tried to update resource: ${subjectCode} which does not exist or is not created by the user from ${ip} using ${device}`
+            );
+            res
+              .status(404)
+              .json({ message: "You can only update what you have created" });
             return;
           }
           let { code, title, description, isArchived } = req.body;
@@ -56,10 +64,14 @@ export default cors(async (req, res) => {
             { code, title, description, isArchived },
             { new: true }
           );
-          console.log("subject updated...");
+          logger.info(
+            `User: ${userId} updated subject: ${subjectCode} from ${ip} using ${device}`
+          );
           res.status(200).json(updatedSubject);
         } catch (e) {
-          console.log(e.message);
+          logger.error(
+            `Error updating subject: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+          );
           res.status(400).json({ message: e.message });
         }
       } else if (req.method === "DELETE") {
@@ -71,15 +83,29 @@ export default cors(async (req, res) => {
             by: userId,
           });
           if (!subject) {
-            res.status(404).json({ message: "Subject not found" });
+            logger.error(
+              `User: ${userId} tried to delete subject: ${subjectCode} which does not exist or is not created by the user from ${ip} using ${device}`
+            );
+            res
+              .status(404)
+              .json({ message: "You can only delete what you created!" });
             return;
           }
           await Subject.findOneAndDelete({ code: subjectCode, by: userId });
+          logger.info(
+            `User: ${userId} deleted subject: ${subjectCode} from ${ip} using ${device}`
+          );
           res.status(200).json({ message: "Subject deleted" });
         } catch (e) {
+          logger.error(
+            `Error deleting subject: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+          );
           res.status(400).json({ message: e.message });
         }
       } else {
+        logger.error(
+          `User: ${req.userId} tried to use ${req.method} method on /resources/subjects/${req.query.subjectCode} from ${ip} using ${device}`
+        );
         res.status(405).json({ message: "Method not allowed" });
       }
     });

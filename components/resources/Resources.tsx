@@ -132,25 +132,20 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
 
   const handleDelete = async (e: any, resourceId: string) => {
     try {
-      await toast
-        .promise(
-          axios.delete(`/api/resources/resources/?resourceId=${resourceId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }),
-          {
-            loading: "Deleting...",
-            success: "Deleted",
-            error: "Error",
-          }
-        )
+      await axios
+        .delete(`/api/resources/resources/?resourceId=${resourceId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
         .then(() => {
           const modal = document.getElementById(`delete_modal_${resourceId}`);
           modal?.click();
+          toast.success("Resource deleted");
           router.refresh();
         });
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(error.response.data.message);
       console.error(error);
     }
   };

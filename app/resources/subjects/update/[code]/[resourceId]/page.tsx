@@ -64,27 +64,22 @@ const Page = ({ params }: Props) => {
     },
     onSubmit: async (values) => {
       try {
-        await toast
-          .promise(
-            axios.put(
-              `/api/resources/resources/?resourceId=${params.resourceId}`,
-              values,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              }
-            ),
+        await axios
+          .put(
+            `/api/resources/resources/?resourceId=${params.resourceId}`,
+            values,
             {
-              loading: "Updating...",
-              success: "Updated",
-              error: "Error",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
             }
           )
           .then(() => {
+            toast.success("Resource updated");
             router.push(`/resources/subjects/${params.code}/all`);
           });
-      } catch (error) {
+      } catch (error: any) {
+        toast.error(error.response.data.message);
         console.error(error);
       }
     },
@@ -92,26 +87,21 @@ const Page = ({ params }: Props) => {
 
   const handleDelete = async () => {
     try {
-      await toast.promise(
-        axios.delete(
-          `/api/resources/resources/?resourceId=${params.resourceId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        ),
+      await axios.delete(
+        `/api/resources/resources/?resourceId=${params.resourceId}`,
         {
-          loading: "Deleting...",
-          success: "Deleted",
-          error: "Error",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
+      toast.success("Resource deleted");
       handleDeleteFile(resource.file).then(() => {
         router.push(`/resources/subjects/${params.code}/all`);
       });
       // router.push(`/resources/subjects/${params.code}/all`);
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(error.response.data.message);
       console.error(error);
     }
   };

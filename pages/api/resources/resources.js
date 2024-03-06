@@ -3,6 +3,7 @@ import Subject from "@/models/Subjects";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 import cors from "@/cors";
+import logger from "@/utils/logger";
 connectDB();
 
 // get subject id from subject code
@@ -13,6 +14,9 @@ const getSubjectId = async (subjectCode) => {
 };
 
 export default cors(async (req, res) => {
+  // get device details and ip address
+  const device = req.headers["user-agent"];
+  const ip = req.headers["x-real-ip"];
   if (req.method === "GET") {
     try {
       const { subjectCode, type, resourceId } = req.query;
@@ -86,9 +90,17 @@ export default cors(async (req, res) => {
             by: userId,
           });
 
+          logger.log(
+            "info",
+            `Resource: ${title}: ${description} (${resourceType}) created by user: ${userId} from ${ip} using ${device}`
+          );
+
           res.status(201).json(resource);
         } catch (e) {
-          console.log(e);
+          logger.log(
+            "error",
+            `Error creating resource: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+          );
           res.status(400).json({ message: e.message });
         }
       } else if (req.method === "PUT") {
@@ -101,7 +113,13 @@ export default cors(async (req, res) => {
             by: userId,
           });
           if (!resource) {
-            res.status(404).json({ message: "Resource not found" });
+            logger.log(
+              "error",
+              `User: ${userId} tried to update resource: ${resourceId} which does not exist or is not created by the user from ${ip} using ${device}`
+            );
+            res
+              .status(404)
+              .json({ message: "You can update only what you have created!" });
             return;
           }
 
@@ -127,9 +145,16 @@ export default cors(async (req, res) => {
             },
             { new: true }
           );
-          console.log(updatedResource);
+          logger.log(
+            "info",
+            `Resource: ${title}: ${description} (${type}) updated by user: ${userId} from ${ip} using ${device}`
+          );
           res.status(200).json(updatedResource);
         } catch (e) {
+          logger.log(
+            "error",
+            `Error updating resource: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+          );
           res.status(400).json({ message: e.message });
         }
       } else if (req.method === "DELETE") {
@@ -141,15 +166,33 @@ export default cors(async (req, res) => {
             by: userId,
           });
           if (!resource) {
-            res.status(404).json({ message: "Resource not found" });
+            logger.log(
+              "error",
+              `User: ${userId} tried to delete resource: ${resourceId} which does not exist or is not created by the user from ${ip} using ${device}`
+            );
+            res
+              .status(404)
+              .json({ message: "You can only delete what you have created!" });
             return;
           }
           await Resources.findByIdAndDelete(resourceId);
+          logger.log(
+            "info",
+            `Resource: ${resource.title}: ${resource.description} (${resource.type}) deleted by user: ${userId} from ${ip} using ${device}`
+          );
           res.status(200).json({ message: "Resource deleted successfully" });
         } catch (e) {
+          logger.log(
+            "error",
+            `Error deleting resource: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+          );
           res.status(400).json({ message: e.message });
         }
       } else {
+        logger.log(
+          "error",
+          `User: ${req.userId} tried to access resource API with ${req.method} method from ${ip} using ${device}`
+        );
         res.status(405).json({ message: "Method not allowed" });
       }
     });

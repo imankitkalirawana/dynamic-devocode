@@ -2,6 +2,7 @@ import Subject from "@/models/Subjects";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 import cors from "@/cors";
+import logger from "@/utils/logger";
 connectDB();
 
 export default cors(async (req, res) => {

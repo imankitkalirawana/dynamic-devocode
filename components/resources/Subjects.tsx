@@ -53,25 +53,16 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
     e.preventDefault();
     try {
       const modal = document.getElementById(`delete_modal_${code}`);
-      await toast.promise(
-        axios.delete(`/api/resources/subjects/${code}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }),
-        {
-          loading: "Deleting...",
-          success: "Deleted",
-          error: "Error deleting",
-        }
-      );
+      await axios.delete(`/api/resources/subjects/${code}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       modal?.click();
       router.refresh();
-      // window.location.reload();
-      // close the modal
+      toast.success("Subject deleted");
     } catch (error: any) {
-      console.error(error.message);
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
 

@@ -56,24 +56,19 @@ const Page = ({ params }: Props) => {
     },
     onSubmit: async (values) => {
       try {
-        await toast.promise(
-          axios
-            .put(`/api/resources/subjects/${params.code}`, values, {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            })
-            .then(() => {
-              router.push("/resources/subjects");
-            }),
-          {
-            loading: "Updating...",
-            success: "Subject updated",
-            error: AxiosError.ERR_BAD_REQUEST as string,
-          }
-        );
-      } catch (error) {
+        await axios
+          .put(`/api/resources/subjects/${params.code}`, values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+          .then(() => {
+            toast.success("Subject updated");
+            router.push("/resources/subjects");
+          });
+      } catch (error: any) {
         console.error(error);
+        toast.error(error.response.data.message);
       }
     },
   });
@@ -89,7 +84,7 @@ const Page = ({ params }: Props) => {
       router.push("/resources/subjects");
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -168,7 +163,11 @@ const Page = ({ params }: Props) => {
                 Delete
               </button>
               <div className="flex gap-2">
-                <button className="btn btn-sm" type="button">
+                <button
+                  className="btn btn-sm"
+                  type="button"
+                  onClick={() => router.back()}
+                >
                   Cancel
                 </button>
                 <button className="btn btn-primary btn-sm" type="submit">
