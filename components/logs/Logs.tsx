@@ -63,7 +63,7 @@ export default function Logs() {
               <div className="flex items-center p-4" key={index}>
                 {log.level === "error" ? (
                   <AlertTriangleIcon className="h-4 w-4 text-red-500" />
-                ) : log.level === "alert" ? (
+                ) : log.level === "warn" ? (
                   <AlertTriangleIcon className="h-4 w-4 text-yellow-500" />
                 ) : (
                   <CheckCircleIcon className="h-4 w-4 text-green-500" />

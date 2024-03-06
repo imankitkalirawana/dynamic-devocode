@@ -38,9 +38,10 @@ export default async function handler(req, res) {
       );
 
       logger.log(
-        "alert",
+        "warn",
         `User: ${username} logged in from ${ip} using ${device}`
       );
+      console.log(`User: ${username} logged in from ${ip} using ${device}`);
 
       res.json({
         userId: user.id,

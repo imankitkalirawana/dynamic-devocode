@@ -43,17 +43,20 @@ export default cors(async (req, res) => {
           });
 
           logger.log(
+            "info",
             `User: ${userId} created subject: ${code} from ${req.headers["x-real-ip"]} using ${req.headers["user-agent"]}`
           );
           res.status(201).json(subject);
         } catch (e) {
-          logger.error(
+          logger.log(
+            "error",
             `Error creating subject: ${e.message} from ${req.headers["x-real-ip"]} using ${req.headers["user-agent"]}`
           );
           res.status(400).json({ message: e.message });
         }
       } else {
-        logger.error(
+        logger.log(
+          "error",
           `User: ${req.userId} tried to access a route /api/resources/subjects/${req.method} from ${req.headers["x-real-ip"]} using ${req.headers["user-agent"]}`
         );
         res.status(405).json({ message: "Method not allowed" });
