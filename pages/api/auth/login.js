@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       );
 
       logger.log(
-        "info",
+        "alert",
         `User: ${username} logged in from ${ip} using ${device}`
       );
 
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
         token,
       });
     } catch (error) {
-      logger.error("Error authenticating user:", error);
+      logger.log("error", `Error authenticating user:, ${error}`);
       console.error("Error authenticating user:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }

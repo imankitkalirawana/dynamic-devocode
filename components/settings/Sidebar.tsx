@@ -2,7 +2,6 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { isLoggedIn } from "@/utils/auth";
 
 const Items = [
   {
@@ -20,6 +19,10 @@ const Items = [
   {
     name: "security",
     href: "/settings/security",
+  },
+  {
+    name: "logs",
+    href: "/settings/logs",
   },
 ];
 
