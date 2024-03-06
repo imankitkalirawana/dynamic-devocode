@@ -165,6 +165,7 @@ export default cors(async (req, res) => {
             _id: resourceId,
             by: userId,
           });
+
           if (!resource) {
             logger.log(
               "error",
@@ -178,7 +179,7 @@ export default cors(async (req, res) => {
           await Resources.findByIdAndDelete(resourceId);
           logger.log(
             "info",
-            `Resource: ${resource.title}: ${resource.description} (${resource.type}) deleted by user: ${userId} from ${ip} using ${device}`
+            `Resource:{\n\taction: "delete"\n${resource}\n\t by: "${userId}"\n\tIP: "${ip}"\n\tdevice: "${device}"\n}`
           );
           res.status(200).json({ message: "Resource deleted successfully" });
         } catch (e) {
