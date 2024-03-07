@@ -4,7 +4,7 @@ import INotFound from "@/components/assets/NotFound";
 export default function NotFound() {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center mt-24">
-      <INotFound message="We have just updated previous links may not work. You can have a visit to our homepage for better experience." />
+      <INotFound message="We couldn't found what you are looking for" />
       <div className="flex gap-4 mt-4">
         <Link href="/" className="btn btn-primary">
           Return Home

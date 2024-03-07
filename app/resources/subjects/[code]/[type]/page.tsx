@@ -2,12 +2,19 @@ import API_BASE_URL from "@/utils/config";
 import Resources from "@/components/resources/Resources";
 import NotFound from "@/components/assets/NotFound";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: {
     code: string;
     type: string;
   };
+}
+
+export async function generateStaticParams() {
+  const res = await fetch(`${API_BASE_URL}/resources/subjects`);
+  const subjects = await res.json();
+  return subjects.map(({ code }: any) => code);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -30,6 +37,8 @@ async function getResources(code: string, type: string) {
         method: "GET",
       }
     );
+    if (res.status !== 200) return notFound();
+
     return res.json();
   }
   const res = await fetch(
