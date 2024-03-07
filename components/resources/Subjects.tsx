@@ -309,9 +309,9 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
               <h2 className="text-xl font-bold" tabIndex={0} role="link">
                 {subject.code}
               </h2>
-              <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
+              <h3 className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
                 {subject.title}
-              </p>
+              </h3>
               <div className="flex justify-end items-center mt-2">
                 <span className="text-xs">
                   {humanReadableDate(subject.addedDate)}
