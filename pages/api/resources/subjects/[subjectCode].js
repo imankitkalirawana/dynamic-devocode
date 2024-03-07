@@ -1,9 +1,15 @@
 import Subject from "@/models/Subjects";
+import User from "@/models/User";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 import cors from "@/cors";
 import logger from "@/utils/logger";
 connectDB();
+
+const getUsername = async (userId) => {
+  const user = await User.findById(userId);
+  return user.username.toString();
+};
 
 export default cors(async (req, res) => {
   // get device details and ip address
@@ -42,8 +48,11 @@ export default cors(async (req, res) => {
             by: userId,
           });
           if (!subject) {
-            logger.error(
-              `User: ${userId} tried to update resource: ${subjectCode} which does not exist or is not created by the user from ${ip} using ${device}`
+            logger.log(
+              "error",
+              `type: "Subject"; action: "put"; code: "BAD_ACCESS"; status: "error"; details: ${subjectCode}; by: ${await getUsername(
+                userId
+              )}; IP: ${ip}; device: ${device};`
             );
             res
               .status(404)
@@ -64,8 +73,11 @@ export default cors(async (req, res) => {
             { code, title, description, isArchived },
             { new: true }
           );
-          logger.info(
-            `User: ${userId} updated subject: ${subjectCode} from ${ip} using ${device}`
+          logger.log(
+            "info",
+            `type: "Subject"; action: "put"; status: "success"; details: ${subject}; by: ${await getUsername(
+              userId
+            )}; IP: ${ip}; device: ${device};`
           );
           res.status(200).json(updatedSubject);
         } catch (e) {
@@ -83,8 +95,11 @@ export default cors(async (req, res) => {
             by: userId,
           });
           if (!subject) {
-            logger.error(
-              `User: ${userId} tried to delete subject: ${subjectCode} which does not exist or is not created by the user from ${ip} using ${device}`
+            logger.log(
+              "error",
+              `type: "Subject"; action: "delete"; code: "BAD_ACCESS"; status: "error"; details: ${subject}; by: ${await getUsername(
+                userId
+              )}; IP: ${ip}; device: ${device};`
             );
             res
               .status(404)
@@ -92,19 +107,24 @@ export default cors(async (req, res) => {
             return;
           }
           await Subject.findOneAndDelete({ code: subjectCode, by: userId });
-          logger.info(
-            `User: ${userId} deleted subject: ${subjectCode} from ${ip} using ${device}`
+          logger.log(
+            "info",
+            `type: "Subject"; action: "post"; status: "success"; details: ${subject}; by: ${await getUsername(
+              userId
+            )}; IP: ${ip}; device: ${device};`
           );
           res.status(200).json({ message: "Subject deleted" });
         } catch (e) {
-          logger.error(
-            `Error deleting subject: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+          logger.log(
+            "error",
+            `type: "Subject"; action: "delete"; status: "error"; details: null; by: null; IP: ${ip}; device: ${device};`
           );
           res.status(400).json({ message: e.message });
         }
       } else {
-        logger.error(
-          `User: ${req.userId} tried to use ${req.method} method on /resources/subjects/${req.query.subjectCode} from ${ip} using ${device}`
+        logger.log(
+          "error",
+          `User: ${req.userId} tried to access a route /api/resources/subjects/[subjectCode]/${req.method} from ${device} using ${ip}`
         );
         res.status(405).json({ message: "Method not allowed" });
       }

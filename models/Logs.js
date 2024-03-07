@@ -1,4 +1,3 @@
-import { timeStamp } from "console";
 import mongoose from "mongoose";
 
 const logSchema = new mongoose.Schema({
@@ -15,7 +14,8 @@ const logSchema = new mongoose.Schema({
   },
   timeStamp: {
     type: Date,
-    default: Date.now(),
+    default: () =>
+      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
   },
 });
 

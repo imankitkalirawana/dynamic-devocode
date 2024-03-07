@@ -1,20 +1,25 @@
 import Resources from "@/models/Resources";
 import Subject from "@/models/Subjects";
+import User from "@/models/User";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 import cors from "@/cors";
 import logger from "@/utils/logger";
+import { useId } from "react";
 connectDB();
 
 // get subject id from subject code
 const getSubjectId = async (subjectCode) => {
   const subject = await Subject.findOne({ code: subjectCode });
-  // console.log(subject._id); // new ObjectId('658432ea49c9a5525725905d')
   return subject._id.toString();
 };
 
+const getUsername = async (userId) => {
+  const user = await User.findById(userId);
+  return user.username.toString();
+};
+
 export default cors(async (req, res) => {
-  // get device details and ip address
   const device = req.headers["user-agent"];
   const ip = req.headers["x-real-ip"];
   if (req.method === "GET") {
@@ -92,14 +97,16 @@ export default cors(async (req, res) => {
 
           logger.log(
             "info",
-            `Resource: ${title}: ${description} (${resourceType}) created by user: ${userId} from ${ip} using ${device}`
+            `type: "Resource"; action: "post"; status: "success"; details: ${resource}; by: ${await getUsername(
+              userId
+            )}; IP: ${ip}; device: ${device};`
           );
 
           res.status(201).json(resource);
         } catch (e) {
           logger.log(
             "error",
-            `Error creating resource: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+            `type: "Resource"; action: "post"; status: "error"; details: null; by: null; IP: ${ip}; device: ${device};`
           );
           res.status(400).json({ message: e.message });
         }
@@ -115,7 +122,9 @@ export default cors(async (req, res) => {
           if (!resource) {
             logger.log(
               "error",
-              `User: ${userId} tried to update resource: ${resourceId} which does not exist or is not created by the user from ${ip} using ${device}`
+              `type: "Resource"; action: "put"; code: "BAD_ACCESS"; status: "error"; details: ${resourceId}; by: ${await getUsername(
+                userId
+              )}; IP: ${ip}; device: ${device};`
             );
             res
               .status(404)
@@ -147,13 +156,15 @@ export default cors(async (req, res) => {
           );
           logger.log(
             "info",
-            `Resource: ${title}: ${description} (${type}) updated by user: ${userId} from ${ip} using ${device}`
+            `type: "Resource"; action: "put"; status: "success"; details: ${resource}; by: ${await getUsername(
+              userId
+            )}; IP: ${ip}; device: ${device};`
           );
           res.status(200).json(updatedResource);
         } catch (e) {
           logger.log(
             "error",
-            `Error updating resource: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+            `type: "Resource"; action: "put"; status: "error"; details: null; by: null; IP: ${ip}; device: ${device};`
           );
           res.status(400).json({ message: e.message });
         }
@@ -169,7 +180,9 @@ export default cors(async (req, res) => {
           if (!resource) {
             logger.log(
               "error",
-              `User: ${userId} tried to delete resource: ${resourceId} which does not exist or is not created by the user from ${ip} using ${device}`
+              `type: "Resource"; action: "delete"; code: "BAD_ACCESS"; status: "error"; details: ${resourceId}; by: ${await getUsername(
+                userId
+              )}; IP: ${ip}; device: ${device};`
             );
             res
               .status(404)
@@ -179,20 +192,22 @@ export default cors(async (req, res) => {
           await Resources.findByIdAndDelete(resourceId);
           logger.log(
             "info",
-            `Resource:{\n\taction: "delete"\n${resource}\n\t by: "${userId}"\n\tIP: "${ip}"\n\tdevice: "${device}"\n}`
+            `type: "Resource"; action: "post"; status: "success"; details: ${resource}; by: ${await getUsername(
+              userId
+            )}; IP: ${ip}; device: ${device};`
           );
           res.status(200).json({ message: "Resource deleted successfully" });
         } catch (e) {
           logger.log(
             "error",
-            `Error deleting resource: ${e.message} by user: ${req.userId} from ${ip} using ${device}`
+            `type: "Resource"; action: "delete"; status: "error"; details: null; by: null; IP: ${ip}; device: ${device};`
           );
           res.status(400).json({ message: e.message });
         }
       } else {
         logger.log(
           "error",
-          `User: ${req.userId} tried to access resource API with ${req.method} method from ${ip} using ${device}`
+          `User: ${req.userId} tried to access a route /api/resources/resources/${req.method} from ${device} using ${ip}`
         );
         res.status(405).json({ message: "Method not allowed" });
       }

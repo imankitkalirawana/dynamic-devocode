@@ -1,8 +1,7 @@
 import Logs from "@/components/logs/Logs";
 import React from "react";
-import API_BASE_URL from "@/utils/config";
 
-const Page = () => {
+export default function Page() {
   return (
     <>
       <div className="col-span-full lg:col-span-9">
@@ -10,6 +9,4 @@ const Page = () => {
       </div>
     </>
   );
-};
-
-export default Page;
+}

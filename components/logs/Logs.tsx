@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { isLoggedIn } from "@/utils/auth";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 interface Log {
   _id: string;
@@ -18,6 +19,7 @@ export default function Logs() {
 
   const [logs, setLogs] = useState<Log[]>([]);
   const [search, setSearch] = useState("");
+  const [isloading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!loggedIn.loggedIn) {
@@ -28,58 +30,90 @@ export default function Logs() {
     }
   }, []);
   useEffect(() => {
-    axios
-      .get("/api/log/log", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((res) => {
-        setLogs(res.data);
-      });
+    const fetchLogs = async () => {
+      try {
+        const response = await axios.get("/api/log/log", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setLogs(response.data);
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching logs:", error);
+        setIsLoading(false);
+      }
+    };
+    fetchLogs();
   }, []);
 
   return (
-    <section className="w-full py-6 md:py-12">
-      <div className="container flex flex-col gap-4 px-4 md:px-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold">Logs</h1>
-          <div className="relative w-full">
-            <input
-              type="text"
-              className="input input-bordered w-full"
-              placeholder="Search the logs..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+    <>
+      <section className="w-full py-6 md:py-12">
+        <div className="container flex flex-col gap-4 px-4 md:px-6">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-3xl font-bold">Logs</h1>
+            <div className="relative w-full">
+              <input
+                type="text"
+                className="input input-bordered w-full"
+                placeholder="Search the logs..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-        <div className="rounded-lg border divide-y max-h-[350px] overflow-y-scroll">
-          {logs
-            .filter((log) =>
-              log.message.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((log, index) => (
-              <div className="flex items-center p-4" key={index}>
-                {log.level === "error" ? (
-                  <AlertTriangleIcon className="h-4 w-4 text-red-500" />
-                ) : log.level === "warn" ? (
-                  <AlertTriangleIcon className="h-4 w-4 text-yellow-500" />
-                ) : (
-                  <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                )}
-                <time className="ml-2 text-sm font-medium">
-                  {new Date(log.timestamp).toLocaleString()}
-                </time>
-                <p className="flex-1 mx-2 text-sm opacity-50 whitespace-nowrap overflow-hidden text-ellipsis">
-                  {log.message}
-                </p>
-                <ChevronRightIcon className="h-4 w-4 opacity-50" />
+          {isloading ? (
+            <>
+              <div className="rounded-lg flex flex-col gap-6 mt-4">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div className="flex items-center" key={index}>
+                    <div className="w-8 h-8 skeleton rounded-full"></div>
+                    <div className="flex-1 ml-4 space-y-2">
+                      <div className="w-3/4 h-4 skeleton rounded-full"></div>
+                      <div className="w-1/2 h-4 skeleton rounded-full"></div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </>
+          ) : (
+            <div className="rounded-lg border border-base-content divide-y max-h-[350px] overflow-y-scroll">
+              {logs
+                .filter((log) =>
+                  log.message.toLowerCase().includes(search.toLowerCase())
+                )
+                .map((log, index) => (
+                  <label
+                    htmlFor={`log_modal_65e8711e4697860008ea9532`}
+                    className="flex items-center p-4"
+                    key={index}
+                  >
+                    {/* add index */}
+                    <span className="mr-4">{index + 1}</span>
+                    {log.level === "error" ? (
+                      <AlertTriangleIcon className="h-4 w-4 text-red-500" />
+                    ) : log.level === "warn" ? (
+                      <AlertTriangleIcon className="h-4 w-4 text-yellow-500" />
+                    ) : (
+                      <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                    )}
+
+                    <time className="ml-2 text-sm font-medium">
+                      {new Date(log.timestamp).toLocaleString()}
+                    </time>
+                    <p className="flex-1 mx-2 text-sm opacity-50 whitespace-nowrap overflow-hidden text-ellipsis">
+                      {log.message}
+                    </p>
+                    <ChevronRightIcon className="h-4 w-4 opacity-50" />
+                  </label>
+                ))}
+            </div>
+          )}
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 

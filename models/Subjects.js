@@ -20,7 +20,8 @@ const subjectSchema = new mongoose.Schema({
   file: String,
   addedDate: {
     type: Date,
-    default: Date.now(),
+    default: () =>
+      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
   },
   by: {
     type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +29,8 @@ const subjectSchema = new mongoose.Schema({
   },
   updatedDate: {
     type: Date,
-    default: Date.now(),
+    default: () =>
+      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
   },
 });
 

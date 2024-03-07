@@ -1,11 +1,19 @@
 import Subject from "@/models/Subjects";
+import User from "@/models/User";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 import cors from "@/cors";
 import logger from "@/utils/logger";
 connectDB();
 
+const getUsername = async (userId) => {
+  const user = await User.findById(userId);
+  return user.username.toString();
+};
+
 export default cors(async (req, res) => {
+  const device = req.headers["user-agent"];
+  const ip = req.headers["x-real-ip"];
   if (req.method === "GET") {
     const subjects = await Subject.find();
     // sort by code alphabetically
@@ -44,20 +52,22 @@ export default cors(async (req, res) => {
 
           logger.log(
             "info",
-            `User: ${userId} created subject: ${code} from ${req.headers["x-real-ip"]} using ${req.headers["user-agent"]}`
+            `type: "Subject"; action: "post"; status: "success"; details: ${subject}; by: ${await getUsername(
+              userId
+            )}; IP: ${ip}; device: ${device};`
           );
           res.status(201).json(subject);
         } catch (e) {
           logger.log(
             "error",
-            `Error creating subject: ${e.message} from ${req.headers["x-real-ip"]} using ${req.headers["user-agent"]}`
+            `type: "Subject"; action: "post"; status: "error"; details: null; by: null; IP: ${ip}; device: ${device};`
           );
           res.status(400).json({ message: e.message });
         }
       } else {
         logger.log(
           "error",
-          `User: ${req.userId} tried to access a route /api/resources/subjects/${req.method} from ${req.headers["x-real-ip"]} using ${req.headers["user-agent"]}`
+          `User: ${req.userId} tried to access a route /api/resources/subjects/${req.method} from ${device} using ${ip}`
         );
         res.status(405).json({ message: "Method not allowed" });
       }
