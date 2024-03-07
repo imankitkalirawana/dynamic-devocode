@@ -113,7 +113,7 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
     e.preventDefault();
     if (file && parseInt(filesize) < 4) {
       openFile(file);
-    } else if (file && parseInt(filesize) > 4) {
+    } else if (file && parseInt(filesize) >= 4) {
       handleDownload(file);
     } else if (link) {
       window.open(link, "_blank");
