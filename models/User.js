@@ -32,8 +32,7 @@ const userSchema = new mongoose.Schema({
   zip: String,
   createdat: {
     type: Date,
-    default: () =>
-      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    default: new Date(),
   },
   theme: {
     type: String,
@@ -41,8 +40,7 @@ const userSchema = new mongoose.Schema({
   },
   updatedat: {
     type: Date,
-    default: () =>
-      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    default: new Date(),
   },
 });
 

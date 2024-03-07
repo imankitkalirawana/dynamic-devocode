@@ -14,8 +14,7 @@ const logSchema = new mongoose.Schema({
   },
   timeStamp: {
     type: Date,
-    default: () =>
-      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    default: new Date(),
   },
 });
 

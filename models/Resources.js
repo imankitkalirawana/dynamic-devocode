@@ -22,14 +22,12 @@ const resourceSchema = new mongoose.Schema({
   },
   addedDate: {
     type: Date,
-    default: () =>
-      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    default: new Date(),
   },
 
   updatedAt: {
     type: Date,
-    default: () =>
-      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    default: new Date(),
   },
   by: {
     type: mongoose.Schema.Types.ObjectId,
