@@ -128,6 +128,8 @@ export default function Logs() {
                   )
                   .map((log, index) => (
                     <pre
+                      key={log._id}
+                      onClick={() => handleLogClick(log)}
                       data-prefix={index + 1}
                       className={`flex pl-6 ${
                         log.message.includes("error")
