@@ -104,10 +104,17 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
     }
   };
 
-  const handleCardClick = (e: any, file: string, link: string) => {
+  const handleCardClick = (
+    e: any,
+    file: string,
+    link: string,
+    filesize: string
+  ) => {
     e.preventDefault();
-    if (file) {
+    if (file && parseInt(filesize) < 4) {
       openFile(file);
+    } else if (file && parseInt(filesize) > 4) {
+      handleDownload(file);
     } else if (link) {
       window.open(link, "_blank");
     }
@@ -452,7 +459,14 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
             </div>
             <div
               className="px-8 py-4"
-              onClick={(e) => handleCardClick(e, resource.file, resource.link)}
+              onClick={(e) =>
+                handleCardClick(
+                  e,
+                  resource.file,
+                  resource.link,
+                  resource.filesize
+                )
+              }
             >
               <div className="flex items-center">
                 <h2
