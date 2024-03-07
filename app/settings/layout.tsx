@@ -1,9 +1,4 @@
 import Sidebar from "@/components/settings/Sidebar";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Settings - Devocode By Divinely Developer",
-};
 
 export default function Layout({
   children,

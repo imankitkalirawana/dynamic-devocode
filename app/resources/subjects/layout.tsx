@@ -1,9 +1,5 @@
 import Breadcrumbs from "@/components/resources/Breadcrumbs";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Subjects - Devocode By Divinely Developer",
-};
 export default function Layout({
   children,
 }: {

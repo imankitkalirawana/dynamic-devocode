@@ -9,9 +9,15 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AxiomWebVitals } from "next-axiom";
 
 export const metadata: Metadata = {
-  title: "Devocode By Divinely Developer",
+  title: {
+    default: "Devocode By Divinely Developer",
+    template: "%s - Devocode By Divinely Developer",
+  },
   description:
     "Devocode by Divinely Developer is a platform for LPU students to share study resources and get easy access to study materials.",
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

@@ -12,7 +12,7 @@ interface Props {
 
 async function fetchResources(id: string) {
   return {
-    title: `${id} - Devocode By Divinely Developer`,
+    title: `${id}`,
     description: `Resources for ${id} - Devocode By Divinely Developer`,
   };
 }

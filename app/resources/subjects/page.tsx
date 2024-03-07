@@ -1,6 +1,12 @@
 import API_BASE_URL from "@/utils/config";
 import Subjects from "@/components/resources/Subjects";
 import NotFound from "@/components/assets/NotFound";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Subjects",
+  description: "Find subjects based on your course for LPU exams and more",
+};
 
 async function getSubjects() {
   const res = await fetch(`${API_BASE_URL}/resources/subjects`, {
