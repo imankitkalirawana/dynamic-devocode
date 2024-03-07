@@ -5,7 +5,6 @@ import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 import cors from "@/cors";
 import logger from "@/utils/logger";
-import { useId } from "react";
 connectDB();
 
 // get subject id from subject code
@@ -192,7 +191,7 @@ export default cors(async (req, res) => {
           await Resources.findByIdAndDelete(resourceId);
           logger.log(
             "info",
-            `type: "Resource"; action: "post"; status: "success"; details: ${resource}; by: ${await getUsername(
+            `type: "Resource"; action: "delete"; status: "success"; details: ${resource}; by: ${await getUsername(
               userId
             )}; IP: ${ip}; device: ${device};`
           );

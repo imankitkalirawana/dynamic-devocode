@@ -14,6 +14,10 @@ export default async function handler(req, res) {
       const { username, password } = req.body;
       const user = await User.findOne({ username });
       if (!user) {
+        logger.log(
+          "error",
+          `type: "Login"; action: "post"; code: "NOT_REGISTERED"; status: "error"; details: ${username}; IP: ${ip}; device: ${device};`
+        );
         return res.status(401).json({ error: "Invalid username" });
       }
 
@@ -21,7 +25,7 @@ export default async function handler(req, res) {
       if (!isPasswordValid) {
         logger.log(
           "error",
-          `Invalid Password for user: ${username} from ${ip} using ${device}`
+          `type: "Login"; action: "post"; status: "error"; details: ${username}; IP: ${ip}; device: ${device};`
         );
         return res.status(402).json({ error: "Invalid Password" });
       }
@@ -39,7 +43,7 @@ export default async function handler(req, res) {
 
       logger.log(
         "warn",
-        `User: ${username} logged in from ${ip} using ${device}`
+        `type: "Login"; action: "post"; status: "success"; details: ${username}; IP: ${ip}; device: ${device};`
       );
       console.log(`User: ${username} logged in from ${ip} using ${device}`);
 

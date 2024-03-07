@@ -4,7 +4,14 @@ import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
 connectDB();
 
+const getUsername = async (userId) => {
+  const user = await User.findById(userId);
+  return user.username.toString();
+};
+
 export default async function handler(req, res) {
+  const device = req.headers["user-agent"];
+  const ip = req.headers["x-real-ip"];
   verifyMember(req, res, async () => {
     if (req.method === "GET") {
       try {
@@ -33,6 +40,12 @@ export default async function handler(req, res) {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
         await user.save();
+        logger.log(
+          "info",
+          `type: "User"; action: "post"; code: "PASSWORD_CHANGED"; status: "success"; details: ${user}; by: ${await getUsername(
+            userId
+          )}; IP: ${ip}; device: ${device};`
+        );
         res.json({ message: "Password updated successfully" });
       } catch (error) {
         console.error(error);
@@ -54,6 +67,12 @@ export default async function handler(req, res) {
         user.address = address;
 
         await user.save();
+        logger.log(
+          "info",
+          `type: "User"; action: "put"; code: "PROFILE_UPDATED"; status: "success"; details: ${user}; by: ${await getUsername(
+            userId
+          )}; IP: ${ip}; device: ${device};`
+        );
         res.json({ message: "Profile updated successfully" });
       } catch (error) {
         console.error(error);
@@ -66,6 +85,12 @@ export default async function handler(req, res) {
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
+        logger.log(
+          "info",
+          `type: "User"; action: "delete"; code: "USER_DELETED"; status: "success"; details: ${user}; by: ${await getUsername(
+            userId
+          )}; IP: ${ip}; device: ${device};`
+        );
         res.json({ message: "User deleted successfully" });
       } catch (error) {
         console.error(error);
