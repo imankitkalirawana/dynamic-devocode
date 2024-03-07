@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
       logger.log(
         "warn",
-        `type: "Login"; action: "post"; status: "success"; details: ${username}; IP: ${ip}; device: ${device};`
+        `type: "Login"; action: "post"; status: "warn"; details: ${username}; IP: ${ip}; device: ${device};`
       );
       console.log(`User: ${username} logged in from ${ip} using ${device}`);
 

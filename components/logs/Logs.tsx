@@ -12,14 +12,55 @@ interface Log {
   timestamp: string;
 }
 
+interface ModalProps {
+  log: Log;
+  onClose: () => void;
+}
+
+const ModalComponent: React.FC<ModalProps> = ({ log, onClose }) => {
+  return (
+    <>
+      <div className="fixed top-1/2 z-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-base-100/30 backdrop-blur-lg w-[90%] lg:w-fit shadow-lg card p-8 border border-base-content/20 transition-all">
+        <div className="grid gap-4">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold flex items-center gap-4">
+              {log.level === "error" ? (
+                <AlertTriangleIcon className="h-5 w-5 text-red-500" />
+              ) : log.level === "warn" ? (
+                <AlertTriangleIcon className="h-5 w-5 text-yellow-500" />
+              ) : (
+                <CheckCircleIcon className="h-5 w-5 text-green-500" />
+              )}
+              {new Date(log.timestamp).toLocaleString()}
+            </h2>
+            <p className="text-start my-4">{log.message}</p>
+          </div>
+          <button className="btn btn-accent" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      </div>
+      <div
+        className="fixed top-0 left-0 z-0 w-full h-full bg-base-100/30"
+        onClick={onClose}
+      ></div>
+    </>
+  );
+};
+
 export default function Logs() {
   const router = useRouter();
   const loggedIn = isLoggedIn();
   const userRole = loggedIn.user?.role;
 
   const [logs, setLogs] = useState<Log[]>([]);
+  const [selectedLog, setSelectedLog] = useState<Log | null>(null);
   const [search, setSearch] = useState("");
   const [isloading, setIsLoading] = useState(true);
+
+  const handleLogClick = (log: Log) => {
+    setSelectedLog(log);
+  };
 
   useEffect(() => {
     if (!loggedIn.loggedIn) {
@@ -79,40 +120,43 @@ export default function Logs() {
               </div>
             </>
           ) : (
-            <div className="rounded-lg border border-base-content divide-y max-h-[350px] overflow-y-scroll">
-              {logs
-                .filter((log) =>
-                  log.message.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((log, index) => (
-                  <label
-                    htmlFor={`log_modal_65e8711e4697860008ea9532`}
-                    className="flex items-center p-4"
-                    key={index}
-                  >
-                    {/* add index */}
-                    <span className="mr-4">{index + 1}</span>
-                    {log.level === "error" ? (
-                      <AlertTriangleIcon className="h-4 w-4 text-red-500" />
-                    ) : log.level === "warn" ? (
-                      <AlertTriangleIcon className="h-4 w-4 text-yellow-500" />
-                    ) : (
-                      <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                    )}
-
-                    <time className="ml-2 text-sm font-medium">
-                      {new Date(log.timestamp).toLocaleString()}
-                    </time>
-                    <p className="flex-1 mx-2 text-sm opacity-50 whitespace-nowrap overflow-hidden text-ellipsis">
-                      {log.message}
-                    </p>
-                    <ChevronRightIcon className="h-4 w-4 opacity-50" />
-                  </label>
-                ))}
+            <div className="mockup-code">
+              <div className="rounded-lg max-h-[350px] overflow-y-scroll">
+                {logs
+                  .filter((log) =>
+                    log.message.toLowerCase().includes(search.toLowerCase())
+                  )
+                  .map((log, index) => (
+                    <pre
+                      data-prefix={index + 1}
+                      className={`flex pl-6 ${
+                        log.message.includes("error")
+                          ? "text-error"
+                          : log.message.includes("warn")
+                          ? "text-warning"
+                          : log.message.includes("success")
+                          ? ""
+                          : ""
+                      }`}
+                    >
+                      <code>
+                        <p className="whitespace-nowrap overflow-scroll">
+                          {log.message}
+                        </p>
+                      </code>
+                    </pre>
+                  ))}
+              </div>
             </div>
           )}
         </div>
       </section>
+      {selectedLog && (
+        <ModalComponent
+          log={selectedLog}
+          onClose={() => setSelectedLog(null)}
+        />
+      )}
     </>
   );
 }
