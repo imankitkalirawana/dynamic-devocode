@@ -11,11 +11,11 @@ interface Props {
   };
 }
 
-export async function generateStaticParams() {
-  const res = await fetch(`${API_BASE_URL}/resources/subjects`);
-  const subjects = await res.json();
-  return subjects.map(({ code }: any) => code);
-}
+// export async function generateStaticParams() {
+//   const res = await fetch(`${API_BASE_URL}/resources/subjects`);
+//   const subjects = await res.json();
+//   return subjects.map(({ code }: any) => code);
+// }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const response = await fetch(
@@ -37,7 +37,7 @@ async function getResources(code: string, type: string) {
         method: "GET",
       }
     );
-    // if (res.status !== 200) return notFound();
+    if (res.status !== 200) return notFound();
 
     return res.json();
   }
