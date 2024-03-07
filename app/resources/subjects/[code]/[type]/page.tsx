@@ -11,22 +11,22 @@ interface Props {
   };
 }
 
-// export async function generateStaticParams() {
-//   const res = await fetch(`${API_BASE_URL}/resources/subjects`);
-//   const subjects = await res.json();
-//   return subjects.map(({ code }: any) => code);
-// }
+export async function generateStaticParams() {
+  const res = await fetch(`${API_BASE_URL}/resources/subjects`);
+  const subjects = await res.json();
+  return subjects.map(({ code }: any) => code);
+}
 
-// export async function generateMetadata({ params }: Props): Promise<Metadata> {
-//   const response = await fetch(
-//     `${API_BASE_URL}/resources/subjects/${params.code}`
-//   );
-//   const subject = await response.json();
-//   return {
-//     title: `${params.code} - ${subject.title}`,
-//     description: `Find ${params.type} for ${params.code} - ${subject.title}`,
-//   };
-// }
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const response = await fetch(
+    `${API_BASE_URL}/resources/subjects/${params.code}`
+  );
+  const subject = await response.json();
+  return {
+    title: `${params.code} - ${subject.title}`,
+    description: `Find ${params.type} for ${params.code} - ${subject.title}`,
+  };
+}
 
 async function getResources(code: string, type: string) {
   if (type === "all") {
