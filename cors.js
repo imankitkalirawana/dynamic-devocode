@@ -9,7 +9,7 @@ const cors = Cors({
     "https://www.devocode.in",
     "http://localhost:5173",
     "http://localhost:3000",
-    // Add any other allowed origins
+    
   ],
   optionsSuccessStatus: 204,
 });
