@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 //   return res.json();
 // }
 
-export default async function Page() {
+export default function Page() {
   // const subjects = await getSubjects();
   const [subjects, setSubjects] = useState([]);
 
@@ -28,8 +28,6 @@ export default async function Page() {
     };
     fetchSubjects();
   }, []);
-
-  console.log(subjects);
 
   // filter subjects with isArchived = false
   const filteredSubjects = subjects?.filter(
