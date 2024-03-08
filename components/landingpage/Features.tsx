@@ -4,6 +4,7 @@ import {
   SwatchIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 const features = [
   {
@@ -40,7 +41,12 @@ const Features = () => {
             Access to all features
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tightsm:text-4xl flex items-center gap-2 justify-center">
-            <img src="/devocode.png" className="w-12" alt="" />
+            <Image
+              src="/devocode.png"
+              width={48}
+              height={48}
+              alt="Devocode Logo"
+            />
             <span>Everything you need to get started</span>
           </p>
           <p className="mt-6 text-lg leading-8 text-center">
