@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import API_BASE_URL from "@/utils/config";
 import toast from "react-hot-toast";
 import S3 from "aws-sdk/clients/s3";
+
 import {
   DownloadIcon,
   ZipIcon,
@@ -39,6 +40,7 @@ type ResourcesProps = {
 
 const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
   const [isCopied, setisCopied] = useState(false);
+  const [isDesktop, setisDesktop] = useState(false);
   let base_url = API_BASE_URL?.split("api")[0];
   const humanReadableDate = (addedDate: string) => {
     return new Date(addedDate).toLocaleDateString("en-US", {
@@ -81,9 +83,7 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
   // handle copy link
   const handleCopyLink = () => {
     const url = `${base_url}resources/subjects/${code}/${resource.type}/${resource._id}`;
-    // navigator.clipboard.writeText(
-    //   `${API_BASE_URL}/resources//file/${resource.file}`
-    // );
+
     setisCopied(true);
     setTimeout(() => {
       setisCopied(false);
@@ -92,6 +92,12 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
   };
   // get file extension
   const fileExtension = resource.file && resource.file.split(".").pop();
+
+  useEffect(() => {
+    if (window.innerWidth > 768) {
+      setisDesktop(true);
+    }
+  }, []);
 
   return (
     <>
@@ -155,7 +161,9 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
           </div>
         </div>
       </div>
-      {fileExtension &&
+
+      {isDesktop &&
+        fileExtension &&
         (fileExtension === "png" ||
           fileExtension == "pdf" ||
           fileExtension == "jpg") && (
