@@ -457,16 +457,17 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
                 </ul>
               </div>
             </div>
-            <div
+            <Link
               className="px-8 py-4"
-              onClick={(e) =>
-                handleCardClick(
-                  e,
-                  resource.file,
-                  resource.link,
-                  resource.filesize
-                )
-              }
+              // onClick={(e) =>
+              //   handleCardClick(
+              //     e,
+              //     resource.file,
+              //     resource.link,
+              //     resource.filesize
+              //   )
+              // }
+              href={`/resources/subjects/${code}/${resource.type}/${resource._id}`}
             >
               <div className="flex items-center">
                 <h2
@@ -524,7 +525,7 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
                   </span>
                 )}
               </div>
-            </div>
+            </Link>
           </div>
         ))}
       {resources.map((resource) => (

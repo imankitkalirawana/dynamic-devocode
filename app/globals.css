@@ -165,3 +165,58 @@
 #nprogress .bar {
   background: var(--inner-color) !important;
 }
+
+/*  */
+iframe img {
+  width: 100%;
+}
+
+/* download button */
+
+.button {
+  --width: 105px;
+  --height: 35px;
+  min-width: var(--width);
+  height: var(--height);
+  position: relative;
+}
+
+.text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-wrapper,
+.text,
+.icon {
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+}
+
+.text {
+  top: 0;
+}
+
+.text,
+.icon {
+  transition: top 0.5s;
+}
+
+.icon {
+  top: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover .text {
+  top: -100%;
+}
+
+.button:hover .icon {
+  top: 0;
+}

@@ -2,6 +2,7 @@
 import { withAxiom } from "next-axiom";
 
 const nextConfig = withAxiom({
+  
   async headers() {
     return [
       {

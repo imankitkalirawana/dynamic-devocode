@@ -5,7 +5,7 @@ import axios from "axios";
 import S3 from "aws-sdk/clients/s3";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, rgb } from "pdf-lib";
 import Jimp from "jimp";
 
 const s3 = new S3({
@@ -43,6 +43,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       file: null,
       filesize: "",
       watermark: false,
+      isURL: false,
     },
     onSubmit: async (values) => {
       addData(values);
@@ -257,12 +258,29 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
               ))}
             </select>
           </div>
+          <div className="flex flex-col w-full my-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="isURL" className="label-text">
+                File
+              </label>
+              <input
+                type="checkbox"
+                className="toggle text-base-content"
+                id="isURL"
+                name="isURL"
+                checked={formik.values.isURL}
+                onChange={formik.handleChange}
+              />
+              <label htmlFor="isURL" className="label-text">
+                URL
+              </label>
+            </div>
+          </div>
           {/* elements added based on user selection */}
-          {formik.values.resourceType === "link" ||
-          formik.values.resourceType === "moocs" ? (
+          {formik.values.isURL ? (
             <div className="flex flex-col w-full">
               <label htmlFor="link" className="label">
-                <span className="label-text">Link</span>
+                <span className="label-text">URL</span>
               </label>
               <input
                 type="text"
@@ -277,19 +295,6 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
           ) : (
             <>
               <div className="flex flex-col w-full">
-                <label htmlFor="filesize" className="label">
-                  <span className="label-text">Add watermark</span>
-                </label>
-                <input
-                  type="checkbox"
-                  id="watermark"
-                  name="watermark"
-                  className="toggle"
-                  onChange={formik.handleChange}
-                  checked={formik.values.watermark}
-                />
-              </div>
-              <div className="flex flex-col w-full">
                 <label htmlFor="file" className="label">
                   <span className="label-text">File</span>
                 </label>
@@ -302,6 +307,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
                   required
                 />
               </div>
+
               {progress > 0 && (
                 <progress
                   className="progress w-full animate-enter"
@@ -309,6 +315,19 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
                   max="100"
                 ></progress>
               )}
+              <div className="flex flex-col w-full">
+                <label htmlFor="filesize" className="label">
+                  <span className="label-text">Add watermark</span>
+                </label>
+                <input
+                  type="checkbox"
+                  id="watermark"
+                  name="watermark"
+                  className="toggle toggle-md"
+                  onChange={formik.handleChange}
+                  checked={formik.values.watermark}
+                />
+              </div>
             </>
           )}
         </div>
