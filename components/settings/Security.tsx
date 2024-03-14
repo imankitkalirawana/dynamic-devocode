@@ -37,7 +37,6 @@ const Security = () => {
     },
   });
 
-  console.log(formik.values);
   return (
     <div className="col-span-full lg:col-span-9">
       <form className="px-4 sm:px-0" onSubmit={formik.handleSubmit}>

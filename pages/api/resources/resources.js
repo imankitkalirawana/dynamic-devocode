@@ -65,7 +65,6 @@ export default cors(async (req, res) => {
           }
           let { resourceType, title, link, description, file, filesize } =
             req.body;
-          console.log("link", link);
           const subjectId = await getSubjectId(subjectCode);
           const userId = req.userId;
           if (!resourceType || !title) {
@@ -139,7 +138,6 @@ export default cors(async (req, res) => {
             return;
           }
           type = type.toLowerCase();
-          console.log(isArchived); // it is returning true
           const updatedResource = await Resources.findByIdAndUpdate(
             resourceId,
             {

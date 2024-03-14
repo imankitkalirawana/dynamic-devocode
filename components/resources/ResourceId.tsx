@@ -14,6 +14,7 @@ import {
   DocsIcon,
   PngIcon,
   FileIcon,
+  RedirectIcon,
 } from "@/icons/Icons";
 
 const s3 = new S3({
@@ -99,6 +100,15 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
     }
   }, []);
 
+  const handleCardClick = (e: any, file: string, link: string) => {
+    e.preventDefault();
+    if (file) {
+      handleDownload(file);
+    } else if (link) {
+      window.open(link, "_blank");
+    }
+  };
+
   return (
     <>
       <div className="flex justify-center mt-12">
@@ -114,29 +124,39 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
           </div>
           <div className="flex justify-center mt-4 gap-4">
             <div
-              className="button hover:bg-primary btn btn-primary btn-sm z-10 tooltip tooltip-primary"
+              className={`button hover:bg-primary btn btn-primary btn-sm z-10 ${
+                resource.file && "tooltip tooltip-primary"
+              }`}
               data-tip={`Size: ${resource.filesize}Mb`}
-              onClick={() => handleDownload(resource.file)}
+              onClick={(e) => handleCardClick(e, resource.file, resource.link)}
             >
               <div className="button-wrapper">
                 <div className="text">
-                  {fileExtension === "zip" ? (
-                    <ZipIcon className="h-5 w-5" />
-                  ) : fileExtension === "pdf" ? (
-                    <PdfIcon className="w-5 h-5" />
-                  ) : fileExtension?.includes("ppt") ? (
-                    <PPTIcon className="w-5 h-5" />
-                  ) : fileExtension?.includes("doc") ? (
-                    <DocsIcon className="w-5 h-5" />
-                  ) : fileExtension == "png" || fileExtension == "jpg" ? (
-                    <PngIcon className="w-5 h-5" />
+                  {resource.file ? (
+                    fileExtension === "zip" ? (
+                      <ZipIcon className="h-5 w-5" />
+                    ) : fileExtension === "pdf" ? (
+                      <PdfIcon className="w-5 h-5" />
+                    ) : fileExtension?.includes("ppt") ? (
+                      <PPTIcon className="w-5 h-5" />
+                    ) : fileExtension?.includes("doc") ? (
+                      <DocsIcon className="w-5 h-5" />
+                    ) : fileExtension == "png" || fileExtension == "jpg" ? (
+                      <PngIcon className="w-5 h-5" />
+                    ) : (
+                      <FileIcon className="w-5 h-5" />
+                    )
                   ) : (
-                    <FileIcon className="w-5 h-5" />
+                    <RedirectIcon className="w-5 h-5" />
                   )}
-                  Download
+                  {resource.file ? "Download" : "Open"}
                 </div>
                 <span className="icon">
-                  <DownloadIcon className="w-5 h-5" />
+                  {resource.file ? (
+                    <DownloadIcon className="w-5 h-5" />
+                  ) : (
+                    <RedirectIcon className="w-5 h-5" />
+                  )}
                 </span>
               </div>
             </div>

@@ -122,8 +122,6 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
     formik.setFieldValue("link", "");
   };
 
-  console.log(formik.values);
-
   const handleUpload = async () => {
     if (file) {
       const params = {

@@ -60,7 +60,6 @@ export default cors(async (req, res) => {
             return;
           }
           let { code, title, description, isArchived } = req.body;
-          console.log("archived: ", isArchived);
           if (!code || !title) {
             res.status(400).json({
               message: "Code, title are required",
