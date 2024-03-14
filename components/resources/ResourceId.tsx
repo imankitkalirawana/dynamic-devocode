@@ -184,6 +184,7 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
 
       {isDesktop &&
         fileExtension &&
+        parseInt(resource.filesize) < 4 &&
         (fileExtension === "png" ||
           fileExtension == "pdf" ||
           fileExtension == "jpg") && (
