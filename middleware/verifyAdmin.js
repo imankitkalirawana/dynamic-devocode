@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "@/utils/keys";
-import exp from "constants";
 
 const verifyAdmin = (req, res, next) => {
   let token = req.headers["authorization"];
