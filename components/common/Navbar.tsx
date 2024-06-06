@@ -3,16 +3,30 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { isLoggedIn } from "@/utils/auth";
 import { usePathname, useRouter } from "next/navigation";
-import Sad from "@/assets/Sad";
 import dynamic from "next/dynamic";
 import BottomBar from "./BottomBar";
 import AnimatedCursor from "react-animated-cursor";
 import dynamicTheme from "@/utils/theme";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import Logo from "../assets/Logo";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isNew, setIsNew] = useState(true);
   const [isCustomCursor, setIsCustomCursor] = useState(false);
 
@@ -45,8 +59,7 @@ const Navbar = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
       localStorage.removeItem("userData");
-      localStorage.setItem("theme", theme as string);
-      window.location.href = "/resources";
+      window.location.reload();
       const modal = document.getElementById("logout_modal") as HTMLInputElement;
       if (modal) {
         modal.checked = false;
@@ -84,8 +97,12 @@ const Navbar = () => {
       >
         <div className="navbar-start">
           <div className="dropdown">
-            <label
+            <Button
+              as={"label"}
               htmlFor="my-drawer"
+              isIconOnly
+              variant="light"
+              radius="full"
               tabIndex={0}
               role="button"
               className="btn btn-ghost btn-circle"
@@ -104,60 +121,78 @@ const Navbar = () => {
                   d="M4 6h16M4 12h16M4 18h7"
                 />
               </svg>
-            </label>
+            </Button>
           </div>
-          <Link
+          <Button
+            as={Link}
             href={"/"}
+            variant="light"
             className="btn btn-ghost text-xl after:content-[''] after:text-xs after:mb-2"
           >
             <Logo />
             DevoCode
-          </Link>
+          </Button>
         </div>
         <div className="hidden lg:block navbar-center">
           <div className="flex items-stretch">
             {loggedIn ? (
-              <Link
+              <Button
+                size="sm"
+                variant="light"
+                as={Link}
                 href={"/dashboard"}
-                className={`btn btn-${
-                  location === "/dashboard" ? "neutral" : "ghost"
-                } btn-sm rounded-btn`}
+                className="text-sm"
               >
                 Dashboard
-              </Link>
+              </Button>
             ) : (
-              <Link
+              <Button
+                size="sm"
+                variant="light"
+                as={Link}
+                className="text-sm"
                 href={"/"}
-                className={`btn btn-${
-                  location === "/" ? "neutral" : "ghost"
-                } btn-sm rounded-btn`}
               >
                 Home
-              </Link>
+              </Button>
             )}
-            <Link
+            <Button
               href={"/resources"}
-              className={`btn btn-${
-                location?.startsWith("/resources") ? "neutral" : "ghost"
-              } btn-sm rounded-btn`}
+              size="sm"
+              variant="light"
+              as={Link}
+              className="text-sm"
             >
               Resources
-            </Link>
-            <a
+            </Button>
+            <Button
               href="https://divinelydeveloper.me"
-              className="btn btn-ghost btn-sm rounded-btn"
+              size="sm"
+              variant="light"
+              as={"a"}
+              className="text-sm"
             >
               About
-            </a>
-            <Link href={"/"} className="btn btn-ghost btn-sm rounded-btn">
+            </Button>
+            <Button
+              href={"/"}
+              size="sm"
+              variant="light"
+              as={Link}
+              className="text-sm"
+            >
               Contact
-            </Link>
+            </Button>
           </div>
         </div>
         <div className="navbar-end">
-          <Link
+          <Button
             href={"/settings/preference"}
             className="btn btn-ghost btn-sm btn-square mr-4 hidden md:flex"
+            as={Link}
+            isIconOnly
+            variant="light"
+            radius="full"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -173,7 +208,7 @@ const Navbar = () => {
                 d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495"
               />
             </svg>
-          </Link>
+          </Button>
 
           <div className="hidden form-control mr-4 ">
             <input
@@ -192,44 +227,40 @@ const Navbar = () => {
             />
           </div>
           {loggedIn ? (
-            <div className="dropdown dropdown-bottom dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="avatar placeholder mr-4"
-              >
-                <div className="bg-neutral text-neutral-content rounded-full w-12">
-                  <span>AK</span>
-                </div>
-              </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content z-[1] menu p-2 shadow bg-base-200 rounded-box w-52"
-              >
-                <li>
-                  <Link href="/admin/dashboard">Admin</Link>
-                </li>
-                <li>
-                  <Link href="/settings/profile">Profile</Link>
-                </li>
-                <li>
-                  <Link href="/settings/overview">Settings</Link>
-                </li>
-                <li>
-                  <label className="text-error" htmlFor="logout_modal">
-                    Logout
-                  </label>
-                </li>
-              </ul>
-            </div>
+            <Dropdown>
+              <DropdownTrigger>
+                <Avatar name="AK" className="cursor-pointer mr-4" />
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Menu">
+                <DropdownItem as={Link} href="/admin/dashboard">
+                  Admin
+                </DropdownItem>
+                <DropdownItem as={Link} href="/settings/profile">
+                  Profile
+                </DropdownItem>
+                <DropdownItem as={Link} href="/settings/overview">
+                  Settings
+                </DropdownItem>
+                <DropdownItem
+                  color="danger"
+                  variant="flat"
+                  className="text-danger"
+                  onPress={onOpen}
+                >
+                  Logout
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           ) : (
             <>
-              <button
-                className="btn btn-primary btn-sm rounded-btn mr-4"
+              <Button
+                className="mr-2"
+                variant="flat"
+                color="primary"
                 onClick={loginRedirect}
               >
                 Sign In
-              </button>
+              </Button>
             </>
           )}
         </div>
@@ -238,34 +269,42 @@ const Navbar = () => {
       <div className="md:hidden">
         <BottomBar />
       </div>
-      <input type="checkbox" id="logout_modal" className="modal-toggle" />
-      <div className="modal" role="dialog">
-        <div className="modal-box max-w-96">
-          <div className="max-w-40 mx-auto flex mb-8">
-            <Sad />
-          </div>
-          <div className="flex modal-action">
-            <button
-              className="btn btn-primary flex-1"
-              onClick={handleLogout}
-              disabled={isloggingOut}
-            >
-              {isloggingOut ? (
-                <span className="loading loading-dots loading-sm"></span>
-              ) : (
-                "Logout"
-              )}
-            </button>
-            <label className="btn flex-1" htmlFor="logout_modal">
-              Cancel
-            </label>
-          </div>
-        </div>
-
-        <label className="modal-backdrop" htmlFor="logout_modal">
-          Close
-        </label>
-      </div>
+      <Modal
+        backdrop="blur"
+        size="xs"
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Logout</ModalHeader>
+              <ModalBody>
+                <p>Are you sure you want to logout?</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  fullWidth
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  fullWidth
+                  onPress={handleLogout}
+                  isLoading={isloggingOut}
+                >
+                  Logout
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       {isNew && (
         <div
           className="card max-w-96 w-full bg-base-100/50 backdrop-blur-lg shadow-xl fixed bottom-[50%] translate-y-[50%] z-10 left-[50%] translate-x-[-50%] px-8 py-4 md:left-1 md:bottom-1 md:translate-x-0 md:translate-y-0"
@@ -314,12 +353,6 @@ const Navbar = () => {
           <li>
             <Link href={"/resources/subjects"}>Subjects</Link>
           </li>
-          {/* <li>
-                  <Link href={"/resources/announcements"}>Announcements</Link>
-                </li>
-                <li>
-                  <Link href={"/resources/dl"}>DL's</Link>
-                </li> */}
           <li>
             <Link href={"/settings/preference"}>Settings</Link>
           </li>

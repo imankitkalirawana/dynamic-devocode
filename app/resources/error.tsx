@@ -1,5 +1,5 @@
 "use client"; // Error components must be Client Components
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 import { useEffect } from "react";
 import NotFound from "@/components/assets/NotFound";

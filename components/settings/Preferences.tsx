@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Switch } from "@nextui-org/react";
 
 const themes = [
   "default",
@@ -59,10 +60,13 @@ const Preference = () => {
       setCurrentTheme("");
       localStorage.removeItem("theme");
       document.documentElement.removeAttribute("data-theme");
+      // change classname of html element
+      document.documentElement.className = "light";
     } else {
       setCurrentTheme(theme);
       localStorage.setItem("theme", theme);
       document.documentElement.dataset.theme = theme;
+      document.documentElement.className = "dark";
     }
   };
 
@@ -87,12 +91,18 @@ const Preference = () => {
               Enable the customised animated cursor.
             </p>
           </div>
-          <input
+          {/* <input
             id="custom-cursor"
             type="checkbox"
             className="toggle toggle-primary"
             onChange={handleCustomCursor}
             checked={isCustomCursor}
+          /> */}
+          <Switch
+            onChange={handleCustomCursor}
+            isSelected={isCustomCursor}
+            id="custom-cursor"
+            aria-label="Automatic updates"
           />
         </label>
 

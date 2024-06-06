@@ -1,13 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
+import { Button, Input } from "@nextui-org/react";
+import { set } from "mongoose";
 
 const Security = () => {
   const router = useRouter();
+  const [processing, setProcessing] = useState(false);
   const formik = useFormik({
     initialValues: {
       currentPassword: "",
@@ -22,6 +25,7 @@ const Security = () => {
       return errors;
     },
     onSubmit: async (values) => {
+      setProcessing(true);
       try {
         const res = await axios.post("/api/user", values, {
           headers: {
@@ -34,6 +38,7 @@ const Security = () => {
       } catch (error: any) {
         toast.error(error.message);
       }
+      setProcessing(false);
     },
   });
 
@@ -48,69 +53,45 @@ const Security = () => {
         </p>
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-6 md:w-[50%]">
-            <label htmlFor="current_password" className="label">
-              <span className="label-text">Current Password</span>
-            </label>
-            <div className="mt-1 rounded-md shadow-sm">
-              <input
-                id="current_password"
-                type="password"
-                name="currentPassword"
-                required
-                className="input input-bordered w-full"
-                onChange={formik.handleChange}
-                value={formik.values.currentPassword}
-              />
-            </div>
+            <Input
+              label="Current Password"
+              name="currentPassword"
+              type="password"
+              onChange={formik.handleChange}
+              value={formik.values.currentPassword}
+            />
           </div>
           <div className="sm:col-span-6 md:w-[50%]">
-            <label htmlFor="new_password" className="label">
-              <span className="label-text">New Password</span>
-            </label>
-            <div className="mt-1 rounded-md shadow-sm">
-              <input
-                id="new_password"
-                type="password"
-                name="newPassword"
-                required
-                className="input input-bordered w-full"
-                onChange={formik.handleChange}
-                value={formik.values.newPassword}
-              />
-            </div>
+            <Input
+              label="New Password"
+              name="newPassword"
+              type="password"
+              onChange={formik.handleChange}
+              value={formik.values.newPassword}
+              errorMessage={formik.errors.newPassword}
+            />
           </div>
           <div className="sm:col-span-6 md:w-[50%]">
-            <label htmlFor="confirm_password" className="label">
-              <span className="label-text">Confirm Password</span>
-            </label>
-            <div className="mt-1 rounded-md shadow-sm">
-              <input
-                id="confirm_password"
-                name="confirmPassword"
-                type="password"
-                required
-                className={`input input-bordered w-full ${
-                  formik.errors.confirmPassword ? "input-error" : ""
-                }`}
-                onChange={formik.handleChange}
-                value={formik.values.confirmPassword}
-              />
-            </div>
-            {formik.errors.confirmPassword && (
-              <p className="mt-1 text-xs text-error">
-                {formik.errors.confirmPassword}
-              </p>
-            )}
+            <Input
+              label="Confirm Password"
+              name="confirmPassword"
+              type="password"
+              onChange={formik.handleChange}
+              value={formik.values.confirmPassword}
+              errorMessage={formik.errors.confirmPassword}
+              isInvalid={
+                formik.errors.confirmPassword === "Passwords do not match" &&
+                formik.touched.confirmPassword
+              }
+            />
           </div>
         </div>
         <div className="divider my-10"></div>
         <div className="mt-6 flex items-center justify-end gap-2">
-          <button type="button" className="btn btn-ghost btn-sm">
-            Cancel
-          </button>
-          <button type="submit" className="btn btn-primary btn-sm">
+          <Button type="button">Cancel</Button>
+          <Button type="submit" color="primary" isLoading={processing}>
             Update
-          </button>
+          </Button>
         </div>
       </form>
     </div>

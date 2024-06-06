@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import axios from "axios";
 import S3 from "aws-sdk/clients/s3";
 import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { PDFDocument, rgb } from "pdf-lib";
 import Jimp from "jimp";
 
@@ -75,6 +75,7 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
           error: "Error",
         }
       );
+      // @ts-ignore
       if (res.status != 201) {
         console.log("error occured");
         return;

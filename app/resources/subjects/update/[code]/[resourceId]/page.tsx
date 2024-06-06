@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import resourceTypes from "@/utils/resourceTypes";
 import S3 from "aws-sdk/clients/s3";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,

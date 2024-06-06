@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { isLoggedIn } from "@/utils/auth";
 import { usePathname } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 interface Props {
   params: {

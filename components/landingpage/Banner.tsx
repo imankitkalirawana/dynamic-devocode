@@ -1,3 +1,4 @@
+import { Button } from "@nextui-org/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -38,16 +39,22 @@ const Banner = () => {
             A platform for developers to share and grow their knowledge.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link href="/resources" className="btn btn-primary">
+            {/* <Link href="/resources" className="btn btn-primary">
               Explore Resources
-            </Link>
-            <a
+            </Link> */}
+            <Button variant="solid" as={Link} color="primary" href="/resources">
+              Explore Resources
+            </Button>
+
+            <Button
+              variant="flat"
+              as={Link}
+              color="default"
               href="https://docs.google.com/forms/d/e/1FAIpQLSdFBSjoY5HW4QeUwOPn2gBruzUwW4utGR1TAGIXa4UoQwmKgg/viewform?usp=send_form"
-              className="btn btn-ghost"
               target="_blank"
             >
               Contribute <span aria-hidden="true">→</span>
-            </a>
+            </Button>
           </div>
         </div>
       </div>

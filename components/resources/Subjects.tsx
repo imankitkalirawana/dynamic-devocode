@@ -4,10 +4,43 @@ import Link from "next/link";
 import axios, { AxiosError } from "axios";
 import { isLoggedIn } from "@/utils/auth";
 import dynamic from "next/dynamic";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useState } from "react";
+import {
+  IconAdjustmentsHorizontal,
+  IconCopy,
+  IconDotsVertical,
+  IconDownload,
+  IconPencil,
+  IconSearch,
+  IconSortAscending,
+  IconSortAscendingSmallBig,
+  IconSortDescending,
+  IconSortDescendingSmallBig,
+  IconTrash,
+  IconZoomScan,
+} from "@tabler/icons-react";
+import DropdownDetailed from "../common/DropdownDetailed";
+import {
+  Dropdown,
+  DropdownTrigger,
+  Button,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+  code,
+  Chip,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+  Input,
+} from "@nextui-org/react";
+import API_BASE_URL from "@/utils/config";
 
 type Subject = {
   _id: string;
@@ -26,6 +59,8 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
   const { loggedIn } = isLoggedIn();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCriteria, setFilterCriteria] = useState("");
+  const deleteModal = useDisclosure();
+  const [clickedItem, setClickedItem] = useState<Subject | null>(null);
 
   useEffect(() => {
     const savedFilterCriteria = localStorage.getItem("subjectFilterCriteria");
@@ -46,11 +81,7 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
     });
   };
 
-  const handleDelete = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-    code: string
-  ) => {
-    e.preventDefault();
+  const handleDelete = async (code: string | undefined) => {
     try {
       const modal = document.getElementById(`delete_modal_${code}`);
       await axios.delete(`/api/resources/subjects/${code}`, {
@@ -58,9 +89,9 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      modal?.click();
+      deleteModal.onClose();
+      toast.success("Subject deleted successfully");
       router.refresh();
-      toast.success("Subject deleted");
     } catch (error: any) {
       toast.error(error.response.data.message);
     }
@@ -111,137 +142,69 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
 
   const filteredSubjects = filterSubjects();
 
+  const filterItems = [
+    {
+      key: "ascending",
+      label: "Ascending",
+      icon: <IconSortAscending size={16} />,
+      onclick: () => setFilterCriteria("ascending"),
+    },
+    {
+      key: "descending",
+      label: "Descending",
+      icon: <IconSortDescending size={16} />,
+      onclick: () => setFilterCriteria("descending"),
+    },
+    {
+      key: "newest",
+      label: "Newest First",
+      icon: <IconSortAscendingSmallBig size={16} />,
+      onclick: () => setFilterCriteria("newest"),
+    },
+    {
+      key: "oldest",
+      label: "Oldest First",
+      icon: <IconSortDescendingSmallBig size={16} />,
+      onclick: () => setFilterCriteria("oldest"),
+    },
+  ];
+
+  let base_url = API_BASE_URL?.split("api")[0];
+  const [isCopied, setisCopied] = useState(false);
+
+  const handleCopyLink = (subject: Subject) => {
+    const url = `${base_url}resources/subjects/${subject.code}/all`;
+
+    setisCopied(true);
+    setTimeout(() => {
+      setisCopied(false);
+    }, 10000);
+    navigator.clipboard.writeText(url);
+    toast.success("Link copied to clipboard");
+  };
+
   return (
     <>
       <div className="col-span-12 flex items-center gap-4">
         <div className="col-span-12 relative">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5 absolute left-0 top-[50%] translate-y-[-50%] ml-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-            />
-          </svg>
-          <input
+          <Input
+            variant="bordered"
             type="text"
-            placeholder="Search by code or title..."
-            className="input input-bordered w-full sm:w-72 pl-12"
+            placeholder={`Search subjects by code or title`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            startContent={<IconSearch />}
+            size="lg"
+            className="w-full sm:w-72"
           />
         </div>
-        {/* filter button */}
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-circle m-1 tooltip flex justify-center items-center"
-            data-tip="Filter Subjects"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
-              />
-            </svg>
-          </div>
-          <ul
-            tabIndex={0}
-            className="dropdown-content z-[1] menu p-2 shadow bg-base-100/20 backdrop-blur-lg rounded-box w-52"
-          >
-            <li onClick={() => setFilterCriteria("ascending")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
-                  />
-                </svg>
-                Ascending
-              </a>
-            </li>
-            <li onClick={() => setFilterCriteria("descending")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
-                  />
-                </svg>
-                Descending
-              </a>
-            </li>
-            <li onClick={() => setFilterCriteria("newest")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                Newest First
-              </a>
-            </li>
-            <li onClick={() => setFilterCriteria("oldest")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                Oldest First
-              </a>
-            </li>
-          </ul>
-        </div>
+        <DropdownDetailed
+          items={filterItems}
+          button={{
+            label: <IconAdjustmentsHorizontal />,
+            variant: "light",
+          }}
+        />
       </div>
       {filteredSubjects
         .filter(
@@ -249,113 +212,132 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
             subject.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             subject.code.toLowerCase().includes(searchQuery.toLowerCase())
         )
-        .map((subject) => (
+        .map((subject, index) => (
           <div
-            key={subject._id}
-            className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
-            title={subject.title}
+            key={index}
+            className="flex flex-col w-full col-span-12 md:col-span-6 lg:col-span-4 relative bg-content1 shadow-small rounded-large border-small border-default-100 p-3"
           >
-            {loggedIn && (
-              <div className="flex items-center justify-between">
-                <div className="dropdown dropdown-end absolute right-3 top-3">
-                  <div
-                    tabIndex={0}
-                    role="button"
-                    className="btn btn-sm btn-ghost m-1"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5"
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  className="absolute right-3 top-4"
+                  isIconOnly={true}
+                  variant={"light"}
+                >
+                  <IconDotsVertical size={20} />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Dynamic Actions">
+                {loggedIn ? (
+                  <DropdownSection>
+                    <DropdownItem
+                      key="copy"
+                      color="success"
+                      className="text-success"
+                      startContent={<IconCopy size={20} />}
+                      onClick={() => handleCopyLink(subject)}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                      />
-                    </svg>
+                      Copy Link
+                    </DropdownItem>
+                    <DropdownItem
+                      key="edit"
+                      startContent={<IconPencil size={20} />}
+                      onClick={() =>
+                        router.push(
+                          `/resources/subjects/update/${subject.code}/`
+                        )
+                      }
+                    >
+                      Edit
+                    </DropdownItem>
+                    <DropdownItem
+                      key="delete"
+                      className="text-danger"
+                      color="danger"
+                      startContent={<IconTrash size={20} />}
+                      onClick={() => {
+                        setClickedItem(subject);
+                        deleteModal.onOpenChange();
+                      }}
+                    >
+                      Delete file
+                    </DropdownItem>
+                  </DropdownSection>
+                ) : (
+                  <DropdownSection>
+                    <DropdownItem
+                      key="copy"
+                      color="success"
+                      className="text-success"
+                      startContent={<IconCopy size={20} />}
+                      onClick={() => handleCopyLink(subject)}
+                    >
+                      Copy Link
+                    </DropdownItem>
+                  </DropdownSection>
+                )}
+              </DropdownMenu>
+            </Dropdown>
+            <Link href={`/resources/subjects/${subject.code}/all`}>
+              <div className="relative flex w-full p-3 flex-auto flex-col place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased px-4 pb-1">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex max-w-[80%] flex-col gap-1">
+                    <p className="text-medium whitespace-nowrap flex items-center gap-2 font-medium">
+                      {subject.code}
+                    </p>
                   </div>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100/30 backdrop-blur-lg rounded-box w-52"
-                  >
-                    <li>
-                      <Link href={`/resources/subjects/update/${subject.code}`}>
-                        Edit
-                      </Link>
-                    </li>
-                    <li>
-                      <a>Archive</a>
-                    </li>
-                    <li>
-                      <label
-                        htmlFor={`delete_modal_${subject.code}`}
-                        className="text-error"
-                      >
-                        Delete
-                      </label>
-                    </li>
-                  </ul>
                 </div>
+                <p className="pt-4 text-small text-default-500">
+                  {subject.title}
+                </p>
               </div>
-            )}
-            <Link
-              href={`/resources/subjects/${subject.code}/all`}
-              className="px-8 py-4 "
-            >
-              <h2 className="text-xl font-bold" tabIndex={0} role="link">
-                {subject.code}
-              </h2>
-              <h3 className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
-                {subject.title}
-              </h3>
-              <div className="flex justify-end items-center mt-2">
-                <span className="text-xs">
+              <div className="p-3 h-auto flex w-full items-center overflow-hidden color-inherit subpixel-antialiased rounded-b-large justify-between gap-2">
+                <Chip className="capitalize">
                   {humanReadableDate(subject.addedDate)}
-                </span>
+                </Chip>
               </div>
             </Link>
           </div>
         ))}
-      {subjects.map((subject) => (
-        <React.Fragment key={subject._id}>
-          <input
-            type="checkbox"
-            id={`delete_modal_${subject.code}`}
-            className="modal-toggle"
-          />
-          <div className="modal" role="dialog">
-            <div className="modal-box max-w-96">
-              <div className="max-w-40 mx-auto flex mb-8">
-                <Trash />
-              </div>
-              <div className="flex modal-action">
-                <button
-                  className="btn btn-primary flex-1"
-                  onClick={(e) => handleDelete(e, subject.code)}
-                >
-                  Delete
-                </button>
-                <label
-                  className="btn flex-1"
-                  htmlFor={`delete_modal_${subject.code}`}
+      <Modal
+        backdrop="blur"
+        size="xs"
+        isOpen={deleteModal.isOpen}
+        onOpenChange={deleteModal.onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Delete</ModalHeader>
+              <ModalBody>
+                <p>Are you sure you want to delete {clickedItem?.title}?</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  fullWidth
+                  variant="flat"
+                  onPress={onClose}
                 >
                   Cancel
-                </label>
-              </div>
-            </div>
-            <label
-              className="modal-backdrop"
-              htmlFor={`delete_modal_${subject.code}`}
-            >
-              Close
-            </label>
-          </div>
-        </React.Fragment>
-      ))}
+                </Button>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  fullWidth
+                  onPress={() => {
+                    handleDelete(clickedItem?.code);
+                    console.log(clickedItem?.title);
+                  }}
+                  // isLoading={isloggingOut}
+                >
+                  Delete
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

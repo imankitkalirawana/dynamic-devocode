@@ -5,9 +5,24 @@ import { usePathname } from "next/navigation";
 import Subject from "./add/Subject";
 import Resource from "./add/Resource";
 import dynamic from "next/dynamic";
+import {
+  Breadcrumbs as NextUIBreadcrumbs,
+  BreadcrumbItem,
+  Dropdown,
+  DropdownTrigger,
+  Button,
+  DropdownItem,
+  DropdownMenu,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalBody,
+} from "@nextui-org/react";
+import { IconPlus } from "@tabler/icons-react";
 
 const Breadcrumbs = () => {
   const { loggedIn } = isLoggedIn();
+  const addModal = useDisclosure();
   const location = usePathname();
   const pathSegments = location?.split("/").filter((segment) => segment !== "");
 
@@ -31,9 +46,9 @@ const Breadcrumbs = () => {
   return (
     <>
       <div className="text-sm breadcrumbs select-none cursor-default flex">
-        <ul>
+        <NextUIBreadcrumbs variant="solid">
           {breadcrumbItems?.map((item, index) => (
-            <li key={index}>
+            <BreadcrumbItem key={index}>
               {index !== breadcrumbItems.length - 1 ? (
                 <Link href={item.link}>
                   {item.label.charAt(0).toUpperCase() + item.label.slice(1)}
@@ -43,46 +58,49 @@ const Breadcrumbs = () => {
                   {item.label.charAt(0).toUpperCase() + item.label.slice(1)}
                 </span>
               )}
-            </li>
+            </BreadcrumbItem>
           ))}
-        </ul>
+        </NextUIBreadcrumbs>
         {loggedIn &&
           (lastItem?.label != "resources" && !update ? (
-            <label
+            <Button
+              as="label"
               htmlFor="add_subject"
-              className="btn btn-sm btn-circle ml-4 active:ring-4 focus:ring-4 ring-primary/50 hover:btn-primary"
+              variant="flat"
+              radius="full"
+              isIconOnly
+              size="sm"
+              className="ml-4"
+              onClick={addModal.onOpenChange}
             >
-              <svg
-                className="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 18 18"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 1v16M1 9h16"
-                />
-              </svg>
-            </label>
+              <IconPlus size={20} />
+            </Button>
           ) : null)}
       </div>
       {loggedIn && (
         <>
-          <input type="checkbox" id="add_subject" className="modal-toggle" />
-          <div className="modal" role="dialog">
-            {lastItem?.label === "subjects" ? (
-              <Subject lastItem={lastItem} />
-            ) : (
-              <Resource lastItem={lastItem} />
-            )}
-            <label className="modal-backdrop" htmlFor="add_subject">
-              Close
-            </label>
-          </div>
+          {/* <input type="checkbox" id="add_subject" className="modal-toggle" /> */}
+          <Modal
+            backdrop="blur"
+            size="xs"
+            isOpen={addModal.isOpen}
+            onOpenChange={addModal.onOpenChange}
+            role="dialog"
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalBody>
+                    {lastItem?.label === "subjects" ? (
+                      <Subject lastItem={lastItem} />
+                    ) : (
+                      <Resource lastItem={lastItem} />
+                    )}
+                  </ModalBody>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
         </>
       )}
     </>

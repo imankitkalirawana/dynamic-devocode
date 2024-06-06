@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 interface HomepageProps {
   subjects: any;

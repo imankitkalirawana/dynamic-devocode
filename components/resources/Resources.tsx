@@ -1,14 +1,53 @@
 "use client";
-import Trash from "@/assets/Trash";
 import S3 from "aws-sdk/clients/s3";
 import axios from "axios";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isLoggedIn } from "@/utils/auth";
 import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
+import DropdownDetailed from "../common/DropdownDetailed";
+import {
+  IconAdjustmentsHorizontal,
+  IconCopy,
+  IconDotsVertical,
+  IconDownload,
+  IconEdit,
+  IconFile,
+  IconFileIsr,
+  IconLink,
+  IconPencil,
+  IconSearch,
+  IconSortAscending,
+  IconSortAscendingShapes,
+  IconSortAscendingSmallBig,
+  IconSortAZ,
+  IconSortDescending,
+  IconSortDescendingSmallBig,
+  IconSortZA,
+  IconTrash,
+  IconZoomScan,
+} from "@tabler/icons-react";
+import {
+  Button,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSection,
+  DropdownTrigger,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
+import Logo from "../assets/Logo";
+import API_BASE_URL from "@/utils/config";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -37,6 +76,14 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
   const { loggedIn } = isLoggedIn();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCriteria, setFilterCriteria] = useState("");
+  const deleteModal = useDisclosure();
+  const [clickedItem, setClickedItem] = useState<Resource | null>(null);
+
+  useEffect(() => {
+    if (!deleteModal.isOpen) {
+      setClickedItem(null);
+    }
+  }, [deleteModal.isOpen]);
 
   useEffect(() => {
     const savedFilterCriteria = localStorage.getItem("resourceFilterCriteria");
@@ -62,13 +109,10 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
           loading: "Loading...",
           success: "Download Started",
           error: "Error Downloading File",
-        },
-        {
-          id: "download",
-          duration: 5000,
         }
       );
       const link = document.createElement("a");
+      // @ts-ignore
       link.href = url;
       link.setAttribute("download", filename);
       document.body.appendChild(link);
@@ -89,34 +133,11 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
     ) {
       window.open(`/api/file/${file}`, "_blank");
     } else {
-      toast.promise(
-        handleDownload(file),
-        {
-          loading: "Loading...",
-          success: "Cannot open file! Downloading...",
-          error: "Error Downloading File",
-        },
-        {
-          id: "download",
-        }
-      );
-      // handleDownload(file);
-    }
-  };
-
-  const handleCardClick = (
-    e: any,
-    file: string,
-    link: string,
-    filesize: string
-  ) => {
-    e.preventDefault();
-    if (file && parseInt(filesize) < 4) {
-      openFile(file);
-    } else if (file && parseInt(filesize) >= 4) {
-      handleDownload(file);
-    } else if (link) {
-      window.open(link, "_blank");
+      toast.promise(handleDownload(file), {
+        loading: "Loading...",
+        success: "Cannot open file! Downloading...",
+        error: "Error Downloading File",
+      });
     }
   };
 
@@ -137,7 +158,7 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
   const path = usePathname();
   const code = path?.split("/")[3];
 
-  const handleDelete = async (e: any, resourceId: string) => {
+  const handleDelete = async (e: any, resourceId: any) => {
     try {
       await axios
         .delete(`/api/resources/resources/?resourceId=${resourceId}`, {
@@ -146,9 +167,9 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
           },
         })
         .then(() => {
-          const modal = document.getElementById(`delete_modal_${resourceId}`);
-          modal?.click();
-          toast.success("Resource deleted");
+          // close the modal
+          deleteModal.onOpenChange();
+          // refresh the page
           router.refresh();
         });
     } catch (error: any) {
@@ -217,158 +238,76 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
 
   const filteredResources = filterResources();
 
+  const filterItems = [
+    {
+      key: "ascending",
+      label: "Ascending",
+      icon: <IconSortAscending size={16} />,
+      onclick: () => setFilterCriteria("ascending"),
+    },
+    {
+      key: "descending",
+      label: "Descending",
+      icon: <IconSortDescending size={16} />,
+      onclick: () => setFilterCriteria("descending"),
+    },
+    {
+      key: "newest",
+      label: "Newest First",
+      icon: <IconSortAscendingSmallBig size={16} />,
+      onclick: () => setFilterCriteria("newest"),
+    },
+    {
+      key: "oldest",
+      label: "Oldest First",
+      icon: <IconSortDescendingSmallBig size={16} />,
+      onclick: () => setFilterCriteria("oldest"),
+    },
+    {
+      key: "type",
+      label: "By Type",
+      icon: <IconSortAscendingShapes size={16} />,
+      onclick: () => setFilterCriteria("type"),
+    },
+  ];
+  let base_url = API_BASE_URL?.split("api")[0];
+  const [isCopied, setisCopied] = useState(false);
+
+  const handleCopyLink = (resource: Resource) => {
+    const url = `${base_url}resources/subjects/${code}/${resource.type}/${resource._id}`;
+
+    setisCopied(true);
+    setTimeout(() => {
+      setisCopied(false);
+    }, 10000);
+    navigator.clipboard.writeText(url);
+    toast.success("Link copied to clipboard");
+  };
+
   return (
     <>
       <div className="col-span-12 flex items-center gap-4">
         <div className="col-span-12 relative">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5 absolute left-0 top-[50%] translate-y-[-50%] ml-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-            />
-          </svg>
-
-          <input
+          <Input
+            variant="bordered"
             type="text"
             placeholder={`Search ${
               type == "all" ? "anything" : type
             } in ${code}`}
-            className="input input-bordered w-full sm:w-72 pl-12"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            startContent={<IconSearch />}
+            size="lg"
+            className="w-full sm:w-72"
           />
         </div>
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-circle m-1 tooltip flex justify-center items-center"
-            data-tip="Filter Subjects"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
-              />
-            </svg>
-          </div>
-          <ul
-            tabIndex={0}
-            className="dropdown-content z-[1] menu p-2 shadow bg-base-100/20 backdrop-blur-lg rounded-box w-52"
-          >
-            <li onClick={() => setFilterCriteria("ascending")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
-                  />
-                </svg>
-                Ascending
-              </a>
-            </li>
-            <li onClick={() => setFilterCriteria("descending")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
-                  />
-                </svg>
-                Descending
-              </a>
-            </li>
-            <li onClick={() => setFilterCriteria("newest")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                Newest First
-              </a>
-            </li>
-            <li onClick={() => setFilterCriteria("oldest")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m15 11.25-3-3m0 0-3 3m3-3v7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                Oldest First
-              </a>
-            </li>
-            <li onClick={() => setFilterCriteria("type")}>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-                  />
-                </svg>
-                By Type
-              </a>
-            </li>
-          </ul>
-        </div>
+        <DropdownDetailed
+          items={filterItems}
+          button={{
+            label: <IconAdjustmentsHorizontal />,
+            variant: "light",
+          }}
+        />
       </div>
       {filteredResources
         .filter((resource) => {
@@ -385,185 +324,183 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
             return resource;
           }
         })
-        .map((resource) => (
+        .map((resource, index) => (
           <div
-            className="card bg-base-200 border border-neutral col-span-12 md:col-span-6 lg:col-span-4 relative select-none cursor-pointer"
-            title={`Title: ${resource.title}\nDescription: ${resource.description}`}
+            key={index}
+            className="flex flex-col w-full col-span-12 md:col-span-6 lg:col-span-4 relative bg-content1 shadow-small rounded-large border-small border-default-100 p-3"
           >
             {path?.includes("all") && (
-              // <span className="indicator-item badge badge-primary -top-2 -right-4 absolute">
-              //   {resource.type}
-              // </span>
-              <span className="indicator-item absolute -top-2 -right-4 inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/70 backdrop-blur-lg">
-                {resource.type}
-              </span>
+              <>
+                <Chip
+                  variant="flat"
+                  color="primary"
+                  className="capitalize absolute -top-2 -right-4 backdrop-blur-sm"
+                >
+                  {resource.type}
+                </Chip>
+              </>
             )}
-
-            <div className="flex items-center justify-between">
-              <div className="dropdown dropdown-end absolute right-3 top-3">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="btn btn-sm btn-ghost m-1"
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  className="absolute right-3 top-4"
+                  isIconOnly={true}
+                  variant={"light"}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                    />
-                  </svg>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100/30 backdrop-blur-lg rounded-box w-52"
-                >
-                  <li onClick={() => openFile(resource.file)}>
-                    <a>Open file</a>
-                  </li>
-                  <li onClick={() => handleDownload(resource.file)}>
-                    <a>Download</a>
-                  </li>
-                  {loggedIn && (
-                    <>
-                      <li>
-                        <Link
-                          href={`/resources/subjects/update/${code}/${resource._id}`}
-                        >
-                          Edit
-                        </Link>
-                      </li>
-
-                      <li>
-                        <a>Archive</a>
-                      </li>
-                      <li>
-                        <label
-                          htmlFor={`delete_modal_${resource._id}`}
-                          className="text-error"
-                        >
-                          Delete
-                        </label>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
-            </div>
+                  <IconDotsVertical size={20} />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Dynamic Actions">
+                {loggedIn ? (
+                  <DropdownSection>
+                    <DropdownItem
+                      key="open"
+                      startContent={<IconZoomScan size={20} />}
+                      onClick={() => openFile(resource.file)}
+                    >
+                      Open file
+                    </DropdownItem>
+                    <DropdownItem
+                      key="download"
+                      startContent={<IconDownload size={20} />}
+                      onClick={() => handleDownload(resource.file)}
+                    >
+                      Download
+                    </DropdownItem>
+                    <DropdownItem
+                      key="copy"
+                      color="success"
+                      className="text-success"
+                      startContent={<IconCopy size={20} />}
+                      onClick={() => handleCopyLink(resource)}
+                    >
+                      Copy Link
+                    </DropdownItem>
+                    <DropdownItem
+                      key="edit"
+                      startContent={<IconPencil size={20} />}
+                      onClick={() =>
+                        router.push(
+                          `/resources/subjects/update/${code}/${resource._id}`
+                        )
+                      }
+                    >
+                      Edit
+                    </DropdownItem>
+                    <DropdownItem
+                      key="delete"
+                      className="text-danger"
+                      color="danger"
+                      startContent={<IconTrash size={20} />}
+                      onClick={() => {
+                        setClickedItem(resource);
+                        deleteModal.onOpenChange();
+                      }}
+                    >
+                      Delete file
+                    </DropdownItem>
+                  </DropdownSection>
+                ) : (
+                  <DropdownSection>
+                    <DropdownItem
+                      key="open"
+                      startContent={<IconZoomScan size={20} />}
+                      onClick={() => openFile(resource.file)}
+                    >
+                      Open file
+                    </DropdownItem>
+                    <DropdownItem
+                      key="download"
+                      startContent={<IconDownload size={20} />}
+                      onClick={() => handleDownload(resource.file)}
+                    >
+                      Download
+                    </DropdownItem>
+                    <DropdownItem
+                      key="copy"
+                      color="success"
+                      className="text-success"
+                      startContent={<IconCopy size={20} />}
+                      onClick={() => handleCopyLink(resource)}
+                    >
+                      Copy Link
+                    </DropdownItem>
+                  </DropdownSection>
+                )}
+              </DropdownMenu>
+            </Dropdown>
             <Link
-              className="px-8 py-4"
-              // onClick={(e) =>
-              //   handleCardClick(
-              //     e,
-              //     resource.file,
-              //     resource.link,
-              //     resource.filesize
-              //   )
-              // }
               href={`/resources/subjects/${code}/${resource.type}/${resource._id}`}
             >
-              <div className="flex items-center">
-                <h2
-                  className="text-lg font-bold max-w-[80%] overflow-hidden text-ellipsis whitespace-nowrap"
-                  tabIndex={0}
-                  role="link"
-                >
-                  {resource.title}
-                </h2>
-                {resource.file ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 ml-2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-5 h-5 ml-2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                    />
-                  </svg>
-                )}
+              <div className="relative flex w-full p-3 flex-auto flex-col place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased px-4 pb-1">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex max-w-[80%] flex-col gap-1">
+                    <p className="text-medium whitespace-nowrap flex items-center gap-2 font-medium">
+                      {resource.title}
+                      {resource.file ? (
+                        <IconFileIsr size={20} />
+                      ) : (
+                        <IconLink size={20} />
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <p className="pt-4 text-small text-default-500">
+                  {resource.description}
+                </p>
               </div>
-              <p className="mt-2 max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
-                {resource.description}
-              </p>
-
-              <div className="flex justify-between items-center">
-                <span className="text-xs">
+              <div className="p-3 h-auto flex w-full items-center overflow-hidden color-inherit subpixel-antialiased rounded-b-large justify-between gap-2">
+                <Chip className="capitalize">
                   {humanReadableDate(resource.addedDate)}
-                </span>
-                <span className="text-xs"></span>
+                </Chip>
                 {resource.file && (
-                  <span className="text-xs">
-                    {parseInt(resource.filesize)}mb (
-                    {getFileExtension(resource.file)})
-                  </span>
+                  <>
+                    <Chip>{resource.filesize} MB</Chip>
+                  </>
                 )}
               </div>
             </Link>
           </div>
         ))}
-      {resources.map((resource) => (
-        <React.Fragment key={resource._id}>
-          <input
-            type="checkbox"
-            id={`delete_modal_${resource._id}`}
-            className="modal-toggle"
-          />
-          <div className="modal" role="dialog">
-            <div className="modal-box max-w-96">
-              <div className="max-w-40 mx-auto flex mb-8">
-                <Trash />
-              </div>
-              <div className="flex modal-action">
-                <button
-                  className="btn btn-primary flex-1"
-                  onClick={(e) => handleDelete(e, resource._id)}
-                >
-                  Delete
-                </button>
-                <label
-                  className="btn flex-1"
-                  htmlFor={`delete_modal_${resource._id}`}
+      <Modal
+        backdrop="blur"
+        size="xs"
+        isOpen={deleteModal.isOpen}
+        onOpenChange={deleteModal.onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Delete</ModalHeader>
+              <ModalBody>
+                <p>Are you sure you want to delete {clickedItem?.title}?</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  fullWidth
+                  variant="flat"
+                  onPress={onClose}
                 >
                   Cancel
-                </label>
-              </div>
-            </div>
-            <label
-              className="modal-backdrop"
-              htmlFor={`delete_modal_${resource._id}`}
-            >
-              Close
-            </label>
-          </div>
-        </React.Fragment>
-      ))}
+                </Button>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  fullWidth
+                  onPress={() => {
+                    handleDelete(null, clickedItem?._id);
+                    console.log(clickedItem?.title);
+                  }}
+                  // isLoading={isloggingOut}
+                >
+                  Delete
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

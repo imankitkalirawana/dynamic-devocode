@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import User from "@/models/User";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
+import logger from "@/utils/logger";
 connectDB();
 
 const getUsername = async (userId) => {

@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
 import Navbar from "@/components/common/Navbar";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 // import ProgressBarI from "@/components/common/ProgressBar";
 import { AxiomWebVitals } from "next-axiom";
+import ProgressBarI from "@/components/common/ProgressBar";
 
 export const metadata: Metadata = {
   title: {
@@ -91,15 +92,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      data-theme={"lemonade"}
-      className="transition-all duration-1000"
-    >
+    <html lang="en" data-theme={"lemonade"} className="dark">
       <body>
         <Providers>
           <Navbar />
-          <Toaster position="bottom-center" containerClassName="mt-16" />
+          <Toaster
+            position="bottom-right"
+            theme="dark"
+            richColors
+            closeButton
+          />
 
           <main className="mb-24">
             {children}
@@ -107,7 +109,7 @@ export default function RootLayout({
             <SpeedInsights />
             <AxiomWebVitals />
           </main>
-          {/* <ProgressBarI /> */}
+          <ProgressBarI />
         </Providers>
       </body>
     </html>

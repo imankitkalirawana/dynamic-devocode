@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
   country: String,
   state: String,
   city: String,
-  streetaddress: String,
+  address: String,
   zip: String,
   createdat: {
     type: Date,

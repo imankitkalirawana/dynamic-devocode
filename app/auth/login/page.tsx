@@ -2,8 +2,11 @@
 
 import ForgotPassword from "@/assets/ForgotPassword";
 import { isLoggedIn } from "@/utils/auth";
+import { Button, Input } from "@nextui-org/react";
 import axios from "axios";
+import { useFormik } from "formik";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type error = {
   message: string;
@@ -12,8 +15,6 @@ type error = {
 
 const Page = () => {
   const { loggedIn } = isLoggedIn();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<error | null>(null);
 
@@ -23,94 +24,77 @@ const Page = () => {
     }
   }, []);
 
-  const handleSubmit = async (event: any) => {
-    setIsLoading(true);
-    event.preventDefault();
-    try {
-      const response = await axios.post("/api/auth/login", {
-        username,
-        password,
-      });
-      const { data } = response;
-      if (data) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userData", JSON.stringify(data));
-        localStorage.setItem("userId", data.userId);
-        if (localStorage.getItem("redirectPath")) {
-          window.location.href = localStorage.getItem("redirectPath") as string;
-        } else {
-          window.location.href = "/dashboard";
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      try {
+        const response = await axios.post("/api/auth/login", values);
+        const { data } = response;
+        if (data) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("userData", JSON.stringify(data));
+          localStorage.setItem("userId", data.userId);
+          if (localStorage.getItem("redirectPath")) {
+            window.location.href = localStorage.getItem(
+              "redirectPath"
+            ) as string;
+          } else {
+            window.location.href = "/dashboard";
+          }
+          localStorage.removeItem("redirectPath");
         }
-        localStorage.removeItem("redirectPath");
+      } catch (error: any) {
+        console.log(error);
+        if (error.response.status === 401) {
+          setError({ message: "Invalid username", status: 401 });
+          toast.error("Invalid username");
+        } else if (error.response.status === 402) {
+          setError({ message: "Invalid password", status: 402 });
+          toast.error("Invalid password");
+        } else {
+          setError({ message: "An error occurred", status: 500 });
+          toast.error("An error occurred");
+        }
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      console.log(error);
-      if (error.response.status === 401) {
-        setError({ message: "Invalid username", status: 401 });
-      } else if (error.response.status === 402) {
-        setError({ message: "Invalid password", status: 402 });
-      } else {
-        setError({ message: "An error occurred", status: 500 });
-      }
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
   return (
     <>
       <div className="hero min-h-screen bg-base-200 p-4">
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-          <form className="card-body" onSubmit={handleSubmit}>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Username</span>
-              </label>
-              <input
-                type="text"
-                name="username"
-                placeholder="username"
-                className="input input-bordered"
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-              <div className="label">
-                <span className="label-text-alt text-error">
-                  {error?.status === 401 ? error.message : ""}
-                </span>
-              </div>
+          <form className="card-body" onSubmit={formik.handleSubmit}>
+            <div>
+              <h2 className="text-2xl font-bold text-center">
+                Welcome to Devocode
+              </h2>
             </div>
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
+              <Input
+                label="Username"
+                name="username"
+                onChange={formik.handleChange}
+                value={formik.values.username}
+              />
+            </div>
+            <div className="form-control">
+              <Input
+                label="Password"
                 type="password"
                 name="password"
-                placeholder="password"
-                className="input input-bordered"
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                value={formik.values.password}
+                onChange={formik.handleChange}
               />
-              <label className="label">
-                <span className="label-text-alt text-error">
-                  {error?.status === 402 ? error.message : ""}
-                </span>
-                <label
-                  className="label-text-alt link link-hover"
-                  htmlFor="my_modal_7"
-                >
-                  Forgot password
-                </label>
-              </label>
             </div>
-            <div className="form-control mt-6">
-              <button className="btn btn-primary">
-                {isLoading ? (
-                  <span className="loading loading-dots loading-md"></span>
-                ) : (
-                  "Login"
-                )}
-              </button>
+            <div className="form-control justify-end">
+              <Button isLoading={isLoading} type="submit" color="primary">
+                Login
+              </Button>
             </div>
           </form>
         </div>
