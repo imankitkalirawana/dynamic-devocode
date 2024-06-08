@@ -15,6 +15,11 @@ import {
   useDisclosure,
   Input,
   Textarea,
+  Card,
+  CardBody,
+  CardHeader,
+  Avatar,
+  CardFooter,
 } from "@nextui-org/react";
 
 interface User {
@@ -36,8 +41,7 @@ const Profile = () => {
   const router = useRouter();
   const [user, setUser] = useState<User>({} as User);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [processing, setProcessing] = useState(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const deleteModal = useDisclosure();
 
   const formik = useFormik({
     initialValues: {
@@ -50,7 +54,6 @@ const Profile = () => {
       confirmusername: "",
     },
     onSubmit: async (values) => {
-      setProcessing(true);
       try {
         const res = await axios.put("/api/user", values, {
           headers: {
@@ -63,7 +66,6 @@ const Profile = () => {
         console.log(error);
         toast.error(error.message);
       }
-      setProcessing(false);
     },
   });
   const fetchUser = async () => {
@@ -124,171 +126,166 @@ const Profile = () => {
     );
 
   return (
-    <div className="col-span-full lg:col-span-9">
-      <form className="px-4 sm:px-0" onSubmit={formik.handleSubmit}>
-        <div className="pb-12">
-          <h2 className="text-base font-semibold leading-7 text-base-content">
-            Profile
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-base-neutral">
-            This information will be displayed publicly so be careful what you
-            share.
-          </p>
-
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-6 md:w-[50%]">
-              <label htmlFor="username" className="label">
-                <span className="label-text">Username</span>
-              </label>
-              <div className="mt-2">
-                <Input
-                  name="username"
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.username}
-                  autoComplete="username"
-                  placeholder="username"
-                  startContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">
-                        www.devocode.in/
-                      </span>
-                    </div>
-                  }
-                />
+    <>
+      <div className="flex items-center justify-center p-4">
+        <Card className="w-full">
+          <CardBody>
+            <div className="p-3 z-10 w-full justify-start shrink-0 overflow-inherit color-inherit subpixel-antialiased rounded-t-large flex flex-col items-start px-4 pb-0 pt-4">
+              <p className="text-large">Account Details</p>
+              <div className="flex gap-4 py-4">
+                <Avatar isBordered name={user.name} />
+                <div className="flex flex-col items-start justify-center">
+                  <p className="font-medium">{user.name}</p>
+                  <span className="text-small text-default-500 capitalize">
+                    {user.role}
+                  </span>
+                </div>
               </div>
+              <p className="text-small text-default-400">
+                The photo will be used for your profile, and will be visible to
+                other users of the platform.
+              </p>
             </div>
-
-            <div className="col-span-full">
-              <Textarea
-                name="about"
-                rows={3}
+            <div className="relative w-full p-3 flex-auto flex-col place-content-inherit align-items-inherit h-auto break-words text-left overflow-y-auto subpixel-antialiased grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Input
+                labelPlacement="outside"
+                label="Full Name"
+                placeholder="Enter your name"
+                value={formik.values.name}
                 onChange={formik.handleChange}
-                value={formik.values.about}
+                name="name"
+                id="name"
+              />
+              <Input
+                labelPlacement="outside"
+                label="Username"
+                placeholder="Enter your username"
+                value={formik.values.username}
+                onChange={formik.handleChange}
+                name="username"
+                id="username"
+              />
+              <Input
+                labelPlacement="outside"
+                label="Email"
+                placeholder="Enter your email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                name="email"
+                id="email"
+              />
+              <Input
+                labelPlacement="outside"
+                label="Phone Number"
+                placeholder="Enter your phone number"
+                value={formik.values.phone}
+                onChange={formik.handleChange}
+                name="phone"
+                id="phone"
+              />
+              <Textarea
+                labelPlacement="outside"
                 label="About"
+                placeholder="Tell us about yourself"
+                value={formik.values.about}
+                onChange={formik.handleChange}
+                name="about"
+                id="about"
+              />
+              <Textarea
+                labelPlacement="outside"
+                label="Address"
+                placeholder="Enter your address"
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                name="address"
+                id="address"
               />
             </div>
-          </div>
-          <div className="divider"></div>
-          <div className="pb-12">
-            <h2 className="text-base font-semibold leading-7 text-base-content">
-              Personal Information
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-base-neutral">
-              Use a permanent address where you can receive mail.
-            </p>
-
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="col-span-6 sm:col-span-3">
-                <Input
-                  label="Full Name"
-                  name="name"
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.name}
-                  autoComplete="given-name"
-                />
+            <CardFooter className="flex justify-between items-center">
+              <Button
+                variant="light"
+                color="danger"
+                onPress={deleteModal.onOpenChange}
+              >
+                Delete Account
+              </Button>
+              <div className="space-x-2 flex items-center">
+                <Button variant="flat">Cancel</Button>
+                <Button
+                  variant="flat"
+                  color="primary"
+                  onPress={() => formik.handleSubmit()}
+                  isDisabled={
+                    formik.values.name === "" ||
+                    formik.values.username === "" ||
+                    formik.values.email === "" ||
+                    formik.values.phone === "" ||
+                    formik.values.about === "" ||
+                    formik.values.address === "" ||
+                    formik.isSubmitting
+                  }
+                  isLoading={formik.isSubmitting}
+                >
+                  Save Changes
+                </Button>
               </div>
-
-              <div className="col-span-6 sm:col-span-3">
+            </CardFooter>
+          </CardBody>
+        </Card>
+      </div>
+      <Modal
+        isOpen={deleteModal.isOpen}
+        onOpenChange={deleteModal.onOpenChange}
+        backdrop="blur"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>
+                <p>
+                  Enter <i>{formik.values.username}</i> to delete
+                </p>
+              </ModalHeader>
+              <ModalBody>
                 <Input
-                  label="Email address"
-                  name="email"
-                  type="email"
+                  type="confirmusername"
+                  name="confirmusername"
                   onChange={formik.handleChange}
-                  value={formik.values.email}
-                  autoComplete="email"
-                  disabled
+                  value={formik.values.confirmusername}
+                  placeholder={formik.values.username}
                 />
-              </div>
-              <div className="col-span-6 sm:col-span-3">
-                <Input
-                  label="Phone"
-                  name="phone"
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.phone}
-                  autoComplete="phone"
-                  isDisabled
-                />
-              </div>
-
-              <div className="col-span-6 sm:col-span-3 lg:col-span-3">
-                <Input
-                  label="Address"
-                  name="address"
-                  type="text"
-                  onChange={formik.handleChange}
-                  value={formik.values.address}
-                  autoComplete="address"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="divider"></div>
-        </div>
-
-        <div className="mt-6 flex items-center justify-between gap-2">
-          <Button onPress={onOpen} variant="flat" color="danger">
-            Delete Account
-          </Button>
-
-          <div className="flex gap-2">
-            <Button type="button" onClick={fetchUser}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              color="primary"
-              isLoading={processing}
-              disabled={processing}
-            >
-              Update
-            </Button>
-          </div>
-        </div>
-
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader>
-                  <p>
-                    Enter <i>{formik.values.username}</i> to delete
-                  </p>
-                </ModalHeader>
-                <ModalBody>
-                  <Input
-                    type="confirmusername"
-                    name="confirmusername"
-                    onChange={formik.handleChange}
-                    value={formik.values.confirmusername}
-                    placeholder={formik.values.username}
-                  />
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="default" variant="light" onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button
-                    color="danger"
-                    isDisabled={
-                      formik.values.confirmusername !==
-                        formik.values.username || isDeleting
-                    }
-                    onPress={() => {
-                      handleDelete();
-                    }}
-                  >
-                    Delete Account
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </form>
-    </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  fullWidth
+                  variant="light"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  fullWidth
+                  isDisabled={
+                    formik.values.confirmusername !== formik.values.username ||
+                    isDeleting
+                  }
+                  isLoading={isDeleting}
+                  onPress={() => {
+                    handleDelete();
+                  }}
+                >
+                  Delete Account
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

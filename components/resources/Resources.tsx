@@ -46,7 +46,6 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-import Logo from "../assets/Logo";
 import API_BASE_URL from "@/utils/config";
 
 const s3 = new S3({

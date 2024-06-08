@@ -96,7 +96,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Navbar />
-          <Toaster position="bottom-right" theme="dark" closeButton />
+          <Toaster position="bottom-right"  theme="dark" closeButton />
 
           <main className="mb-24">
             {children}

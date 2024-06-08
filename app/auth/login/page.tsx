@@ -1,5 +1,4 @@
 "use client";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Checkbox, Input, Link } from "@nextui-org/react";
@@ -7,22 +6,9 @@ import { useFormik } from "formik";
 import axios from "axios";
 import { toast } from "sonner";
 
-type error = {
-  message: string;
-  status: number;
-};
-
 const Page = () => {
-  const { data: session } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<error | null>(null);
-
-  useEffect(() => {
-    if (session) {
-      router.push("/dashboard");
-    }
-  }, [session]);
 
   const formik = useFormik({
     initialValues: {
@@ -48,13 +34,10 @@ const Page = () => {
       } catch (error: any) {
         console.log(error);
         if (error.response.status === 401) {
-          setError({ message: "Invalid username", status: 401 });
           toast.error("Invalid username");
         } else if (error.response.status === 402) {
-          setError({ message: "Invalid password", status: 402 });
           toast.error("Invalid password");
         } else {
-          setError({ message: "An error occurred", status: 500 });
           toast.error("An error occurred");
         }
         setIsLoading(false);
@@ -117,7 +100,7 @@ const Page = () => {
             <hr className="bg-divider border-none w-full h-divider flex-1" />
           </div>
           <div className="flex flex-col gap-2">
-            <Button variant="bordered" onPress={() => signIn("google")}>
+            <Button variant="bordered">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"

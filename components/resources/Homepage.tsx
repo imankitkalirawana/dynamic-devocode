@@ -1,4 +1,6 @@
 "use client";
+import { Avatar, Button, Card, Image, ScrollShadow } from "@nextui-org/react";
+import { IconBook, IconSpeakerphone } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
 import { toast } from "sonner";
@@ -12,143 +14,97 @@ const Homepage: React.FC<HomepageProps> = ({ subjects }) => {
     <>
       <div className="mt-24 max-w-7xl m-auto grid grid-cols-12 gap-4 gap-y-8 p-8">
         {/* subjects */}
-        <div className="card bg-base-200 col-span-12 md:col-span-8 md:col-start-3 lg:col-span-6">
-          <div className="card-body">
-            <div className="flex justify-between items-center">
-              <h2>Subjects</h2>
-              <Link
-                href={"/resources/subjects"}
-                className="btn btn-link link link-primary"
-              >
-                View all
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-                  />
-                </svg>
-              </Link>
-            </div>
-            <div className="card grid grid-cols-2 md:grid-cols-3 gap-4">
-              {subjects.slice(0, 3).map((subject: any, index: any) => (
-                <Link
-                  href={`/resources/subjects/${subject.code}`}
-                  key={index}
-                  className="stat bg-base-100 card aspect-square flex justify-center items-center hover:bg-base-300 transition-all"
-                >
-                  <div className="stat-value text-2xl">{subject.code}</div>
-                </Link>
-              ))}
+
+        <Card
+          className="w-full col-span-12 p-4 md:col-span-8 md:col-start-3 lg:col-span-6"
+          tabIndex={-1}
+        >
+          <div className="flex p-3 z-10 w-full justify-start items-center shrink-0 overflow-inherit color-inherit subpixel-antialiased rounded-t-large">
+            <div className="flex items-center gap-3">
+              <Avatar showFallback fallback={<IconBook />}></Avatar>
+              <p className="text-large font-medium">Subjects</p>
             </div>
           </div>
-        </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
+            {subjects.slice(0, 3).map((subject: any, index: any) => (
+              <Card
+                as={Link}
+                href={`/resources/subjects/${subject.code}`}
+                key={index}
+                isPressable
+                isHoverable
+                shadow="lg"
+                className="aspect-square flex justify-center items-center"
+              >
+                <div className="stat-value text-2xl">{subject.code}</div>
+              </Card>
+            ))}
+          </div>
+          <div className="p-3 h-auto flex w-full items-center overflow-hidden color-inherit subpixel-antialiased rounded-b-large justify-end gap-2">
+            <Button
+              as={Link}
+              href="/resources/subjects"
+              fullWidth
+              variant="flat"
+            >
+              View All
+            </Button>
+          </div>
+        </Card>
+
         {/* announcements */}
-        <div className="card bg-base-200 col-span-12 md:col-span-8 md:col-start-3 lg:col-span-6">
-          <div className="card-body">
-            <div className="flex justify-between items-center">
-              <h2>Announcements</h2>
-              <button
-                onClick={() => {
-                  toast.error("Coming soon!", {
-                    icon: "🚧",
-                    id: "announcement-coming-soon",
-                    position: "bottom-center",
-                  });
-                }}
-                className="btn btn-link link link-primary"
-              >
-                View all
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-4 h-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="overflow-hidden mt-4">
-              {/* {isLoading ? (
-              Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="skeleton w-full h-10 my-2"></div>
-              ))
-            ) : ( */}
-              <ul className="divide-y divide-base-200 gap-2 flex flex-col">
-                {/* {announcements.slice(0, 3).map((announcement) => ( */}
-                <Link
-                  href={`/announcements/`}
-                  className="p-4 bg-base-100 card hover:bg-base-300 transition-all"
-                >
-                  <div className="flex">
-                    <h3 className="text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    </h3>
-                  </div>
-                </Link>
-                {/* ))} */}
-              </ul>
-              {/* )} */}
+        <Card
+          className="w-full col-span-12 p-4 md:col-span-8 md:col-start-3 lg:col-span-6"
+          tabIndex={-1}
+        >
+          <div className="flex p-3 z-10 w-full justify-start items-center shrink-0 overflow-inherit color-inherit subpixel-antialiased rounded-t-large">
+            <div className="flex items-center gap-3">
+              <Avatar showFallback fallback={<IconSpeakerphone />}></Avatar>
+              <p className="text-large font-medium">Announcements</p>
             </div>
           </div>
-        </div>
-        {/* Dl's */}
-        <div className="card col-span-12 md:col-span-8 md:col-start-3 lg:col-span-6">
-          <div className="flex justify-between items-center">
-            <h2 className="pl-8">Upcoming DL's</h2>
-            <button
-              onClick={() => {
+
+          <ScrollShadow size={100} className="p-4 space-y-2 w-full h-[200px]">
+            {/* {Array.from({ length: 8 }, (_, index) => (
+              <Card
+                as={Link}
+                href={`/resources`}
+                isHoverable
+                isPressable
+                key={index}
+                fullWidth
+                className="px-4 py-2 text-nowrap overflow-hidden overflow-ellipsis"
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+                nec nulla euismod, tempus odio in, fermentum nunc. Donec nec
+                urna nec justo suscipit tincidunt. Sed condimentum, nisi sit
+                amet.
+              </Card>
+            ))} */}
+            {/* No Announcement available */}
+            <Card
+              fullWidth
+              className="px-4 py-2 text-nowrap overflow-hidden overflow-ellipsis"
+            >
+              No Announcement available
+            </Card>
+          </ScrollShadow>
+          <div className="p-3 h-auto flex w-full items-center overflow-hidden color-inherit subpixel-antialiased rounded-b-large justify-end gap-2">
+            <Button
+              onPress={() => {
                 toast.error("Coming soon!", {
                   icon: "🚧",
-                  id: "dl-coming-soon",
-                  position: "bottom-center",
+                  id: "announcement-coming-soon",
                 });
               }}
-              className="btn btn-link link link-primary"
+              fullWidth
+              variant="flat"
             >
-              Register
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-                />
-              </svg>
-            </button>
+              View All
+            </Button>
           </div>
-          <div className="stats stats-vertical lg:stats-horizontal">
-            <div className="stat">
-              <div className="stat-value">Time</div>
-              <div className="stat-title">Jan 1st - Feb 1st</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-value">Location</div>
-              <div className="stat-title">SDMA</div>
-            </div>
-          </div>
-        </div>
+        </Card>
+        {/* Dl's */}
       </div>
     </>
   );

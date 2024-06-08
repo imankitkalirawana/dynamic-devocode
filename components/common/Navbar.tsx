@@ -184,7 +184,7 @@ const Navbar = () => {
         </div>
         <div className="navbar-end">
           <Button
-            href={"/settings/preference"}
+            href={"/settings"}
             className="btn btn-ghost btn-sm btn-square mr-4 hidden md:flex"
             as={Link}
             isIconOnly
@@ -232,10 +232,10 @@ const Navbar = () => {
                 <DropdownItem as={Link} href="/admin/dashboard">
                   Admin
                 </DropdownItem>
-                <DropdownItem as={Link} href="/settings/profile">
+                <DropdownItem as={Link} href="/settings">
                   Profile
                 </DropdownItem>
-                <DropdownItem as={Link} href="/settings/overview">
+                <DropdownItem as={Link} href="/settings">
                   Settings
                 </DropdownItem>
                 <DropdownItem
@@ -346,7 +346,7 @@ const Navbar = () => {
             <Link href={"/resources/subjects"}>Subjects</Link>
           </li>
           <li>
-            <Link href={"/settings/preference"}>Settings</Link>
+            <Link href={"/settings"}>Settings</Link>
           </li>
           <li>
             <a href="https://divinelydeveloper.me">About</a>

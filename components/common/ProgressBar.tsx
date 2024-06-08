@@ -4,7 +4,12 @@ import NextTopLoader from "nextjs-toploader";
 const ProgressBarI = () => {
   return (
     <>
-      <NextTopLoader showSpinner={false} shadow="false" easing="ease" />
+      <NextTopLoader
+        height={1}
+        showSpinner={false}
+        shadow="false"
+        easing="ease"
+      />
     </>
   );
 };

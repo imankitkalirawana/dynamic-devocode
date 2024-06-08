@@ -6,13 +6,12 @@ interface NotFoundProps {
 
 const NotFound: React.FC<NotFoundProps> = ({ message }) => {
   return (
-    <div className="col-span-12 md:col-span-8 lg:col-span-4 col-start-1 md:col-start-3 lg:col-start-5">
+    <>
       <svg
         fill="none"
         viewBox="-80 0 369 271"
-        // width="360"
         xmlns="http://www.w3.org/2000/svg"
-        className="max-w-xs mx-auto"
+        className="max-w-xs mx-auto h-full"
       >
         <path
           clipRule="evenodd"
@@ -93,14 +92,10 @@ const NotFound: React.FC<NotFoundProps> = ({ message }) => {
         </defs>
       </svg>
 
-      {/* <div className="relative w-[300px] mb-24 mt-10 mx-auto">
-        <div className="w-0 h-0 border-l-[100px] border-l-transparent border-b-[170px] border-base-content border-r-[100px] border-r-transparent transition-all"></div>
-        <div className="absolute bottom-[-66px] right-[40px] w-[150px] h-[150px] bg-primary rounded-full mix-blend-screen transition-all"></div>
-      </div> */}
       <div className="text-lg text-center">
         {message ? message : "Page not found"}
       </div>
-    </div>
+    </>
   );
 };
 
