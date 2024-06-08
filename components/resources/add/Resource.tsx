@@ -7,6 +7,18 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PDFDocument, rgb } from "pdf-lib";
 import Jimp from "jimp";
+import {
+  Button,
+  Input,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Progress,
+  Select,
+  SelectItem,
+  Switch,
+  Textarea,
+} from "@nextui-org/react";
 
 const s3 = new S3({
   accessKeyId: process.env.NEXT_PUBLIC_ACCESS_KEY_ID,
@@ -16,6 +28,7 @@ const s3 = new S3({
 
 type ResourceProps = {
   lastItem: any;
+  onclose: () => void;
 };
 
 interface Resource {
@@ -27,7 +40,7 @@ interface Resource {
   filesize: string;
 }
 
-const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
+const Resource: React.FC<ResourceProps> = ({ lastItem, onclose }) => {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [upload, setUpload] = useState<S3.ManagedUpload | null>(null);
@@ -46,21 +59,22 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
       isURL: false,
     },
     onSubmit: async (values) => {
-      addData(values);
-      if (file) {
-        handleUpload();
-      } else {
-        const modal = document.getElementById("add_subject");
-        modal?.click();
-        router.refresh();
+      try {
+        if (file) {
+          await handleUpload();
+        }
+        await addData(values);
+      } catch (error) {
+        console.error(error);
+        toast.error("An error occurred");
       }
     },
   });
 
   const addData = async (values: any) => {
     try {
-      const res = await toast.promise(
-        axios.post(
+      await axios
+        .post(
           `/api/resources/resources/?subjectCode=${lastItem.label}`,
           values,
           {
@@ -68,20 +82,16 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
-        ),
-        {
-          loading: "Adding...",
-          success: "Added",
-          error: "Error",
-        }
-      );
-      // @ts-ignore
-      if (res.status != 201) {
-        console.log("error occured");
-        return;
-      }
+        )
+        .then(() => {
+          toast.success("Resource added successfully");
+          onclose();
+          router.refresh();
+        });
+
       // handleUpload();
     } catch (error) {
+      toast.error("An error occurred");
       console.error(error);
     }
   };
@@ -189,18 +199,10 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
         upload.on("httpUploadProgress", (p: any) => {
           setProgress((p.loaded / p.total) * 100);
         });
-        const res = await toast.promise(upload.promise(), {
-          loading: "Uploading...",
-          success: "Uploaded",
-          error: "Error",
-        });
-        formik.resetForm();
-        // close the popup
-        const modal = document.getElementById("add_subject");
-        modal?.click();
-        router.refresh();
+        upload.promise();
       } catch (error) {
         console.error(error);
+        toast.error("An error occurred");
       }
     }
   };
@@ -208,137 +210,126 @@ const Resource: React.FC<ResourceProps> = ({ lastItem }) => {
   const resourceType = resourceTypes.filter((type) => type != "all");
   return (
     <>
-      <form className="modal-box max-w-96" onSubmit={formik.handleSubmit}>
-        <h2 className="text-lg text-center font-semibold">
-          Add to {lastItem.label}
-        </h2>
-        <div className="mx-auto flex flex-col mb-8 overflow-y-scroll px-4 py-2 gap-2">
-          <div className="flex flex-col w-full">
-            <label htmlFor="title" className="label">
-              <span className="label-text">Title</span>
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              className="input input-bordered w-full"
-              value={formik.values.title}
-              onChange={formik.handleChange}
-              required
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="description" className="label">
-              <span className="label-text">Description</span>
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              className="textarea textarea-bordered w-full"
-              value={formik.values.description}
-              onChange={formik.handleChange}
-            ></textarea>
-          </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="resource_type" className="label">
-              <span className="label-text">Resource Type</span>
-            </label>
-            <select
-              className="select select-bordered w-full max-w-xs"
-              id="resourceType"
-              name="resourceType"
-              onChange={handleResourceType}
-              value={formik.values.resourceType}
-            >
-              {resourceType.map((type, index) => (
-                <option key={index} value={type}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col w-full my-4">
-            <div className="flex items-center gap-2">
-              <label htmlFor="isURL" className="label-text">
-                File
-              </label>
-              <input
-                type="checkbox"
-                className="toggle text-base-content"
-                id="isURL"
-                name="isURL"
-                checked={formik.values.isURL}
-                onChange={formik.handleChange}
-              />
-              <label htmlFor="isURL" className="label-text">
-                URL
-              </label>
-            </div>
-          </div>
-          {/* elements added based on user selection */}
-          {formik.values.isURL ? (
+      <ModalHeader>Add to {lastItem.label}</ModalHeader>
+      <ModalBody>
+        <Input
+          autoFocus
+          label="Title"
+          value={formik.values.title}
+          onChange={formik.handleChange}
+          name="title"
+          id="title"
+          required
+        />
+        <Textarea
+          label="Description"
+          value={formik.values.description}
+          onChange={formik.handleChange}
+          name="description"
+          id="description"
+        />
+        <Select
+          label="Resource Type"
+          value={formik.values.resourceType}
+          onChange={formik.handleChange}
+          name="resourceType"
+          id="resourceType"
+          required
+        >
+          {resourceType.map((type, index) => (
+            <SelectItem className="capitalize" key={type}>
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </SelectItem>
+          ))}
+        </Select>
+        <p className="text-small text-default-500">
+          {formik.values.isURL ? "Type: URL" : "Type: File"}
+        </p>
+        <Switch
+          isSelected={formik.values.isURL}
+          name="isURL"
+          id="isURL"
+          onValueChange={
+            formik.values.isURL
+              ? () => formik.setFieldValue("isURL", false)
+              : () => formik.setFieldValue("isURL", true)
+          }
+        >
+          File/URL
+        </Switch>
+
+        {formik.values.isURL ? (
+          <Input
+            label="URL"
+            value={formik.values.link}
+            onChange={formik.handleChange}
+            name="link"
+            id="link"
+            required
+          />
+        ) : (
+          <>
             <div className="flex flex-col w-full">
-              <label htmlFor="link" className="label">
-                <span className="label-text">URL</span>
+              <label htmlFor="file" className="label">
+                <span className="label-text">File</span>
               </label>
               <input
-                type="text"
-                id="link"
-                name="link"
-                className="input input-bordered w-full"
-                value={formik.values.link}
-                onChange={formik.handleChange}
+                type="file"
+                id="file"
+                name="file"
+                className="file-input file-input-bordered w-full"
+                onChange={handleFile}
                 required
               />
             </div>
-          ) : (
-            <>
-              <div className="flex flex-col w-full">
-                <label htmlFor="file" className="label">
-                  <span className="label-text">File</span>
-                </label>
-                <input
-                  type="file"
-                  id="file"
-                  name="file"
-                  className="file-input file-input-bordered w-full"
-                  onChange={handleFile}
-                  required
-                />
-              </div>
 
-              {progress > 0 && (
-                <progress
-                  className="progress w-full animate-enter"
-                  value={progress}
-                  max="100"
-                ></progress>
-              )}
-              <div className="flex flex-col w-full">
-                <label htmlFor="filesize" className="label">
-                  <span className="label-text">Add watermark</span>
-                </label>
-                <input
-                  type="checkbox"
-                  id="watermark"
-                  name="watermark"
-                  className="toggle toggle-md"
-                  onChange={formik.handleChange}
-                  checked={formik.values.watermark}
-                />
-              </div>
-            </>
-          )}
-        </div>
-        <div className="flex modal-action">
-          <button className="btn btn-primary flex-1" type="submit">
-            Add
-          </button>
-          <label className="btn flex-1" htmlFor="add_subject">
-            Cancel
-          </label>
-        </div>
-      </form>
+            {progress > 0 && (
+              <Progress
+                aria-label="Downloading..."
+                value={progress}
+                color="success"
+                showValueLabel={true}
+              />
+            )}
+
+            <Switch
+              isSelected={formik.values.watermark}
+              name="watermark"
+              id="watermark"
+              onValueChange={
+                formik.values.watermark
+                  ? () => formik.setFieldValue("watermark", false)
+                  : () => formik.setFieldValue("watermark", true)
+              }
+            >
+              Watermark on file
+            </Switch>
+          </>
+        )}
+      </ModalBody>
+      <ModalFooter className="flex-col sm:flex-row">
+        <Button
+          variant="flat"
+          onClick={() => {
+            onclose();
+          }}
+          fullWidth
+          isDisabled={(progress > 0 && progress < 100) || formik.isSubmitting}
+        >
+          Cancel
+        </Button>
+        <Button
+          isLoading={formik.isSubmitting}
+          onClick={() => formik.handleSubmit()}
+          color="primary"
+          variant="flat"
+          type="submit"
+          fullWidth
+          isDisabled={(progress > 0 && progress < 100) || formik.isSubmitting}
+        >
+          Add
+        </Button>
+      </ModalFooter>
     </>
   );
 };

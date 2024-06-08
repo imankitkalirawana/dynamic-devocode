@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -27,10 +28,23 @@ interface Props {
       | "faded"
       | "ghost";
   };
+  currentSelection?: string;
 }
 
-const DropdownDetailed: React.FC<Props> = ({ className, items, button }) => {
+const DropdownDetailed: React.FC<Props> = ({
+  className,
+  items,
+  button,
+  currentSelection,
+}) => {
   const isLabelString = typeof button.label === "string";
+  const [selectedKeys, setSelectedKeys] = React.useState(
+    new Set([currentSelection || "ascending"])
+  );
+
+  const handleSelectionChange = (keys: any) => {
+    setSelectedKeys(new Set(keys));
+  };
 
   return (
     <Dropdown>
@@ -44,7 +58,15 @@ const DropdownDetailed: React.FC<Props> = ({ className, items, button }) => {
           {button.label}
         </Button>
       </DropdownTrigger>
-      <DropdownMenu aria-label="Dynamic Actions" items={items}>
+      <DropdownMenu
+        aria-label="Dynamic Actions"
+        items={items}
+        selectionMode="single"
+        selectedKeys={selectedKeys}
+        onSelectionChange={handleSelectionChange}
+        variant="flat"
+        disallowEmptySelection
+      >
         {(item) => (
           <DropdownItem
             key={item.key}

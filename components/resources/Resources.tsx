@@ -464,7 +464,6 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
         ))}
       <Modal
         backdrop="blur"
-        size="xs"
         isOpen={deleteModal.isOpen}
         onOpenChange={deleteModal.onOpenChange}
       >

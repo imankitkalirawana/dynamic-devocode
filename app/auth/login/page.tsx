@@ -1,11 +1,10 @@
 "use client";
-
-import ForgotPassword from "@/assets/ForgotPassword";
-import { isLoggedIn } from "@/utils/auth";
-import { Button, Input } from "@nextui-org/react";
-import axios from "axios";
-import { useFormik } from "formik";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Checkbox, Input, Link } from "@nextui-org/react";
+import { useFormik } from "formik";
+import axios from "axios";
 import { toast } from "sonner";
 
 type error = {
@@ -14,15 +13,16 @@ type error = {
 };
 
 const Page = () => {
-  const { loggedIn } = isLoggedIn();
+  const { data: session } = useSession();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<error | null>(null);
 
   useEffect(() => {
-    if (loggedIn) {
-      window.location.href = "/dashboard";
+    if (session) {
+      router.push("/dashboard");
     }
-  }, []);
+  }, [session]);
 
   const formik = useFormik({
     initialValues: {
@@ -39,11 +39,9 @@ const Page = () => {
           localStorage.setItem("userData", JSON.stringify(data));
           localStorage.setItem("userId", data.userId);
           if (localStorage.getItem("redirectPath")) {
-            window.location.href = localStorage.getItem(
-              "redirectPath"
-            ) as string;
+            router.push(localStorage.getItem("redirectPath") as string);
           } else {
-            window.location.href = "/dashboard";
+            router.push("/dashboard");
           }
           localStorage.removeItem("redirectPath");
         }
@@ -65,66 +63,99 @@ const Page = () => {
   });
 
   return (
-    <>
-      <div className="hero min-h-screen bg-base-200 p-4">
-        <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-          <form className="card-body" onSubmit={formik.handleSubmit}>
-            <div>
-              <h2 className="text-2xl font-bold text-center">
-                Welcome to Devocode
-              </h2>
+    <div className="flex items-center h-screen justify-center p-4">
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
+          <p className="pb-2 text-xl text-center font-medium">
+            Log In to Devocode
+          </p>
+          <form className="flex flex-col gap-3">
+            <Input
+              variant="bordered"
+              label="Username"
+              placeholder="Enter your username"
+              id="username"
+              name="username"
+              onChange={formik.handleChange}
+              value={formik.values.username}
+            />
+            <Input
+              variant="bordered"
+              label="Password"
+              placeholder="Enter your password"
+              type="password"
+              id="password"
+              name="password"
+              onChange={formik.handleChange}
+              value={formik.values.password}
+            />
+            <div className="flex items-center justify-between px-1 py-2">
+              <Checkbox defaultSelected size="sm">
+                Remember me
+              </Checkbox>
+              <Link href="/auth/forgot-password" color="foreground" size="sm">
+                Forgot password?
+              </Link>
             </div>
-            <div className="form-control">
-              <Input
-                label="Username"
-                name="username"
-                onChange={formik.handleChange}
-                value={formik.values.username}
-              />
-            </div>
-            <div className="form-control">
-              <Input
-                label="Password"
-                type="password"
-                name="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="form-control justify-end">
-              <Button isLoading={isLoading} type="submit" color="primary">
-                Login
-              </Button>
-            </div>
+            <Button
+              isLoading={isLoading}
+              type="submit"
+              color="primary"
+              variant="flat"
+              fullWidth
+              onPress={() => formik.handleSubmit()}
+              isDisabled={
+                formik.values.username === "" || formik.values.password === ""
+              }
+            >
+              Log In
+            </Button>
           </form>
+          <div className="flex items-center gap-4 py-2">
+            <hr className="bg-divider border-none w-full h-divider flex-1" />
+            <p className="shrink-0 text-tiny text-default-500">OR</p>
+            <hr className="bg-divider border-none w-full h-divider flex-1" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Button variant="bordered" onPress={() => signIn("google")}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                role="img"
+                className="iconify iconify--flat-color-icons"
+                width={24}
+                height={24}
+                viewBox="0 0 48 48"
+              >
+                <path
+                  fill="#FFC107"
+                  d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917"
+                />
+                <path
+                  fill="#FF3D00"
+                  d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691"
+                />
+                <path
+                  fill="#4CAF50"
+                  d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44"
+                />
+                <path
+                  fill="#1976D2"
+                  d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917"
+                />
+              </svg>
+              Continue with Google
+            </Button>
+          </div>
+          <p className="text-center text-small">
+            Need to create an account?&nbsp;
+            <Link href="/auth/register" size="sm">
+              Sign Up
+            </Link>
+          </p>
         </div>
       </div>
-      <input type="checkbox" id="my_modal_7" className="modal-toggle" />
-      <div className="modal" role="dialog">
-        <form className="modal-box max-w-96">
-          <div className="max-w-40 mx-auto flex mb-8">
-            <ForgotPassword />
-          </div>
-          <div className="flex flex-col gap-4">
-            <div className="label">
-              <span className="label-text">Enter your email address</span>
-            </div>
-            <input
-              type="text"
-              name="email"
-              placeholder="Email"
-              className="input input-bordered"
-              required
-            />
-            <button className="btn btn-primary">Send Reset Link</button>
-          </div>
-        </form>
-
-        <label className="modal-backdrop" htmlFor="my_modal_7">
-          Close
-        </label>
-      </div>
-    </>
+    </div>
   );
 };
 

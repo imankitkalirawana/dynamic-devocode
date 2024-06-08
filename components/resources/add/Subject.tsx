@@ -4,9 +4,19 @@ import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import {
+  Button,
+  Input,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Textarea,
+} from "@nextui-org/react";
+import { useFormik } from "formik";
 
 type SubjectProps = {
   lastItem: any;
+  onclose: () => void;
 };
 
 interface Subject {
@@ -16,106 +26,86 @@ interface Subject {
   _id: string;
 }
 
-const Subject: React.FC<SubjectProps> = ({ lastItem }) => {
-  const router = useRouter();
-  const [subject, setSubject] = useState<Subject>({
-    code: "",
-    title: "",
-    description: "",
-    _id: "",
+const Subject: React.FC<SubjectProps> = ({ lastItem, onclose }) => {
+  const formik = useFormik({
+    initialValues: {
+      code: "",
+      title: "",
+      description: "",
+    },
+    onSubmit: async (values) => {
+      try {
+        await axios
+          .post("/api/resources/subjects", values, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+          .then(() => {
+            toast.success("Subject added successfully");
+            onclose();
+          });
+      } catch (error) {
+        console.error(error);
+        toast.error("An error occurred");
+      }
+    },
   });
-  const handleInput = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setSubject((prevSubject) => ({
-      ...prevSubject,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const res = await toast.promise(
-        axios.post("/api/resources/subjects", subject, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }),
-        {
-          loading: "Adding...",
-          success: "Added",
-          error: "Error",
-        }
-      );
-      setSubject({} as Subject);
-      //   close the popup
-      const modal = document.getElementById("add_subject");
-      modal?.click();
-      router.refresh();
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <>
-      <form className="modal-box max-w-96" onSubmit={handleSubmit}>
-        <h2 className="text-lg text-center font-semibold">
-          Add to {lastItem.label}
-        </h2>
-        <div className="mx-auto flex flex-col mb-8 overflow-y-scroll px-4 py-2 gap-2">
-          <div className="flex flex-col w-full">
-            <label htmlFor="code" className="label">
-              <span className="label-text">Code</span>
-            </label>
-            <input
-              type="text"
-              id="code"
-              name="code"
-              value={subject.code}
-              className="input input-bordered w-full"
-              onChange={handleInput}
-              required
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="title" className="label">
-              <span className="label-text">Title</span>
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={subject.title}
-              className="input input-bordered w-full"
-              onChange={handleInput}
-              required
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label htmlFor="description" className="label">
-              <span className="label-text">Description</span>
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={subject.description}
-              className="textarea textarea-bordered w-full"
-              onChange={handleInput}
-            ></textarea>
-          </div>
-        </div>
-        <div className="flex modal-action">
-          <button className="btn btn-primary flex-1" type="submit">
-            Add
-          </button>
-          <label className="btn flex-1" htmlFor="add_subject">
-            Cancel
-          </label>
-        </div>
-      </form>
+      <ModalHeader className="text-lg text-center font-semibold">
+        Add to {lastItem.label}
+      </ModalHeader>
+      <ModalBody>
+        <Input
+          autoFocus
+          label="Subject Code"
+          value={formik.values.code}
+          onChange={formik.handleChange}
+          name="code"
+          id="code"
+          fullWidth
+          required
+        />
+        <Input
+          label="Subject Title"
+          value={formik.values.title}
+          onChange={formik.handleChange}
+          name="title"
+          id="title"
+          required
+        />
+        <Textarea
+          id="description"
+          name="description"
+          value={formik.values.description}
+          onChange={formik.handleChange}
+          label="Description"
+          rows={3}
+        />
+      </ModalBody>
+      <ModalFooter className="flex-col sm:flex-row">
+        <Button
+          variant="flat"
+          onClick={() => {
+            onclose();
+          }}
+          fullWidth
+        >
+          Cancel
+        </Button>
+        <Button
+          isLoading={formik.isSubmitting}
+          onClick={() => formik.handleSubmit()}
+          color="primary"
+          variant="flat"
+          type="submit"
+          fullWidth
+        >
+          Add
+        </Button>
+      </ModalFooter>
     </>
   );
 };

@@ -170,15 +170,10 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
   ];
 
   let base_url = API_BASE_URL?.split("api")[0];
-  const [isCopied, setisCopied] = useState(false);
 
   const handleCopyLink = (subject: Subject) => {
     const url = `${base_url}resources/subjects/${subject.code}/all`;
 
-    setisCopied(true);
-    setTimeout(() => {
-      setisCopied(false);
-    }, 10000);
     navigator.clipboard.writeText(url);
     toast.success("Link copied to clipboard");
   };
@@ -204,6 +199,7 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
             label: <IconAdjustmentsHorizontal />,
             variant: "light",
           }}
+          currentSelection={filterCriteria}
         />
       </div>
       {filteredSubjects
@@ -227,7 +223,7 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
                   <IconDotsVertical size={20} />
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu aria-label="Dynamic Actions">
+              <DropdownMenu aria-label="Filter Subjects">
                 {loggedIn ? (
                   <DropdownSection>
                     <DropdownItem
@@ -301,7 +297,6 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
         ))}
       <Modal
         backdrop="blur"
-        size="xs"
         isOpen={deleteModal.isOpen}
         onOpenChange={deleteModal.onOpenChange}
       >

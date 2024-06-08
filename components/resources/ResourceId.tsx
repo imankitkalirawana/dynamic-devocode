@@ -137,7 +137,7 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
                 <p className="max-w-[90%] text-small text-default-400">
                   @divinelydeveloper
                 </p>
-                <div className="flex gap-2 pb-1 pt-2">
+                <div className="flex gap-2 overflow-scroll pb-1 pt-2">
                   <Chip className="capitalize">{resource.type}</Chip>
                   {resource.file && (
                     <>
@@ -170,7 +170,10 @@ const ResourceId: React.FC<ResourcesProps> = ({ code, resource }) => {
                   </p>
                 </div>
               </div>
-              <div data-slot="base" className="flex justify-between w-full">
+              <div
+                data-slot="base"
+                className="flex flex-col sm:flex-row gap-2 justify-between w-full"
+              >
                 <Button
                   size="md"
                   variant="flat"

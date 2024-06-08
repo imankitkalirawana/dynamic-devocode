@@ -60,10 +60,7 @@ const Navbar = () => {
       localStorage.removeItem("userId");
       localStorage.removeItem("userData");
       window.location.reload();
-      const modal = document.getElementById("logout_modal") as HTMLInputElement;
-      if (modal) {
-        modal.checked = false;
-      }
+
       setIsLoggingOut(false);
     }, 1000);
   };
@@ -269,12 +266,7 @@ const Navbar = () => {
       <div className="md:hidden">
         <BottomBar />
       </div>
-      <Modal
-        backdrop="blur"
-        size="xs"
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-      >
+      <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
@@ -282,14 +274,14 @@ const Navbar = () => {
               <ModalBody>
                 <p>Are you sure you want to logout?</p>
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter className="flex-col sm:flex-row">
                 <Button
                   color="default"
                   fullWidth
-                  variant="light"
+                  variant="flat"
                   onPress={onClose}
                 >
-                  Close
+                  Cancel
                 </Button>
                 <Button
                   color="danger"

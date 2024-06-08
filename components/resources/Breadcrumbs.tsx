@@ -8,11 +8,7 @@ import dynamic from "next/dynamic";
 import {
   Breadcrumbs as NextUIBreadcrumbs,
   BreadcrumbItem,
-  Dropdown,
-  DropdownTrigger,
   Button,
-  DropdownItem,
-  DropdownMenu,
   useDisclosure,
   Modal,
   ModalContent,
@@ -79,24 +75,21 @@ const Breadcrumbs = () => {
       </div>
       {loggedIn && (
         <>
-          {/* <input type="checkbox" id="add_subject" className="modal-toggle" /> */}
           <Modal
             backdrop="blur"
-            size="xs"
             isOpen={addModal.isOpen}
             onOpenChange={addModal.onOpenChange}
-            role="dialog"
+            isDismissable={false}
+            scrollBehavior="inside"
           >
             <ModalContent>
               {(onClose) => (
                 <>
-                  <ModalBody>
-                    {lastItem?.label === "subjects" ? (
-                      <Subject lastItem={lastItem} />
-                    ) : (
-                      <Resource lastItem={lastItem} />
-                    )}
-                  </ModalBody>
+                  {lastItem?.label === "subjects" ? (
+                    <Subject lastItem={lastItem} onclose={onClose} />
+                  ) : (
+                    <Resource lastItem={lastItem} onclose={onClose} />
+                  )}
                 </>
               )}
             </ModalContent>
