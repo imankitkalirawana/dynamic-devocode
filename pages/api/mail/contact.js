@@ -4,7 +4,7 @@ const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
       // get ip address of the user
-      const ip = req.headers["x-real-ip"] || req.connection.remoteAddress;
+      // const ip = req.headers["x-real-ip"] || req.connection.remoteAddress;
       console.log("ip", ip);
       const { firstname, lastname, phoneNumber, email, message } = req.body;
       if (!firstname || !email || !message) {
@@ -20,7 +20,6 @@ const handler = async (req, res) => {
             <p><strong>Phone:</strong> ${phoneNumber}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Message:</strong> ${message}</p>
-            <p><strong>IP:</strong> ${ip}</p>
           </body>
         </html>
       `;
