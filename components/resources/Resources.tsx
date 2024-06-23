@@ -449,12 +449,12 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
                 </p>
               </div>
               <div className="p-3 h-auto flex w-full items-center overflow-hidden color-inherit subpixel-antialiased rounded-b-large justify-between gap-2">
-                <Chip className="capitalize">
+                <Chip variant="flat" className="capitalize">
                   {humanReadableDate(resource.addedDate)}
                 </Chip>
                 {resource.file && (
                   <>
-                    <Chip>{resource.filesize} MB</Chip>
+                    <Chip variant="flat">{resource.filesize} MB</Chip>
                   </>
                 )}
               </div>

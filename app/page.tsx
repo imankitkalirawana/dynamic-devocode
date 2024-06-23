@@ -6,18 +6,21 @@ import Footer from "@/components/landingpage/Footer";
 import Pricing from "@/components/landingpage/Pricing";
 import Stats from "@/components/landingpage/Stats";
 import Testimonial from "@/components/landingpage/Testimonial";
+import SmoothScroll from "@/components/smooth-scroll";
 
 const Page = () => {
   return (
     <>
-      <Banner />
-      <Features />
-      {/* <Newsletter /> */}
-      <Stats />
-      <Testimonial />
-      <Pricing />
-      <Contact />
-      <Footer />
+      <SmoothScroll>
+        <Banner />
+        <Features />
+        {/* <Newsletter /> */}
+        <Stats />
+        <Testimonial />
+        <Pricing />
+        <Contact />
+        <Footer />
+      </SmoothScroll>
     </>
   );
 };

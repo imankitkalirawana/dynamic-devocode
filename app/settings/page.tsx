@@ -4,7 +4,6 @@ import { Tabs, Tab } from "@nextui-org/react";
 import React from "react";
 import Overview from "@/components/settings/Overview";
 import Profile from "@/components/settings/Profile";
-import Preference from "@/components/settings/Preferences";
 import Security from "@/components/settings/Security";
 
 const Page = () => {
@@ -30,9 +29,7 @@ const Page = () => {
           <Tab key="profile" title="Profile">
             <Profile />
           </Tab>
-          <Tab key="prefrence" title="Preference">
-            <Preference />
-          </Tab>
+
           <Tab key="security" title="Security">
             <Security />
           </Tab>

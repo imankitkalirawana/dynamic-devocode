@@ -3,57 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Switch } from "@nextui-org/react";
 
-const themes = [
-  "default",
-  "light",
-  // "dark",
-  "cupcake",
-  // "bumblebee",
-  "emerald",
-  "corporate",
-  "synthwave",
-  "retro",
-  // "cyberpunk",
-  "valentine",
-  "halloween",
-  "garden",
-  "forest",
-  // "aqua",
-  // "lofi",
-  // "pastel",
-  "fantasy",
-  // "wireframe",
-  "black",
-  // "luxury",
-  "dracula",
-  // "cmyk",
-  // "autumn",
-  // "business",
-  // "acid",
-  "lemonade",
-  "night",
-  // "coffee",
-  "winter",
-  "dim",
-  // "nord",
-  "sunset",
-];
-
 const Preference = () => {
-  const [currentTheme, setCurrentTheme] = useState("");
-  const [isCustomCursor, setIsCustomCursor] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const cursor = localStorage.getItem("isCustomCursor");
-    setIsCustomCursor(cursor ? JSON.parse(cursor) : false);
-  });
-
-  const handleCustomCursor = () => {
-    setIsCustomCursor(!isCustomCursor);
-    localStorage.setItem("isCustomCursor", JSON.stringify(!isCustomCursor));
-    router.refresh();
-  };
 
   const handleThemeChange = (theme: any) => {
     if (theme === "default") {

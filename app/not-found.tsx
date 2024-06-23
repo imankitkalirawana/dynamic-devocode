@@ -1,31 +1,25 @@
 import Link from "next/link";
 import INotFound from "@/components/assets/NotFound";
+import { Button } from "@nextui-org/react";
+import { IconArrowRight } from "@tabler/icons-react";
 
 export default function NotFound() {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center mt-24">
       <INotFound message="We couldn't found what you are looking for" />
       <div className="flex gap-4 mt-4">
-        <Link href="/" className="btn btn-primary">
+        <Button as={Link} href="/" variant="flat">
           Return Home
-        </Link>
-        <Link href="/resources" className="btn btn-ghost">
+        </Button>
+        <Button
+          as={Link}
+          href="/resources"
+          endContent={<IconArrowRight size={16} />}
+          variant="light"
+          color="primary"
+        >
           Explore Resources
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-            />
-          </svg>
-        </Link>
+        </Button>
       </div>
     </div>
   );

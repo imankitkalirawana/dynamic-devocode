@@ -4,10 +4,28 @@ import { useFormik } from "formik";
 import axios from "axios";
 import { useState } from "react";
 import * as Yup from "yup";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Textarea,
+  useDisclosure,
+} from "@nextui-org/react";
+import { Icon } from "@iconify/react";
 
 const Contact = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submittedModal = useDisclosure();
   const formik = useFormik({
     initialValues: {
       firstname: "",
@@ -32,15 +50,14 @@ const Contact = () => {
         .min(10, "Too short"),
     }),
     onSubmit: async (values) => {
-      setIsSubmitting(true);
       try {
-        const res = await axios.post("/api/mail/contact", values);
-        setIsSubmitted(true);
+        await axios.post("/api/mail/contact", values).then(() => {
+          submittedModal.onOpenChange();
+        });
         formik.resetForm();
       } catch (error) {
         console.error(error);
       }
-      setIsSubmitting(false);
     },
   });
 
@@ -68,176 +85,161 @@ const Contact = () => {
             back to you as soon as possible.
           </p>
         </div>
-        <form
-          className="mx-auto mt-16 max-w-xl sm:mt-20"
-          onSubmit={formik.handleSubmit}
+        <Card
+          className="mx-auto mt-16 max-w-xl sm:mt-20 bg-transparent"
+          shadow="none"
         >
-          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-            <div>
-              <label htmlFor="firstname" className="label">
-                <span className="label-text">First Name</span>
-              </label>
-              <div className="mt-2.5">
-                <input
-                  type="text"
-                  name="firstname"
-                  id="firstname"
-                  autoComplete="given-name"
-                  className={`input input-bordered w-full bg-transparent ${
-                    formik.errors.firstname && formik.touched.firstname
-                      ? "input-error"
-                      : ""
-                  }`}
-                  onChange={formik.handleChange}
-                  value={formik.values.firstname}
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="lastname" className="label">
-                <span className="label-text">Last Name</span>
-              </label>
-              <div className="mt-2.5">
-                <input
-                  type="text"
-                  name="lastname"
-                  id="lastname"
-                  autoComplete="family-name"
-                  className={`input input-bordered w-full bg-transparent ${
-                    formik.errors.lastname && formik.touched.lastname
-                      ? "input-error"
-                      : ""
-                  }`}
-                  onChange={formik.handleChange}
-                  value={formik.values.lastname}
-                />
-              </div>
-            </div>
+          <CardBody className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="First Name"
+              name="firstname"
+              id="firstname"
+              autoComplete="given-name"
+              labelPlacement="outside"
+              placeholder="eg. John"
+              onChange={formik.handleChange}
+              value={formik.values.firstname}
+              isInvalid={
+                formik.touched.firstname && formik.errors.firstname
+                  ? true
+                  : false
+              }
+              errorMessage={formik.touched.firstname && formik.errors.firstname}
+            />
+            <Input
+              label="Last Name"
+              name="lastname"
+              id="lastname"
+              labelPlacement="outside"
+              placeholder="eg. Doe"
+              autoComplete="family-name"
+              onChange={formik.handleChange}
+              value={formik.values.lastname}
+              isInvalid={
+                formik.touched.lastname && formik.errors.lastname ? true : false
+              }
+              errorMessage={formik.touched.lastname && formik.errors.lastname}
+            />
 
-            <div className="sm:col-span-2">
-              <label htmlFor="email" className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <div className="mt-2.5">
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  autoComplete="email"
-                  className={`input input-bordered w-full bg-transparent ${
-                    formik.errors.email && formik.touched.email
-                      ? "input-error"
-                      : ""
-                  }`}
-                  onChange={formik.handleChange}
-                  value={formik.values.email}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label htmlFor="phoneNumber" className="label">
-                <span className="label-text">Phone Number</span>
-              </label>
-              <div className="relative mt-2.5">
-                <div className="absolute inset-y-0 left-0 flex items-center">
-                  <label htmlFor="country" className="sr-only">
-                    Country
-                  </label>
-                  <select
-                    id="country"
-                    name="country"
-                    className="h-full rounded-md border-0 bg-transparent bg-none py-0 pl-4 pr-9 ring-0 outline-none border-none sm:text-sm"
-                  >
-                    <option>IN</option>
-                    <option>US</option>
-                    <option>EU</option>
-                  </select>
-                </div>
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  id="phoneNumber"
-                  autoComplete="tel"
-                  className={`input input-bordered w-full pl-24 bg-transparent ${
-                    formik.errors.phoneNumber && formik.touched.phoneNumber
-                      ? "input-error"
-                      : ""
-                  }`}
-                  onChange={formik.handleChange}
-                  value={formik.values.phoneNumber}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label htmlFor="message" className="label">
-                <span className="label-text">Message</span>
-              </label>
-              <div className="mt-2.5">
-                <textarea
-                  name="message"
-                  id="message"
-                  rows={4}
-                  className={`textarea textarea-bordered w-full bg-transparent ${
-                    formik.errors.message && formik.touched.message
-                      ? "textarea-error"
-                      : ""
-                  }`}
-                  onChange={formik.handleChange}
-                  value={formik.values.message}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="mt-10">
-            <button type="submit" className="btn btn-primary w-full">
-              {isSubmitting ? (
-                <span className="loading loading-dots loading-md"></span>
-              ) : (
-                "Let's Talk"
-              )}
-            </button>
-          </div>
-        </form>
+            <Input
+              label="Email"
+              type="email"
+              name="email"
+              id="email"
+              labelPlacement="outside"
+              placeholder="eg. johndoe@example.com"
+              autoComplete="email"
+              onChange={formik.handleChange}
+              value={formik.values.email}
+              isInvalid={
+                formik.touched.email && formik.errors.email ? true : false
+              }
+              errorMessage={formik.touched.email && formik.errors.email}
+            />
+
+            <Input
+              type="tel"
+              name="phoneNumber"
+              id="phoneNumber"
+              label="Phone Number"
+              labelPlacement="outside"
+              autoComplete="tel"
+              placeholder="eg. 1234567890"
+              onChange={formik.handleChange}
+              value={formik.values.phoneNumber}
+              isInvalid={
+                formik.touched.phoneNumber && formik.errors.phoneNumber
+                  ? true
+                  : false
+              }
+              errorMessage={
+                formik.touched.phoneNumber && formik.errors.phoneNumber
+              }
+              startContent={
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button
+                      className="text-default-500"
+                      endContent={
+                        <span className="hidden sm:flex">
+                          <Icon icon="solar:alt-arrow-down-linear" />
+                        </span>
+                      }
+                      size="sm"
+                      variant="light"
+                    >
+                      IN
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu selectionMode="single">
+                    <DropdownItem key="can-view">Can view</DropdownItem>
+                    <DropdownItem key="can-edit">Can edit</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              }
+            />
+
+            <Textarea
+              name="message"
+              id="message"
+              rows={4}
+              label="Message"
+              labelPlacement="outside"
+              placeholder="Type your message here..."
+              onChange={formik.handleChange}
+              value={formik.values.message}
+              className="col-span-full"
+              isInvalid={
+                formik.touched.message && formik.errors.message ? true : false
+              }
+              errorMessage={formik.touched.message && formik.errors.message}
+            />
+          </CardBody>
+          <CardFooter>
+            <Button
+              type="submit"
+              isLoading={formik.isSubmitting}
+              color="primary"
+              variant="flat"
+              fullWidth
+              onPress={() => formik.handleSubmit()}
+            >
+              Let's Talk
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
-      {/* Submitted modal */}
-      {isSubmitted && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="w-96 p-8 bg-base-100 rounded-lg">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">
-                Thank you {formik.values.firstname}!
-              </h2>
-              <button
-                className="btn btn-ghost"
-                onClick={() =>
-                  setIsSubmitted((prev) => {
-                    return !prev;
-                  })
-                }
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+      <Modal
+        backdrop="blur"
+        isOpen={submittedModal.isOpen}
+        // isOpen={true}
+        onOpenChange={submittedModal.onOpenChange}
+      >
+        <ModalContent>
+          <ModalHeader className="text-center justify-center">
+            <h3 className="text-2xl font-bold">Thank you!</h3>
+          </ModalHeader>
+          <ModalBody>
+            <div className="text-center">
+              <p className="mt-2">
+                Your message has been sent successfully. We will get back to you
+                as soon as possible.
+              </p>
             </div>
-            <p className="mt-4">
-              We have received your message. We will get back to you as soon as
-              possible.
-            </p>
-          </div>
-        </div>
-      )}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="flat"
+              color="primary"
+              className="mt-4"
+              onPress={submittedModal.onOpenChange}
+              fullWidth
+            >
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
