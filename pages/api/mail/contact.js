@@ -5,7 +5,6 @@ const handler = async (req, res) => {
     try {
       // get ip address of the user
       // const ip = req.headers["x-real-ip"] || req.connection.remoteAddress;
-      console.log("ip", ip);
       const { firstname, lastname, phoneNumber, email, message } = req.body;
       if (!firstname || !email || !message) {
         res.status(400).json({ message: "All fields are required" });
