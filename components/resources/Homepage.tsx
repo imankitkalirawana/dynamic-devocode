@@ -1,9 +1,17 @@
 "use client";
-import { Avatar, Button, Card, Image, ScrollShadow } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  Card,
+  CardHeader,
+  Image,
+  ScrollShadow,
+} from "@nextui-org/react";
 import { IconBook, IconSpeakerphone } from "@tabler/icons-react";
 import Link from "next/link";
 import React from "react";
 import { toast } from "sonner";
+import CgpaCalculator from "./cgpa-calculator";
 
 interface HomepageProps {
   subjects: any;
@@ -19,12 +27,12 @@ const Homepage: React.FC<HomepageProps> = ({ subjects }) => {
           className="w-full col-span-12 p-4 md:col-span-8 md:col-start-3 lg:col-span-6"
           tabIndex={-1}
         >
-          <div className="flex p-3 z-10 w-full justify-start items-center shrink-0 overflow-inherit color-inherit subpixel-antialiased rounded-t-large">
+          <CardHeader className="flex p-3 z-10 w-full justify-start items-center shrink-0 overflow-inherit color-inherit subpixel-antialiased rounded-t-large">
             <div className="flex items-center gap-3">
               <Avatar showFallback fallback={<IconBook />}></Avatar>
               <p className="text-large font-medium">Subjects</p>
             </div>
-          </div>
+          </CardHeader>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
             {subjects.slice(0, 3).map((subject: any, index: any) => (
               <Card
@@ -104,7 +112,8 @@ const Homepage: React.FC<HomepageProps> = ({ subjects }) => {
             </Button>
           </div>
         </Card>
-        {/* Dl's */}
+        {/* cgpa calculator*/}
+        <CgpaCalculator />
       </div>
     </>
   );

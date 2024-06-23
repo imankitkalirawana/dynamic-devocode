@@ -5,10 +5,11 @@ const ProgressBarI = () => {
   return (
     <>
       <NextTopLoader
-        height={1}
+        height={2}
         showSpinner={false}
         shadow="false"
         easing="ease"
+        color="#75cd7d"
       />
     </>
   );

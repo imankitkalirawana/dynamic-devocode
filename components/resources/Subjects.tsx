@@ -59,6 +59,7 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
   const { loggedIn } = isLoggedIn();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCriteria, setFilterCriteria] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
   const deleteModal = useDisclosure();
   const [clickedItem, setClickedItem] = useState<Subject | null>(null);
 
@@ -82,8 +83,8 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
   };
 
   const handleDelete = async (code: string | undefined) => {
+    setIsDeleting(true);
     try {
-      const modal = document.getElementById(`delete_modal_${code}`);
       await axios.delete(`/api/resources/subjects/${code}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -95,6 +96,7 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
     } catch (error: any) {
       toast.error(error.response.data.message);
     }
+    setIsDeleting(false);
   };
 
   const filterSubjects = () => {
@@ -236,13 +238,10 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
                       Copy Link
                     </DropdownItem>
                     <DropdownItem
+                      as={Link}
                       key="edit"
                       startContent={<IconPencil size={20} />}
-                      onClick={() =>
-                        router.push(
-                          `/resources/subjects/update/${subject.code}/`
-                        )
-                      }
+                      href={`/resources/subjects/update/${subject.code}/`}
                     >
                       Edit
                     </DropdownItem>
@@ -288,7 +287,7 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
                 </p>
               </div>
               <div className="p-3 h-auto flex w-full items-center overflow-hidden color-inherit subpixel-antialiased rounded-b-large justify-between gap-2">
-                <Chip className="capitalize">
+                <Chip className="capitalize" variant="flat">
                   {humanReadableDate(subject.addedDate)}
                 </Chip>
               </div>
@@ -324,7 +323,8 @@ const Subjects: React.FC<SubjectsProps> = ({ subjects }) => {
                     handleDelete(clickedItem?.code);
                     console.log(clickedItem?.title);
                   }}
-                  // isLoading={isloggingOut}
+                  isLoading={isDeleting}
+                  isDisabled={isDeleting}
                 >
                   Delete
                 </Button>

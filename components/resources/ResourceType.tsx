@@ -1,4 +1,5 @@
 "use client";
+import { Chip } from "@nextui-org/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -13,20 +14,22 @@ const ResourceType = ({
 
   return (
     <>
-      <Link
+      <Chip
+        as={Link}
+        color={location?.includes(ResourceType) ? "primary" : "default"}
         href={`/resources/subjects/${code}/${ResourceType}`}
-        className={`btn btn-sm ${
-          location?.includes(ResourceType)
-            ? "btn-primary"
-            : "" ||
-              (location === `/resources/subjects/${code}` &&
-                ResourceType === "all")
-            ? "btn-primary"
-            : ""
-        }`}
+        // className={`btn btn-sm ${
+        //   location?.includes(ResourceType)
+        //     ? "btn-primary"
+        //     : "" ||
+        //       (location === `/resources/subjects/${code}` &&
+        //         ResourceType === "all")
+        //     ? "btn-primary"
+        //     : ""
+        // }`}
       >
         {ResourceType.charAt(0).toUpperCase() + ResourceType.slice(1)}
-      </Link>
+      </Chip>
     </>
   );
 };

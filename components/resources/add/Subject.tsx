@@ -1,21 +1,20 @@
 "use client";
-
-import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Button,
+  Divider,
   Input,
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Spacer,
   Textarea,
 } from "@nextui-org/react";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 
 type SubjectProps = {
-  lastItem: any;
   onclose: () => void;
 };
 
@@ -26,13 +25,25 @@ interface Subject {
   _id: string;
 }
 
-const Subject: React.FC<SubjectProps> = ({ lastItem, onclose }) => {
+const Subject: React.FC<SubjectProps> = ({ onclose }) => {
+  const validationSchema = Yup.object().shape({
+    code: Yup.string()
+      .min(3, "Subject code must be atleast 3 characters")
+      .max(6, "Subject code must be atmost 6 characters")
+      .required("Subject code is required"),
+    title: Yup.string()
+      .min(3, "Subject title must be 3 characters")
+      .max(50, "Subject title must be 50 characters")
+      .required("Subject title is required"),
+  });
+
   const formik = useFormik({
     initialValues: {
       code: "",
       title: "",
       description: "",
     },
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
         await axios
@@ -55,7 +66,12 @@ const Subject: React.FC<SubjectProps> = ({ lastItem, onclose }) => {
   return (
     <>
       <ModalHeader className="text-lg text-center font-semibold">
-        Add to {lastItem.label}
+        <div className="flex flex-col items-start">
+          <h4 className="text-large">New Subject</h4>
+          <p className="text-small text-default-500">
+            Add a new subject to the database
+          </p>
+        </div>
       </ModalHeader>
       <ModalBody>
         <Input
@@ -65,8 +81,10 @@ const Subject: React.FC<SubjectProps> = ({ lastItem, onclose }) => {
           onChange={formik.handleChange}
           name="code"
           id="code"
-          fullWidth
-          required
+          isClearable
+          maxLength={6}
+          isInvalid={formik.touched.code && formik.errors.code ? true : false}
+          errorMessage={formik.touched.code && formik.errors.code}
         />
         <Input
           label="Subject Title"
@@ -74,7 +92,10 @@ const Subject: React.FC<SubjectProps> = ({ lastItem, onclose }) => {
           onChange={formik.handleChange}
           name="title"
           id="title"
-          required
+          isClearable
+          maxLength={50}
+          isInvalid={formik.touched.title && formik.errors.title ? true : false}
+          errorMessage={formik.touched.title && formik.errors.title}
         />
         <Textarea
           id="description"
@@ -85,7 +106,9 @@ const Subject: React.FC<SubjectProps> = ({ lastItem, onclose }) => {
           rows={3}
         />
       </ModalBody>
-      <ModalFooter className="flex-col sm:flex-row">
+      <Spacer y={2} />
+      <Divider />
+      <ModalFooter className="flex-col-reverse sm:flex-row">
         <Button
           variant="flat"
           onClick={() => {

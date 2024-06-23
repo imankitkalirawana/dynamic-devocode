@@ -6,6 +6,30 @@ import { useRouter } from "next/navigation";
 import { isLoggedIn } from "@/utils/auth";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
+import * as Yup from "yup";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Switch,
+  Textarea,
+  useDisclosure,
+} from "@nextui-org/react";
+import {
+  IconArchive,
+  IconArchiveOff,
+  IconCheck,
+  IconTrash,
+} from "@tabler/icons-react";
 
 interface Props {
   params: {
@@ -23,21 +47,15 @@ interface Subject {
 
 const Page = ({ params }: Props) => {
   const { loggedIn } = isLoggedIn();
-  const [subject, setSubject] = useState<Subject>({} as Subject);
   const router = useRouter();
   const location = usePathname();
+  const deleteModal = useDisclosure();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const getSubject = async () => {
       const res = await axios.get(`/api/resources/subjects/${params.code}`);
-      setSubject(res.data);
-      formik.setValues({
-        ...formik.values,
-        code: res.data.code,
-        title: res.data.title,
-        description: res.data.description,
-        isArchived: res.data.isArchived,
-      });
+      formik.setValues(res.data);
     };
     if (!loggedIn) {
       router.push("/auth/login");
@@ -47,13 +65,25 @@ const Page = ({ params }: Props) => {
     getSubject();
   }, []);
 
+  const validationSchema = Yup.object().shape({
+    code: Yup.string()
+      .min(3, "Subject code must be atleast 3 characters")
+      .max(6, "Subject code must be atmost 6 characters")
+      .required("Subject code is required"),
+    title: Yup.string()
+      .min(3, "Subject title must be 3 characters")
+      .max(50, "Subject title must be 50 characters")
+      .required("Subject title is required"),
+  });
+
   const formik = useFormik({
     initialValues: {
-      code: subject.code,
-      title: subject.title,
-      description: subject.description,
-      isArchived: subject.isArchived,
+      code: "",
+      title: "",
+      description: "",
+      isArchived: false,
     },
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
         await axios
@@ -64,7 +94,7 @@ const Page = ({ params }: Props) => {
           })
           .then(() => {
             toast.success("Subject updated");
-            router.push("/resources/subjects");
+            // router.push("/resources/subjects");
           });
       } catch (error: any) {
         console.error(error);
@@ -74,6 +104,7 @@ const Page = ({ params }: Props) => {
   });
 
   const handleDelete = async () => {
+    setIsDeleting(true);
     try {
       const res = await axios.delete(`/api/resources/subjects/${params.code}`, {
         headers: {
@@ -86,98 +117,129 @@ const Page = ({ params }: Props) => {
       console.error(error);
       toast.error(error.response.data.message);
     }
+    setIsDeleting(false);
   };
 
   return (
     <>
-      <div className="hero min-h-screen p-4">
-        <div className="card shrink-0 w-full max-w-sm">
-          <form className="card-body" onSubmit={formik.handleSubmit}>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Code</span>
-              </label>
-              <input
-                type="text"
-                id="code"
-                name="code"
-                className="input input-bordered"
-                required
-                value={formik.values.code}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Title</span>
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                className="input input-bordered"
-                required
-                value={formik.values.title}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Description</span>
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                className="textarea textarea-bordered"
-                value={formik.values.description}
-                onChange={formik.handleChange}
-              ></textarea>
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Archived</span>
-              </label>
-              <input
-                type="checkbox"
-                id="isArchived"
-                name="isArchived"
-                className="toggle"
-                checked={formik.values.isArchived}
-                onChange={formik.handleChange}
-              />
-              {formik.values.isArchived && (
-                <label className="label">
-                  <span className="label-text-alt">
-                    The subject will not be visible to anyone
-                  </span>
-                </label>
-              )}
-            </div>
+      <div className="min-h-screen p-4">
+        <Card className="p-4">
+          <CardHeader>
+            <h3 className="text-lg font-semibold">Update Subject</h3>
+          </CardHeader>
+          <CardBody className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+            <Input
+              label="Code"
+              type="text"
+              id="code"
+              name="code"
+              value={formik.values.code}
+              onChange={formik.handleChange}
+              isInvalid={
+                formik.touched.code && formik.errors.code ? true : false
+              }
+              errorMessage={formik.touched.code && formik.errors.code}
+              maxLength={6}
+            />
+            <Input
+              label="Title"
+              type="text"
+              id="title"
+              name="title"
+              value={formik.values.title}
+              onChange={formik.handleChange}
+              isInvalid={
+                formik.touched.title && formik.errors.title ? true : false
+              }
+              errorMessage={formik.touched.title && formik.errors.title}
+            />
 
-            <div className="mt-6 flex justify-between">
-              <button
-                className="btn btn-error btn-outline btn-sm"
-                type="button"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
-              <div className="flex gap-2">
-                <button
-                  className="btn btn-sm"
-                  type="button"
-                  onClick={() => router.back()}
+            <Textarea
+              label="Description"
+              id="description"
+              name="description"
+              className="col-span-full"
+              value={formik.values.description}
+              onChange={formik.handleChange}
+            />
+
+            <Switch
+              name="isArchived"
+              id="isArchived"
+              isSelected={formik.values.isArchived}
+              onChange={formik.handleChange}
+              endContent={<IconArchiveOff size={16} />}
+              startContent={<IconArchive size={16} />}
+              color="danger"
+            >
+              Archive
+            </Switch>
+          </CardBody>
+          <Divider className="my-2" />
+          <CardFooter className="justify-end gap-2 flex-col-reverse sm:flex-row">
+            <Button
+              type="button"
+              variant="flat"
+              color="danger"
+              startContent={<IconTrash size={16} />}
+              onClick={deleteModal.onOpenChange}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="solid"
+              isLoading={formik.isSubmitting}
+              isDisabled={formik.isSubmitting}
+              color="primary"
+              type="submit"
+              startContent={
+                formik.isSubmitting ? null : <IconCheck size={18} />
+              }
+              onPress={() => formik.handleSubmit()}
+            >
+              Update
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+      <Modal
+        backdrop="blur"
+        isOpen={deleteModal.isOpen}
+        onOpenChange={deleteModal.onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Delete</ModalHeader>
+              <ModalBody>
+                <p>Are you sure you want to delete {formik.values.title}?</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="default"
+                  fullWidth
+                  variant="flat"
+                  onPress={onClose}
                 >
                   Cancel
-                </button>
-                <button className="btn btn-primary btn-sm" type="submit">
-                  Update
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+                </Button>
+                <Button
+                  color="danger"
+                  variant="flat"
+                  fullWidth
+                  onPress={() => {
+                    handleDelete();
+                  }}
+                  isLoading={isDeleting}
+                  isDisabled={isDeleting}
+                >
+                  Delete
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

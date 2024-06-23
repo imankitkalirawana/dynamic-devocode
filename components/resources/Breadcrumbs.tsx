@@ -86,7 +86,7 @@ const Breadcrumbs = () => {
               {(onClose) => (
                 <>
                   {lastItem?.label === "subjects" ? (
-                    <Subject lastItem={lastItem} onclose={onClose} />
+                    <Subject onclose={onClose} />
                   ) : (
                     <Resource lastItem={lastItem} onclose={onClose} />
                   )}

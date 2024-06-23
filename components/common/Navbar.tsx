@@ -42,7 +42,7 @@ const Navbar = () => {
 
   const location = usePathname();
   const router = useRouter();
-  const { loggedIn } = isLoggedIn();
+  const { loggedIn, user } = isLoggedIn();
 
   dynamicTheme();
 
@@ -226,7 +226,7 @@ const Navbar = () => {
           {loggedIn ? (
             <Dropdown>
               <DropdownTrigger>
-                <Avatar name="AK" className="cursor-pointer mr-4" />
+                <Avatar className="cursor-pointer mr-4" />
               </DropdownTrigger>
               <DropdownMenu aria-label="Menu">
                 <DropdownItem as={Link} href="/admin/dashboard">

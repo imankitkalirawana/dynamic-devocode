@@ -1,13 +1,17 @@
 "use client";
 
 import { NextUIProvider } from "@nextui-org/react";
-import { SessionProvider } from "next-auth/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
       <NextUIProvider>
-        <SessionProvider session={null}>{children}</SessionProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
       </NextUIProvider>
     </>
   );

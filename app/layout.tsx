@@ -8,6 +8,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 // import ProgressBarI from "@/components/common/ProgressBar";
 import { AxiomWebVitals } from "next-axiom";
 import ProgressBarI from "@/components/common/ProgressBar";
+import { ThemeProvider } from "@/components/theme-provider";
+import SmoothScroll from "@/components/smooth-scroll";
 
 export const metadata: Metadata = {
   title: {
@@ -92,19 +94,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme={"lemonade"} className="dark">
+    <html lang="en">
       <body>
         <Providers>
-          <Navbar />
-          <Toaster position="bottom-right"  theme="dark" closeButton />
-
-          <main className="mb-24">
-            {children}
-            <Analytics />
-            <SpeedInsights />
-            <AxiomWebVitals />
-          </main>
-          <ProgressBarI />
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Navbar />
+            <Toaster position="bottom-right" theme="system" closeButton />
+            <main className="mb-24">
+              {children}
+              <Analytics />
+              <SpeedInsights />
+              <AxiomWebVitals />
+            </main>
+            <ProgressBarI />
+          </ThemeProvider>
         </Providers>
       </body>
     </html>
