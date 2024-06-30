@@ -14,8 +14,6 @@ import {
   IconCopy,
   IconDotsVertical,
   IconDownload,
-  IconEdit,
-  IconFile,
   IconFileIsr,
   IconLink,
   IconPencil,
@@ -23,10 +21,8 @@ import {
   IconSortAscending,
   IconSortAscendingShapes,
   IconSortAscendingSmallBig,
-  IconSortAZ,
   IconSortDescending,
   IconSortDescendingSmallBig,
-  IconSortZA,
   IconTrash,
   IconZoomScan,
 } from "@tabler/icons-react";
@@ -148,12 +144,6 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
     });
   };
 
-  // function to get file extension
-  const getFileExtension = (file: string) => {
-    if (!file) return;
-    return file.split(".").pop();
-  };
-
   const path = usePathname();
   const code = path?.split("/")[3];
 
@@ -270,15 +260,9 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
     },
   ];
   let base_url = API_BASE_URL?.split("api")[0];
-  const [isCopied, setisCopied] = useState(false);
 
   const handleCopyLink = (resource: Resource) => {
     const url = `${base_url}resources/subjects/${code}/${resource.type}/${resource._id}`;
-
-    setisCopied(true);
-    setTimeout(() => {
-      setisCopied(false);
-    }, 10000);
     navigator.clipboard.writeText(url);
     toast.success("Link copied to clipboard");
   };

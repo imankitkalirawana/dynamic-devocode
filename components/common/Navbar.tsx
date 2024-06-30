@@ -5,7 +5,6 @@ import { isLoggedIn } from "@/utils/auth";
 import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import BottomBar from "./BottomBar";
-import AnimatedCursor from "react-animated-cursor";
 import dynamicTheme from "@/utils/theme";
 import { toast } from "sonner";
 import Logo from "../assets/Logo";
@@ -23,33 +22,17 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
+import Image from "next/image";
 
 const Navbar = () => {
   const [isloggingOut, setIsLoggingOut] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [isNew, setIsNew] = useState(true);
-  const [isCustomCursor, setIsCustomCursor] = useState(false);
-
-  useEffect(() => {
-    const cursor = localStorage.getItem("isCustomCursor");
-    setIsCustomCursor(cursor ? JSON.parse(cursor) : false);
-    // check if the user is new from localstorage isNew key
-    const isNewUser = localStorage.getItem("isNew");
-    if (isNewUser) {
-      setIsNew(false);
-    }
-  }, []);
 
   const location = usePathname();
   const router = useRouter();
   const { loggedIn, user } = isLoggedIn();
 
   dynamicTheme();
-
-  const handleIsNew = () => {
-    setIsNew(false);
-    localStorage.setItem("isNew", "false");
-  };
 
   const handleLogout = () => {
     setIsLoggingOut(true);
@@ -76,50 +59,12 @@ const Navbar = () => {
 
   return (
     <>
-      {isCustomCursor && (
-        <AnimatedCursor
-          innerStyle={{
-            backgroundColor: "var(--inner-color)",
-          }}
-          outerStyle={{
-            backgroundColor: "var(--outer-color)",
-            mixBlendMode: "difference",
-          }}
-        />
-      )}
       <div
         className={`navbar bg-base-100/50 fixed z-30 text-content backdrop-blur-lg transition-all duration-1000 top-0 ${
           location?.startsWith("/auth") ? "hidden" : ""
         }`}
       >
         <div className="navbar-start">
-          <div className="dropdown">
-            <Button
-              as={"label"}
-              htmlFor="my-drawer"
-              isIconOnly
-              variant="light"
-              radius="full"
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
-                />
-              </svg>
-            </Button>
-          </div>
           <Button
             as={Link}
             href={"/"}
@@ -226,7 +171,7 @@ const Navbar = () => {
           {loggedIn ? (
             <Dropdown>
               <DropdownTrigger>
-                <Avatar className="cursor-pointer mr-4" />
+                <Avatar size="sm" className="cursor-pointer mr-4" />
               </DropdownTrigger>
               <DropdownMenu aria-label="Menu">
                 <DropdownItem as={Link} href="/admin/dashboard">
@@ -271,7 +216,13 @@ const Navbar = () => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">Logout</ModalHeader>
-              <ModalBody>
+              <ModalBody className="items-center">
+                <Image
+                  src={"/animated-icons/logout.gif"}
+                  width={100}
+                  height={100}
+                  alt="Logout animation"
+                />
                 <p>Are you sure you want to logout?</p>
               </ModalBody>
               <ModalFooter className="flex-col sm:flex-row">
@@ -297,65 +248,6 @@ const Navbar = () => {
           )}
         </ModalContent>
       </Modal>
-      {isNew && (
-        <div
-          className="card max-w-96 w-full bg-base-100/50 backdrop-blur-lg shadow-xl fixed bottom-[50%] translate-y-[50%] z-10 left-[50%] translate-x-[-50%] px-8 py-4 md:left-1 md:bottom-1 md:translate-x-0 md:translate-y-0"
-          id="updated-popup"
-        >
-          <form method="dialog">
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={handleIsNew}
-            >
-              ✕
-            </button>
-          </form>
-          <h3 className="font-bold text-lg">New Look and Feel!</h3>
-          <p className="py-4 text-sm">
-            Devocode just got updated.{" "}
-            <a
-              className="link"
-              href="https://github.com/imankitkalirawana/dynamic-devocode"
-              target="_blank"
-            >
-              Know more!
-            </a>
-          </p>
-        </div>
-      )}
-      <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-side z-50" tabIndex={0}>
-        <label
-          htmlFor="my-drawer"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <ul className="menu p-4 w-80 min-h-full bg-base-100/50 backdrop-blur-lg text-base-content">
-          <li>
-            <Link href={"/"}>Home</Link>
-          </li>
-          {loggedIn && (
-            <li>
-              <Link href={"/dashboard"}>Dashboard</Link>
-            </li>
-          )}
-          <li>
-            <Link href={"/resources"}>Resources</Link>
-          </li>
-          <li>
-            <Link href={"/resources/subjects"}>Subjects</Link>
-          </li>
-          <li>
-            <Link href={"/settings"}>Settings</Link>
-          </li>
-          <li>
-            <a href="https://divinelydeveloper.me">About</a>
-          </li>
-          <li>
-            <a href="https://divinelydeveloper.me">Contact</a>
-          </li>
-        </ul>
-      </div>
     </>
   );
 };

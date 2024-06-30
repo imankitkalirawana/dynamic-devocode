@@ -1,11 +1,8 @@
 import { CheckIcon } from "@heroicons/react/20/solid";
+import { Button } from "@nextui-org/react";
+import Link from "next/link";
 
-const includedFeatures = [
-  "Unlimited projects",
-  "Telegram repository",
-  "Know our developers",
-  "Fork projects",
-];
+const includedFeatures = ["NEXT UI", "Express", "MongoDB", "Tailwind CSS"];
 
 const Pricing = () => {
   return (
@@ -13,7 +10,7 @@ const Pricing = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl sm:text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Simple no-tricks pricing
+            Help us to provide you better
           </h2>
           <p className="mt-6 text-lg leading-8">
             The platform is completly free to use. We never charge you anything
@@ -24,11 +21,11 @@ const Pricing = () => {
         <div className="mx-auto mt-16 max-w-2xl rounded-3xl ring-1 ring-neutral sm:mt-20 lg:mx-0 lg:flex lg:max-w-none">
           <div className="p-8 sm:p-10 lg:flex-auto">
             <h3 className="text-2xl font-bold tracking-tight">
-              Star us on GitHub
+              Contribute to our platform
             </h3>
             <p className="mt-6 text-base leading-7">
-              If you like our platform, please give us a star on GitHub. It will
-              help us to reach more people and help them.
+              If you are a NEXT.js developer and want to contribute to our
+              platform
             </p>
             <div className="mt-10 flex items-center gap-x-4">
               <h4 className="flex-none text-sm font-semibold leading-6 text-primary">
@@ -55,7 +52,7 @@ const Pricing = () => {
           <div className="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
             <div className="rounded-2xl py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
               <div className="mx-auto max-w-xs px-8">
-                <p className="text-base font-semibold">Star us and Enjoy</p>
+                <p className="text-base font-semibold">Contribute Now</p>
                 <p className="mt-6 flex items-baseline justify-center gap-x-2">
                   <span className="text-5xl font-bold tracking-tight">
                     GitHub
@@ -64,13 +61,15 @@ const Pricing = () => {
                     .com
                   </span>
                 </p>
-                <a
-                  href="https://github.com/imankitkalirawana/dynamic-devocode"
-                  className="btn btn-primary mt-4"
+                <Button
+                  as={Link}
+                  href="https://github.com/imankitkalirawana/dynamic-devocode/issues"
                   target="_blank"
+                  variant="flat"
+                  color="primary"
                 >
                   Let's make it
-                </a>
+                </Button>
               </div>
             </div>
           </div>

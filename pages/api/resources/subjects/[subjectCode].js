@@ -1,4 +1,5 @@
 import Subject from "@/models/Subjects";
+import Resources from "@/models/Resources";
 import User from "@/models/User";
 import { connectDB } from "@/utils/db";
 import verifyMember from "@/middleware/verifyMember";
@@ -93,6 +94,7 @@ export default cors(async (req, res) => {
             code: subjectCode,
             by: userId,
           });
+
           if (!subject) {
             logger.log(
               "error",
@@ -105,7 +107,14 @@ export default cors(async (req, res) => {
               .json({ message: "You can only delete what you created!" });
             return;
           }
-          await Subject.findOneAndDelete({ code: subjectCode, by: userId });
+          const response = await Subject.findOneAndDelete({
+            code: subjectCode,
+            by: userId,
+          });
+          if (response) {
+            // delete all resources where subject id is equal to the subject id
+            await Resources.deleteMany({ subject: response._id });
+          }
           logger.log(
             "info",
             `type: "Subject"; action: "post"; status: "success"; details: ${subject}; by: ${await getUsername(

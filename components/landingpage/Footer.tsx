@@ -1,5 +1,8 @@
 "use client";
 
+import { Button, Input } from "@nextui-org/react";
+import { Icon } from "@iconify/react";
+
 const footerNavs = [
   {
     label: "Resources",
@@ -112,16 +115,15 @@ const Footer = () => {
                     d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
                   />
                 </svg>
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your email"
-                  className="input input-bordered pl-10"
-                />
+                <Input type="email" placeholder="Enter your email" />
               </div>
-              <button className="btn btn-primary hidden sm:block">
-                Subscribe
-              </button>
+              <Button isIconOnly variant="flat" color="primary">
+                <Icon
+                  icon="iconamoon:send-light"
+                  width="1.5em"
+                  height="1.5em"
+                />
+              </Button>
               <button
                 className="btn btn-primary sm:hidden tooltip"
                 data-tip="Subscribe"
