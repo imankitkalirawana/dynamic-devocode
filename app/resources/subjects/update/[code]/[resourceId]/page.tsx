@@ -171,8 +171,8 @@ const Page = ({ params }: Props) => {
                 onChange={handleResourceType}
                 value={formik.values.type}
               >
-                {resourceType.map((type, index) => (
-                  <option key={index} value={type}>
+                {resourceType.map((type) => (
+                  <option key={type} value={type}>
                     {type.charAt(0).toUpperCase() + type.slice(1)}
                   </option>
                 ))}

@@ -309,7 +309,7 @@ const Resources: React.FC<ResourcesProps> = ({ resources, type }) => {
         })
         .map((resource, index) => (
           <div
-            key={index}
+            key={resource._id}
             className="flex flex-col w-full col-span-12 md:col-span-6 lg:col-span-4 relative bg-content1 shadow-small rounded-large border-small border-default-100 p-3"
           >
             {path?.includes("all") && (

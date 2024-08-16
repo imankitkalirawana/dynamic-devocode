@@ -149,16 +149,16 @@ const Footer = () => {
         </div>
         {/* <div className="flex-1 mt-16 space-y-6 justify-between sm:flex md:space-y-0"> */}
         <div className="grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12 lg:justify-items-center gap-8 mt-12">
-          {footerNavs.map((item, idx) => (
+          {footerNavs.map((item) => (
             <ul
               className="space-y-4 col-span-2 md:col-span-4 lg:col-span-3"
-              key={idx}
+              key={item.label}
             >
               <h4 className="font-semibold sm:pb-2 text-primary">
                 {item.label}
               </h4>
-              {item.items.map((el, idx) => (
-                <li key={idx}>
+              {item.items.map((el) => (
+                <li key={el.name}>
                   <a href={el.href} className="link-hover" target="_blank">
                     {el.name}
                   </a>

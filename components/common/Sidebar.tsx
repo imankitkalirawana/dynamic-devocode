@@ -18,9 +18,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarContent = [] }) => {
         tabIndex={0}
         className="dropdown-content z-[1] p-2 rounded-box flex md:flex-col"
       >
-        {sidebarContent.map((item, i) => {
+        {sidebarContent.map((item) => {
           return (
-            <li key={i}>
+            <li key={item.name}>
               <Link
                 href={item.href}
                 className={`flex items-center justify-start btn-sm sm:btn-md btn btn-${

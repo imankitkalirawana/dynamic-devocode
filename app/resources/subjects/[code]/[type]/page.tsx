@@ -11,12 +11,6 @@ interface Props {
   };
 }
 
-// export async function generateStaticParams() {
-//   const res = await fetch(`${API_BASE_URL}/resources/subjects`);
-//   const subjects = await res.json();
-//   return subjects.map(({ code }: any) => code);
-// }
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const response = await fetch(
     `${API_BASE_URL}/resources/subjects/${params.code}`
