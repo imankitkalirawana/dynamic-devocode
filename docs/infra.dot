@@ -1,0 +1,14 @@
+digraph INFRA {
+  node [ color = "black", fillcolor = "#E6E6E6", height =1, style = "filled,bold,rounded", fontname = "Arial" ];
+  "MongoDB" [ label = "MongoDB
+(MongoDB)", shape =cylinder, fillcolor = "#FFCFB3" ];
+  "LoggingSystem" [ label = "LoggingSystem
+(WinstonLogger)", shape =rectangle ];
+  "VercelAnalytics" [ label = "VercelAnalytics
+(AnalyticsService)", shape =rectangle ];
+  "VercelSpeedInsights" [ label = "VercelSpeedInsights
+(PerformanceMonitoring)", shape =rectangle ];
+  "AxiomWebVitals" [ label = "AxiomWebVitals
+(PerformanceMonitoring)", shape =rectangle ];
+  "LoggingSystem" -> "MongoDB";
+}
